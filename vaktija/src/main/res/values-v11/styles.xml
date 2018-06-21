@@ -1,0 +1,33 @@
+<resources>
+    <style name="AppThemeLight" parent="@style/Theme.AppCompat.Light">
+        <item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
+        <item name="actionBarStyle">@style/TransparentActionBar</item>
+        <item name="actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
+        <item name="homeAsUpIndicator">@drawable/ic_arrow_back_gray_24dp</item>
+        <item name="colorAccent">@color/theme_gray</item>
+        <item name="android:listChoiceIndicatorMultiple">@drawable/gray_btn_check_holo_light</item>
+        <item name="android:seekBarStyle">@style/SeekBargray</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+    </style>
+
+    <style name="MyTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:textSize">@dimen/default_text_size</item>
+    </style>
+
+    <style name="AppThemeLightNoOverlay" parent="@style/AppThemeLight">
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="AppThemeAlarm" parent="@style/Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/black</item>
+    </style>
+
+    <style name="TransparentActionBar" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="android:background">@drawable/ab</item>
+    </style>
+
+    <style name="MyActionButtonOverflow" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_action_overflow</item>
+    </style>
+
+</resources>

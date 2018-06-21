@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CheckBoxgray" parent="android:Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/gray_btn_check_holo_light</item>
+    </style>
+</resources>

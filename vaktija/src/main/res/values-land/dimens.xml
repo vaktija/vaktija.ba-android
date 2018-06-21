@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="ab_city_title_size">20dp</dimen>
+
+    <dimen name="vakat_time_size">30sp</dimen>
+    <dimen name="vakat_title_size">13sp</dimen>
+    <dimen name="vakat_mins_size">9sp</dimen>
+    <dimen name="vakat_mins_icons_size">19sp</dimen>
+    <dimen name="events_wrapper_height">19dp</dimen>
+</resources>

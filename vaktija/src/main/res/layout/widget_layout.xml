@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp">
+
+    <LinearLayout
+        android:id="@+id/widget_layout_root"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/widget_bg_light">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_gravity="left"
+                android:id="@+id/widget_layout_city" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_gravity="right"
+                android:id="@+id/widget_layout_app" />
+
+        </FrameLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/widget_row_height"
+            android:layout_marginRight="5dp">
+
+            <ImageView
+                android:layout_width="@dimen/widget_current_indicator_width"
+                android:layout_height="@dimen/widget_row_height"
+                android:layout_alignParentLeft="true"
+                android:id="@+id/widget_layout_fajr_current" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:id="@+id/widget_layout_fajr_time" />
+
+            <LinearLayout
+                android:id="@+id/icons_wrapper"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true">
+
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_alarm"
+                    android:id="@+id/widget_layout_fajr_alarm" />
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_info"
+                    android:id="@+id/widget_layout_fajr_notif" />
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_sound_off"
+                    android:id="@+id/widget_layout_fajr_silent" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="5dp"
+                android:layout_centerVertical="true"
+                android:id="@+id/widget_layout_fajr_title" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/widget_row_height"
+
+            android:layout_marginRight="5dp">
+
+            <ImageView
+                android:layout_width="@dimen/widget_current_indicator_width"
+                android:layout_height="@dimen/widget_row_height"
+                android:layout_alignParentLeft="true"
+                android:id="@+id/widget_layout_sunrise_current" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:id="@+id/widget_layout_sunrise_time" />
+
+            <LinearLayout
+                android:id="@+id/icons_wrapper"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true">
+
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_alarm"
+                    android:id="@+id/widget_layout_sunrise_alarm" />
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_info"
+                    android:id="@+id/widget_layout_sunrise_notif" />
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_sound_off"
+                    android:id="@+id/widget_layout_sunrise_silent" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/widget_layout_sunrise_title" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/widget_row_height"
+            android:layout_marginRight="5dp">
+
+            <ImageView
+                android:layout_width="@dimen/widget_current_indicator_width"
+                android:layout_height="@dimen/widget_row_height"
+                android:layout_alignParentLeft="true"
+                android:id="@+id/widget_layout_dhuhr_current" />
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:id="@+id/widget_layout_dhuhr_time" />
+
+            <LinearLayout
+                android:id="@+id/icons_wrapper"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true">
+
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_alarm"
+                    android:id="@+id/widget_layout_dhuhr_alarm" />
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_info"
+                    android:id="@+id/widget_layout_dhuhr_notif" />
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_sound_off"
+                    android:id="@+id/widget_layout_dhuhr_silent" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/widget_layout_dhuhr_title" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/widget_row_height"
+            android:layout_marginRight="5dp">
+
+            <ImageView
+                android:layout_width="@dimen/widget_current_indicator_width"
+                android:layout_height="@dimen/widget_row_height"
+                android:layout_alignParentLeft="true"
+                android:id="@+id/widget_layout_asr_current" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:id="@+id/widget_layout_asr_time" />
+
+            <LinearLayout
+                android:id="@+id/icons_wrapper"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true">
+
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_alarm"
+                    android:id="@+id/widget_layout_asr_alarm" />
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_info"
+                    android:id="@+id/widget_layout_asr_notif" />
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_sound_off"
+                    android:id="@+id/widget_layout_asr_silent" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:id="@+id/widget_layout_asr_title" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/widget_row_height"
+            android:layout_marginRight="5dp">
+
+            <ImageView
+                android:layout_width="@dimen/widget_current_indicator_width"
+                android:layout_height="@dimen/widget_row_height"
+                android:layout_alignParentLeft="true"
+                android:id="@+id/widget_layout_maghrib_current" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:id="@+id/widget_layout_maghrib_time" />
+
+            <LinearLayout
+                android:id="@+id/icons_wrapper"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true">
+
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_alarm"
+                    android:id="@+id/widget_layout_maghrib_alarm" />
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_info"
+                    android:id="@+id/widget_layout_maghrib_notif" />
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_sound_off"
+                    android:id="@+id/widget_layout_maghrib_silent" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:id="@+id/widget_layout_maghrib_title" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/widget_row_height"
+            android:layout_marginRight="5dp">
+
+            <ImageView
+                android:layout_width="@dimen/widget_current_indicator_width"
+                android:layout_height="@dimen/widget_row_height"
+                android:layout_alignParentLeft="true"
+                android:id="@+id/widget_layout_ishaa_current" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:id="@+id/widget_layout_ishaa_time" />
+
+            <LinearLayout
+                android:id="@+id/icons_wrapper"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true">
+
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_alarm"
+                    android:id="@+id/widget_layout_ishaa_alarm" />
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_info"
+                    android:id="@+id/widget_layout_ishaa_notif" />
+                <ImageView
+                    android:layout_width="@dimen/widget_icon_size"
+                    android:layout_height="@dimen/widget_icon_size"
+                    android:src="@drawable/ic_sound_off"
+                    android:id="@+id/widget_layout_ishaa_silent" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/widget_layout_ishaa_title" />
+        </RelativeLayout>
+
+    </LinearLayout>
+</FrameLayout>

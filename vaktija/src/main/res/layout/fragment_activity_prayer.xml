@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/activity_vakat_alarm"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            card_view:cardCornerRadius="3dp"
+            card_view:cardElevation="1dp"
+            card_view:cardUseCompatPadding="true"
+            android:clickable="false"
+            android:layout_marginTop="5dp"
+            android:foreground="?attr/selectableItemBackground">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:clickable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:id="@+id/fragment_activity_prayer_alarmTitle"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/left_rigt_margin"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="ALARM"
+                        android:textStyle="bold" />
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <android.support.v7.widget.SwitchCompat
+                            android:id="@+id/activity_vakat_alarmSwitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/left_rigt_margin"/>
+
+                        <CheckBox
+                            android:id="@+id/activity_vakat_alarmCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/left_rigt_margin"/>
+
+                    </FrameLayout>
+
+
+                </LinearLayout>
+
+                <ba.vaktija.android.widgets.ClickConsumingLinearLayout
+                    android:id="@+id/activity_vakat_alarmOptionsWrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/fragment_activity_prayer_alarmTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginLeft="@dimen/left_rigt_margin"
+                        android:duplicateParentState="true"
+                        android:gravity="center_vertical"
+                        android:text="25 minuta prije"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <SeekBar
+                        android:id="@+id/activity_vakat_alarmSeekBar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:duplicateParentState="true"
+                        android:max="80"
+                        android:layout_marginTop="10dp"
+                        android:indeterminate="false" />
+                </ba.vaktija.android.widgets.ClickConsumingLinearLayout>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/activity_vakat_notif"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            card_view:cardCornerRadius="3dp"
+            card_view:cardElevation="1dp"
+            card_view:cardUseCompatPadding="true"
+            android:clickable="false"
+            android:layout_marginTop="5dp"
+            android:foreground="?attr/selectableItemBackground">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="0dp" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="7dp">
+
+                    <TextView
+                        android:id="@+id/fragment_activity_prayer_notifTitle"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="NOTIFIKACIJE"
+                        android:layout_marginLeft="@dimen/left_rigt_margin"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="bold" />
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <android.support.v7.widget.SwitchCompat
+                            android:id="@+id/activity_vakat_notifSwitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/left_rigt_margin"/>
+
+                        <CheckBox
+                            android:id="@+id/activity_vakat_notifCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/left_rigt_margin"/>
+                    </FrameLayout>
+                </LinearLayout>
+
+                <ba.vaktija.android.widgets.ClickConsumingLinearLayout
+                    android:id="@+id/activity_vakat_notifOptionsWrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="vertical" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:duplicateParentState="true" >
+
+                        <CheckBox
+                            android:id="@+id/fragment_activity_prayer_notifUseSound"
+                            android:layout_width="0dip"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="1"
+                            android:duplicateParentState="true"
+                            android:layout_marginLeft="@dimen/left_rigt_margin"
+                            android:textColor="@color/theme_gray"
+                            android:text="Zvuk"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <CheckBox
+                            android:id="@+id/fragment_activity_prayer_notifUseVibro"
+                            android:layout_width="0dip"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="1"
+                            android:duplicateParentState="true"
+                            android:text="Vibracija"
+                            android:textColor="@color/theme_gray"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+                    </LinearLayout>
+
+
+
+                    <TextView
+                        android:id="@+id/fragment_activity_prayer_notifTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:duplicateParentState="true"
+                        android:gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/left_rigt_margin"
+                        android:text="5 minuta prije nastupa"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <SeekBar
+                        android:id="@+id/activity_vakat_notifTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:duplicateParentState="true"
+                        android:layout_marginTop="10dp"
+
+                        android:max="80" />
+                </ba.vaktija.android.widgets.ClickConsumingLinearLayout>
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/activity_vakat_silent"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            card_view:cardCornerRadius="3dp"
+            card_view:cardElevation="1dp"
+            card_view:cardUseCompatPadding="true"
+            android:clickable="false"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:foreground="?attr/selectableItemBackground">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical"
+                android:padding="0dp" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="7dp">
+
+                    <TextView
+                        android:id="@+id/fragment_activity_prayer_silentTitle"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/left_rigt_margin"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="UGASI ZVUK"
+                        android:textStyle="bold" />
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <android.support.v7.widget.SwitchCompat
+                            android:id="@+id/activity_vakat_silentSwitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/left_rigt_margin"/>
+
+                        <CheckBox
+                            android:id="@+id/activity_vakat_silentCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/left_rigt_margin"/>
+
+                    </FrameLayout>
+
+                </LinearLayout>
+
+                <ba.vaktija.android.widgets.ClickConsumingLinearLayout
+                    android:id="@+id/activity_vakat_soundOptionsWrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/fragment_activity_prayer_silentDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/left_rigt_margin"
+                        android:layout_marginLeft="@dimen/left_rigt_margin"
+                        android:duplicateParentState="true"
+                        android:text="@string/silent_description" />
+
+                    <CheckBox
+                        android:id="@+id/fragment_activity_prayer_silentVibroOff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:duplicateParentState="true"
+                        android:layout_marginLeft="@dimen/left_rigt_margin"
+                        android:textColor="@color/theme_gray"
+                        android:text="Isključi vibraciju"
+                        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+                    <TextView
+                        android:id="@+id/fragment_activity_prayer_silentOffLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:duplicateParentState="true"
+                        android:text="UKLJUČIVANJE ZVUKOVA"
+                        android:layout_marginLeft="@dimen/left_rigt_margin"/>
+
+                    <View style="@style/DividerNarrow"/>
+
+                    <TextView
+                        android:id="@+id/fragment_activity_prayer_silentTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/left_rigt_margin"
+                        android:duplicateParentState="true"
+                        android:gravity="center_vertical"
+                        android:text="25 minuta nakon nastupa"
+                        android:layout_marginTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <SeekBar
+                        android:id="@+id/activity_vakat_silentOffSeekBar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:duplicateParentState="true"
+                        android:max="80"
+                        android:layout_marginTop="10dp"
+
+                        android:indeterminate="false" />
+                </ba.vaktija.android.widgets.ClickConsumingLinearLayout>
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+</ScrollView>

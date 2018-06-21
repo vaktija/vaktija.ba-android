@@ -1,0 +1,108 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    android:background="@color/main_window_bg">
+
+    <LinearLayout
+        android:id="@+id/main_actual_event_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorAccent"
+        android:layout_gravity="top"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:layout_marginLeft="@dimen/event_message_margin_left"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#fff"
+            android:layout_gravity="center_vertical"
+            android:id="@+id/main_actual_event_message" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Uključi"
+            android:layout_marginLeft="5dp"
+            android:padding="5dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="20dp"
+            android:textColor="?attr/colorAccent"
+            android:background="@drawable/simple_button"
+            android:id="@+id/main_actual_event_action" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/main_containers"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <fragment
+            android:id="@+id/main_container_1"
+            android:name="ba.vaktija.android.FragmentPrayer"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:tag="0" />
+
+        <fragment
+            android:id="@+id/main_container_2"
+            android:name="ba.vaktija.android.FragmentPrayer"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/fragments_top_margin"
+            android:tag="1" />
+
+        <fragment
+            android:id="@+id/main_container_3"
+            android:name="ba.vaktija.android.FragmentPrayer"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/fragments_top_margin"
+            android:tag="2" />
+
+        <fragment
+            android:id="@+id/main_container_4"
+            android:name="ba.vaktija.android.FragmentPrayer"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/fragments_top_margin"
+            android:tag="3" />
+
+        <fragment
+            android:id="@+id/main_container_5"
+            android:name="ba.vaktija.android.FragmentPrayer"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/fragments_top_margin"
+            android:tag="4" />
+
+        <fragment
+            android:id="@+id/main_container_6"
+            android:name="ba.vaktija.android.FragmentPrayer"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/fragments_top_margin"
+            android:tag="5" />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

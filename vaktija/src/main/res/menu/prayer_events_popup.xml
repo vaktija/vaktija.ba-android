@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/prayer_events_popup_skip_alarm"
+        android:title="Preskoči alarm"/>
+    <item
+        android:id="@+id/prayer_events_popup_skip_notif"
+        android:title="Preskoči notifikaciju"/>
+    <item
+        android:id="@+id/prayer_events_popup_skip_silent"
+        android:title="Preskoči gašenje zvukova"/>
+</menu>

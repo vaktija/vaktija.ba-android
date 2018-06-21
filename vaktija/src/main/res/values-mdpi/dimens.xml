@@ -1,0 +1,18 @@
+<resources>
+    <bool name="use_cards">false</bool>
+    <dimen name="vakat_time_size">47sp</dimen>
+    <dimen name="vakat_title_size">17sp</dimen>
+    <dimen name="events_wrapper_height">21dp</dimen>
+    <dimen name="vakat_mins_size">10sp</dimen>
+    <dimen name="vakat_mins_icons_size">20sp</dimen>
+    <dimen name="widget_font_size">21sp</dimen>
+    <dimen name="widget_icon_size">25dp</dimen>
+    <dimen name="widget_row_height">35dp</dimen>
+
+    <dimen name="prayer_time_margin_left">12dp</dimen>
+    <dimen name="prayer_time_margin_right">12dp</dimen>
+    <dimen name="ab_title_margin_left">27dp</dimen>
+
+    <dimen name="fragments_top_margin">0dp</dimen>
+
+</resources>

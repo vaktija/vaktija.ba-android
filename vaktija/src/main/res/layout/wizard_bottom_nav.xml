@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/wizard_bottom_nav"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:orientation="vertical" >
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/gray_divider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1" >
+
+        <Button
+            android:id="@+id/wizard_prev"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            style="?attr/buttonBarButtonStyle"
+            android:background="#fff"
+            android:gravity="center"
+            android:text="NAZAD" />
+
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="@color/gray_divider" />
+
+        <Button
+            android:id="@+id/wizard_next"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            style="?attr/buttonBarButtonStyle"
+            android:background="#fff"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="DALJE" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="dhuhrTimeEntries">
+        <item>@string/standard_time_12_13</item>
+        <item>@string/real_time</item>
+    </string-array>
+    <string-array name="dhuhrTimeValues">
+        <item>1</item>
+        <item>0</item>
+    </string-array>
+</resources>

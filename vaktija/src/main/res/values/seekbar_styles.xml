@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="SeekBarBase"  parent="android:Widget.SeekBar">
+        <item name="android:minHeight">13dip</item>
+        <item name="android:maxHeight">13dip</item>
+        <item name="android:thumbOffset">16dip</item>
+        <item name="android:paddingLeft">16dip</item>
+        <item name="android:paddingRight">16dip</item>
+    </style>
+
+    <style name="SeekBargray" parent="SeekBarBase">
+        <item name="android:progressDrawable">@drawable/gray_scrubber_progress_horizontal_holo_light</item>
+        <item name="android:indeterminateDrawable">@drawable/gray_scrubber_progress_horizontal_holo_light</item>
+        <item name="android:thumb">@drawable/gray_scrubber_control_selector_holo_light</item>
+    </style>
+</resources>

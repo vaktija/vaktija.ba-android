@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <issue id="DuplicateIds" severity="ignore" />
+    <issue id="ExtraTranslation" severity="ignore" />
+    <issue id="MissingPrefix" severity="ignore" />
+    <issue id="MissingRegistered" severity="ignore" />
+    <issue id="MissingTranslation" severity="ignore" />
+    <issue id="Orientation" severity="ignore" />
+</lint>

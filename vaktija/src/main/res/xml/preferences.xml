@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <Preference
+        android:key="locationName"
+        android:title="@string/location" />
+
+    <PreferenceCategory android:key="notifications"
+        android:title="@string/notifications" >
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="statusbarNotification"
+            android:summaryOff="@string/statusbar_notification_off"
+            android:summaryOn="@string/statusbar_notification_on"
+            android:title="@string/statusbar_notification" />
+
+        <CheckBoxPreference
+            android:dependency="statusbarNotification"
+            android:defaultValue="false"
+            android:key="ALL_PRAYERS_IN_NOTIF"
+            android:summaryOff="@string/all_prayers_not_shown_in_notif"
+            android:summaryOn="@string/all_prayers_shown_in_notif"
+            android:title="@string/all_prayers_in_notif" />
+
+        <Preference
+            android:key="notificationToneUri"
+            android:title="@string/prefs_notification_tone"
+            android:summary="@string/prefs_notification_tone_summary"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:key="alarms"
+        android:title="@string/prefs_alarms" >
+
+        <Preference
+            android:key="alarmToneUri"
+            android:title="@string/prefs_alarm_tone"
+            android:summary="@string/prefs_alarm_tone_summary"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:key="dhuhrTimeCounting"
+        android:title="@string/dhuhr_prayer" >
+
+        <ListPreference
+            android:entries="@array/dhuhrTimeEntries"
+            android:entryValues="@array/dhuhrTimeValues"
+            android:key="dhuhrTime"
+            android:summary="@string/dhuhr_calculation_summary"
+            android:title="@string/dhuhr_calculation" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="separateJumaSettings"
+            android:summaryOff="@string/prefs_separateJumaSettings_disabled"
+            android:summaryOn="@string/prefs_separateJumaSettings_enabled"
+            android:title="@string/prefs_separateJumaSettings_title" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:key="app"
+        android:title="@string/application" >
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="showDate"
+            android:summaryOff="@string/prefs_showDate_disabled"
+            android:summaryOn="@string/prefs_showDate_enabled"
+            android:title="@string/prefs_showDate_title" />
+
+        <!--
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="gaEnabled"
+            android:summaryOff="@string/prefs_ga_disabled"
+            android:summaryOn="@string/prefs_ga_enabled"
+            android:title="@string/prefs_ga_title" />
+        -->
+        <Preference
+            android:key="feedback"
+            android:summary="@string/prefs_feedback_summary"
+            android:title="@string/prefs_feedback_title" >
+
+            <intent android:action="android.intent.action.VIEW"
+                android:data="@string/prefs_feedback_email_ready" >
+
+                <extra android:name="android.intent.extra.SUBJECT"
+                    android:value="@string/prefs_feedback_subject" />
+            </intent>
+
+        </Preference>
+
+        <Preference
+            android:key="about"
+            android:summary="@string/version_name"
+            android:title="@string/about_app" >
+
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:targetClass="ba.vaktija.android.prefs.AboutActivity"
+                android:targetPackage="ba.vaktija.android" />
+
+        </Preference>
+
+        <!--
+        <Preference
+            android:key="export"
+            android:title="@string/prefs_export_title" >
+
+        </Preference>
+        <Preference
+            android:key="import"
+            android:title="@string/prefs_import_title" >
+
+        </Preference>
+        -->
+    </PreferenceCategory>
+
+</PreferenceScreen>
