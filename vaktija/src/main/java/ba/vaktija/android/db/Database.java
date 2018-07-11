@@ -19,7 +19,7 @@ public class Database extends SQLiteAssetHelper {
     public static final String TAG = Database.class.getSimpleName();
 
     private static final String DATABASE_NAME = "vaktija.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     public static final String TABLE_LOCATIONS = "locations";
     public static final String TABLE_SCHEDULE = "schedule";

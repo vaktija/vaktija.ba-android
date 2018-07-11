@@ -4,11 +4,11 @@
     <string name="app_name">Vaktija.ba</string>
     <string name="crash_toast_text">Vaktija crashed. Send report please.</string>
     <string name="play_url">https://play.google.com/store/apps/details?id=ba.vaktija.android</string>
-    <string name="version_name">1.1.9</string>
-    <string name="prefs_feedback_subject">Vaktija za Android (v1.1.9)</string>
+    <string name="version_name">1.1.9.1</string>
+    <string name="prefs_feedback_subject">Vaktija za Android (v1.1.9.1)</string>
     <string name="dev_email">android@vaktija.ba</string>
     <string name="changelog">
-        1.1.9
+        1.1.9.1
         \n\t• Ispravka vremena za Sandzak (NV, NP, PB, PP, SJ, TT)
         \n1.1.8
         \n\t• Ispravka za alarm za Android 7

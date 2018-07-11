@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="ba.vaktija.android"
-    android:versionCode="46"
+    android:versionCode="47"
     android:versionName="@string/version_name">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
