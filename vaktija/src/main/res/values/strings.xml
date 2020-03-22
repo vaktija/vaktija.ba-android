@@ -117,5 +117,6 @@
     <string name="open_settings">Otvori postavke</string>
     <string name="doze_mode_message">Da bi alarmi radili ispravno Vaktiju je potrebno dodati u listu aplikacija za koje se ne primjenjuju optimizacije za potrošnju baterije.</string>
     <string name="doze_mode">Vaktija i Doze Mode</string>
+    <string name="notif_default_channel_desc">Generalne notifikacije</string>
 
 </resources>

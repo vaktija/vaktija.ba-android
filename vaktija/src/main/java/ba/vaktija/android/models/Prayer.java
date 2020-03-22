@@ -220,7 +220,7 @@ public class Prayer implements Parcelable{
 
         switch (currentVakatId) {
             case Prayer.FAJR:
-                return "Izlazak Sunca";
+                return "Izlazak sunca";
             case Prayer.SUNRISE:
                 return "Podne";
             case Prayer.DHUHR:
@@ -383,7 +383,7 @@ public class Prayer implements Parcelable{
             case FAJR:
                 return "Zora";
             case SUNRISE:
-                return "Izlazak Sunca";
+                return "Izlazak sunca";
             case DHUHR:
                 return "Podne";
             case ASR:
@@ -404,7 +404,7 @@ public class Prayer implements Parcelable{
             case FAJR:
                 return "Zora";
             case SUNRISE:
-                return "I. Sunca";
+                return "I. sunca";
             case DHUHR:
                 return "Podne";
             case ASR:

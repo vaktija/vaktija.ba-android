@@ -31,7 +31,7 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.provider.Settings;
-import android.support.v4.preference.PreferenceFragment;
+import androidx.core.preference.PreferenceFragment;
 import android.text.TextUtils;
 import android.util.Log;
 

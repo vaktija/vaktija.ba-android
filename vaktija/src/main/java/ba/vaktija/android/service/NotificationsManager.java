@@ -1,5 +1,6 @@
 package ba.vaktija.android.service;
 
+import ba.vaktija.android.BuildConfig;
 import ba.vaktija.android.MainActivityHelper;
 import ba.vaktija.android.R;
 import ba.vaktija.android.models.Prayer;
@@ -8,11 +9,11 @@ import ba.vaktija.android.prefs.Defaults;
 import ba.vaktija.android.prefs.Prefs;
 import ba.vaktija.android.util.FileLog;
 import ba.vaktija.android.util.FormattingUtils;
-import ba.vaktija.android.util.HijriCalendar;
 import ba.vaktija.android.util.Utils;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -22,12 +23,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
 
-import java.util.Calendar;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 
 public class NotificationsManager {
     public static final String TAG = NotificationsManager.class.getSimpleName();
+
+    private static final String DEFAULT_CHANNEL = "DEFAULT_CHANNEL";
 
     private static final int ONGOING_NOTIF = 77;
     static final int NOTIF_UPDATE_INTERVAL = 10 * 1000; //10s
@@ -45,9 +48,10 @@ public class NotificationsManager {
     private NotificationCompat.BigTextStyle mBigTextStyle;
 
     private NotificationsManager(Context context){
-        mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         mContext = context;
+        mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        createNotifChannels();
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         mPrayer = PrayersSchedule.getInstance(mContext).getCurrentPrayer();
         mApproaching = PrayersSchedule.getInstance(mContext).isNextPrayerApproaching();
@@ -55,6 +59,26 @@ public class NotificationsManager {
         mStatusbarNotification = mPrefs.getBoolean(
                 Prefs.STATUSBAR_NOTIFICATION,
                 Defaults.STATUSBAR_NOTIFICATION);
+    }
+
+    private void createNotifChannels(){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String desc = mContext.getString(R.string.notif_default_channel_desc);
+            createNotifChannel(DEFAULT_CHANNEL, desc);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void  createNotifChannel(String channelId, String desc){
+
+//        https://stackoverflow.com/a/51802085
+//        mNotificationManager.deleteNotificationChannel(DEFAULT_CHANNEL);
+
+        NotificationChannel notificationChannel = new NotificationChannel(channelId, desc, NotificationManager.IMPORTANCE_HIGH);
+        notificationChannel.enableVibration(true);
+        notificationChannel.setShowBadge(false);
+        mNotificationManager.createNotificationChannel(notificationChannel);
     }
 
     public static NotificationsManager getInstance(Context context){
@@ -105,15 +129,20 @@ public class NotificationsManager {
                 .setBigContentTitle(title)
                 .setSummaryText(mContext.getString(R.string.vaktija_url));
 
-        mCountdownNotifBuilder = new NotificationCompat.Builder(mContext)
+        mCountdownNotifBuilder = new NotificationCompat.Builder(mContext, DEFAULT_CHANNEL)
                 .setSmallIcon(R.drawable.ic_notif_default)
                 .setOnlyAlertOnce(true)
                 .setContentIntent(pi)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setOngoing(mStatusbarNotification)
                 .setContentTitle(title)
-                .setContentInfo(city)
                 .setContentText(PrayersSchedule.getInstance(mContext).getCurrentAndNextTime());
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            mCountdownNotifBuilder.setSubText(city);
+        } else {
+            mCountdownNotifBuilder.setContentInfo(city);
+        }
 
         if(allPrayersInNotif){
             mCountdownNotifBuilder.setStyle(mBigTextStyle);
@@ -273,7 +302,11 @@ public class NotificationsManager {
 
         String city = mPrefs.getString(Prefs.LOCATION_NAME, Defaults.LOCATION_NAME);
 
-        mCountdownNotifBuilder.setContentInfo(city);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            mCountdownNotifBuilder.setSubText(city);
+        } else {
+            mCountdownNotifBuilder.setContentInfo(city);
+        }
 
         mCountdownNotifBuilder.setWhen(System.currentTimeMillis());
         mNotificationManager.notify(ONGOING_NOTIF, mCountdownNotifBuilder.build());

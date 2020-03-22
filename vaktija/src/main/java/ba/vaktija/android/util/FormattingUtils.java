@@ -138,7 +138,7 @@ public class FormattingUtils {
             case Prayer.SUNRISE:
                 switch (caseId) {
                     case Case.AKUZATIV:
-                        return "izlazak Sunca";
+                        return "izlazak sunca";
                 }
 
             case Prayer.DHUHR:

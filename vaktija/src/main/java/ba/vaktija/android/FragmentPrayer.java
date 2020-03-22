@@ -1,28 +1,15 @@
 package ba.vaktija.android;
-import java.util.Locale;
 
-import ba.vaktija.android.models.Events;
-import ba.vaktija.android.models.Prayer;
-import ba.vaktija.android.models.PrayersSchedule;
-import ba.vaktija.android.prefs.Prefs;
-import ba.vaktija.android.service.VaktijaService;
-//import ba.vaktija.android.util.FileLog;
-import ba.vaktija.android.util.FileLog;
-import ba.vaktija.android.util.FormattingUtils;
-
-import de.greenrobot.event.EventBus;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.PopupMenu;
-import android.util.Log;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.appcompat.widget.PopupMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +17,19 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.Locale;
+
+import ba.vaktija.android.models.Events;
+import ba.vaktija.android.models.Prayer;
+import ba.vaktija.android.models.PrayersSchedule;
+import ba.vaktija.android.prefs.Prefs;
+import ba.vaktija.android.service.VaktijaService;
+import ba.vaktija.android.util.FileLog;
+import ba.vaktija.android.util.FormattingUtils;
+import de.greenrobot.event.EventBus;
+
+//import ba.vaktija.android.util.FileLog;
 
 public class FragmentPrayer extends Fragment {
     public static final String TAG = FragmentPrayer.class.getSimpleName();
@@ -277,7 +277,7 @@ public class FragmentPrayer extends Fragment {
 
     @Override
     public void onResume() {
-        super.onStart();
+        super.onResume();
 		FileLog.d(TAG, "onResume");
 
         boolean respectJuma = mPrefs.getBoolean(Prefs.SEPARATE_JUMA_SETTINGS, true);
