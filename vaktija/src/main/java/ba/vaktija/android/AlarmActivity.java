@@ -178,12 +178,13 @@ public class AlarmActivity extends AppCompatActivity
     }
 
     @Override
-    public void onNewIntent(Intent intent){
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
         FileLog.d(TAG, "[onNewIntent]");
         String action = intent.getAction();
         FileLog.d(TAG, "action: " + action);
 
-        if(action != null && action.equals(ACTION_CANCEL_ALARM)){
+        if (action != null && action.equals(ACTION_CANCEL_ALARM)) {
             cancelAlarmAndFinish();
         }
     }
