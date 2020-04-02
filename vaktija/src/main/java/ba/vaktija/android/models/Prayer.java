@@ -592,14 +592,7 @@ public class Prayer implements Parcelable{
     @SuppressLint("NewApi")
     public void scheduleSunriseSilent(Context conext, AlarmManager alarmManager){
         FileLog.d(TAG, "scheduleSunriseSilent for "+getTitle());
-        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-
-        int prayerH = getHours();
-        int prayerM = getMinutes();
-
-        calendar.set(Calendar.HOUR_OF_DAY, prayerH);
-        calendar.set(Calendar.MINUTE, prayerM);
-        calendar.set(Calendar.SECOND, 0);
+        Calendar calendar = getCalendar();
 
         FileLog.i(TAG, "sunrise sound off mins: " + getSoundOffMins());
 
@@ -648,15 +641,7 @@ public class Prayer implements Parcelable{
 
     @SuppressLint("NewApi")
     public void scheduleAlarms(Context conext, AlarmManager alarmManager){
-//        FileLog.d(TAG, "scheduleAlarms for "+getTitle(true));
-        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-
-        int prayerH = getHours();
-        int prayerM = getMinutes();
-
-        calendar.set(Calendar.HOUR_OF_DAY, prayerH);
-        calendar.set(Calendar.MINUTE, prayerM);
-        calendar.set(Calendar.SECOND, 0);
+        Calendar calendar = getCalendar();
 
         calendar.add(Calendar.MINUTE, -getAlarmMins());
 
@@ -709,17 +694,21 @@ public class Prayer implements Parcelable{
         }
     }
 
+    private Calendar getCalendar() {
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+
+        int prayerH = getHours();
+        int prayerM = getMinutes();
+
+        calendar.set(Calendar.HOUR_OF_DAY, prayerH);
+        calendar.set(Calendar.MINUTE, prayerM);
+        calendar.set(Calendar.SECOND, 0);
+        return calendar;
+    }
+
     @SuppressLint("NewApi")
     public void scheduleNotifications(Context context, AlarmManager alarmManager){
-        //FileLog.d(TAG, "scheduleNotifications for "+getTitle(true));
-        Calendar mCalendar = Calendar.getInstance(TimeZone.getDefault());
-
-        int vakatH = getHours();
-        int vakatM = getMinutes();
-
-        mCalendar.set(Calendar.HOUR_OF_DAY, vakatH);
-        mCalendar.set(Calendar.MINUTE, vakatM);
-        mCalendar.set(Calendar.SECOND, 0);
+        Calendar mCalendar = getCalendar();
 
         mCalendar.add(Calendar.MINUTE, -getNotifMins());
 
