@@ -141,7 +141,6 @@ public class LocationFragment extends Fragment implements OnClickListener {
         FileLog.i(TAG, "locationId: "+ locationId +" adapter.count: "+adapter.getCount());
         FileLog.i(TAG, "selectedName: "+selectedName);
 
-        //		mListView.setSelection(adapter.getIdPosition(locationId));
         mListView.setItemChecked(adapter.getPositionForLocationId(locationId), true);
 
         mListView.setOnItemClickListener(new OnItemClickListener() {
@@ -158,7 +157,6 @@ public class LocationFragment extends Fragment implements OnClickListener {
             }
         });
 
-//		mListView.smoothScrollToPosition(locationId);
         mListView.setSelectionFromTop(adapter.getPositionForLocationId(locationId), getHalfScreenHeight());
     }
 
