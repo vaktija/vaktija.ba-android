@@ -19,11 +19,13 @@ public class Database extends SQLiteAssetHelper {
     public static final String TAG = Database.class.getSimpleName();
 
     private static final String DATABASE_NAME = "vaktija.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     public static final String TABLE_LOCATIONS = "locations";
-    public static final String TABLE_SCHEDULE = "schedule";
-    public static final String TABLE_OFFSET = "offset";
+    public static String TABLE_SCHEDULE = "schedule";
+    public static final String TABLE_SCHEDULE_DE = "schedule_de";
+    public static String TABLE_OFFSET = "offset";
+    public static final String TABLE_OFFSET_DE = "offset_de";
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_WEIGHT = "weight";
@@ -77,9 +79,25 @@ public class Database extends SQLiteAssetHelper {
 
         Log.i(TAG, "datum="+datum);
 
+        if (locationId >= 100000)
+        {
+            TABLE_SCHEDULE  = TABLE_SCHEDULE_DE;
+            TABLE_OFFSET = TABLE_OFFSET_DE;
+        }
+
         Cursor prayerTimes = getReadableDatabase().query(TABLE_SCHEDULE, null, COLUMN_DATUM+"=?", new String[]{datum}, null, null, null);
 
-        Cursor offset = getReadableDatabase().query(TABLE_OFFSET, null, COLUMN_MONTH + "=? AND " + COLUMN_LOCATION_ID + "=?", new String[]{month + "", locationId + ""}, null, null, null);
+        //Cursor offset = getReadableDatabase().query(TABLE_OFFSET, null, COLUMN_MONTH + "=? AND " + COLUMN_LOCATION_ID + "=?", new String[]{month + "", locationId + ""}, null, null, null);
+
+        Cursor offset;
+        if (locationId <100000)
+        {
+            offset = getReadableDatabase().query(TABLE_OFFSET, null, COLUMN_MONTH + "=? AND " + COLUMN_LOCATION_ID + "=?", new String[]{month + "", locationId + ""}, null, null, null);
+        }
+        else
+        {
+            offset = getReadableDatabase().query(TABLE_OFFSET, null, COLUMN_LOCATION_ID + "=?", new String[]{locationId + ""}, null, null, null);
+        }
 
         Log.i(TAG, "prayerTimes count="+prayerTimes.getCount());
         Log.i(TAG, "offset count="+offset.getCount());
@@ -115,18 +133,30 @@ public class Database extends SQLiteAssetHelper {
 
         offset.moveToFirst();
 
+      //  int offsetFajr = offset.getInt(offset.getColumnIndex(COLUMN_FAJR));
+      //  int offsetDhuhr = offset.getInt(offset.getColumnIndex(COLUMN_DHUHR));
+      //  int offsetAsr = offset.getInt(offset.getColumnIndex(COLUMN_ASR));
+
         int offsetFajr = offset.getInt(offset.getColumnIndex(COLUMN_FAJR));
+        int offsetSunrise = offsetFajr;
         int offsetDhuhr = offset.getInt(offset.getColumnIndex(COLUMN_DHUHR));
         int offsetAsr = offset.getInt(offset.getColumnIndex(COLUMN_ASR));
+        int offsetMaghrib = offsetAsr;
+        int offsetIsha = offsetAsr;
+        if (locationId >= 100000) {
+            offsetSunrise = offset.getInt(offset.getColumnIndex(COLUMN_SUNRISE));
+            offsetMaghrib = offset.getInt(offset.getColumnIndex(COLUMN_MAGHRIB));
+            offsetIsha = offset.getInt(offset.getColumnIndex(COLUMN_ISHA));
+        }
 
         Log.i(TAG, "offsetFajr="+offsetFajr+" offsetDhuhr="+offsetDhuhr+" offsetAsr="+offsetAsr);
 
         fajrTime = (fajrTime + offsetFajr) * 60;
-        sunriseTime = (sunriseTime + offsetFajr) * 60;
+        sunriseTime = (sunriseTime + offsetSunrise) * 60;
         dhuhrTime = (dhuhrTime + offsetDhuhr) * 60;
         asrTime = (asrTime + offsetAsr) * 60;
-        maghribTime = (maghribTime + offsetAsr) * 60;
-        ishaTime = (ishaTime + offsetAsr) * 60;
+        maghribTime = (maghribTime + offsetMaghrib) * 60;
+        ishaTime = (ishaTime + offsetIsha) * 60;
 
         int[] times = new int[]{fajrTime, sunriseTime, dhuhrTime, asrTime, maghribTime, ishaTime};
 

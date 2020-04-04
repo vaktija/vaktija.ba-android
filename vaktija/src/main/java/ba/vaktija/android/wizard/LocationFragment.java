@@ -14,10 +14,9 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -116,6 +115,9 @@ public class LocationFragment extends Fragment implements OnClickListener {
                 locationsList.add(new Location("Sandžak", -1));
             }
 
+            if(i == 118){
+                locationsList.add(new Location("Njemačka", -1));
+            }
             locationsList.add(locations.get(i));
         }
 
@@ -123,6 +125,7 @@ public class LocationFragment extends Fragment implements OnClickListener {
 
         sections.put(0, new Location("Bosna i Hercegovina", -1));
         sections.put(108, new Location("Sandžak", -1));
+        sections.put(120, new Location("Njemačka", -1));
 
         final LocationsAdapter adapter = new LocationsAdapter(
                 mActivity,
