@@ -1,5 +1,6 @@
 package ba.vaktija.android;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -82,13 +83,14 @@ public class MainActivity extends BaseActivity {
 
         View customAb = LayoutInflater.from(this).inflate(R.layout.custom_action_bar, null);
 
-        mActionBarTitle = (TextView) customAb.findViewById(R.id.custom_action_bar_title);
-        mActionBarSubtitle = (TextView) customAb.findViewById(R.id.custom_action_bar_subtitle);
+        mActionBarTitle = customAb.findViewById(R.id.custom_action_bar_title);
+        mActionBarSubtitle = customAb.findViewById(R.id.custom_action_bar_subtitle);
 
         mActionBarTitle.setTextColor(getResources().getColor(android.R.color.darker_gray));
         mActionBarSubtitle.setTextColor(getResources().getColor(android.R.color.darker_gray));
 
         ActionBar ab = getSupportActionBar();
+        assert ab != null;
         ab.setDisplayShowHomeEnabled(false);
         ab.setDisplayShowTitleEnabled(true);
         ab.setTitle("");
@@ -113,7 +115,7 @@ public class MainActivity extends BaseActivity {
         Log.d(TAG, "[setupActivity]");
         setContentView(R.layout.activity_main);
 
-        LinearLayout rootView = (LinearLayout) findViewById(R.id.main_root);
+        LinearLayout rootView = findViewById(R.id.main_root);
 
         changeActionBarColor(getResources().getColor(R.color.very_light_gray));
 
@@ -123,8 +125,8 @@ public class MainActivity extends BaseActivity {
         }
 
         mActualEvent = findViewById(R.id.main_actual_event_wrapper);
-        mActualEventMessage = (TextView) mActualEvent.findViewById(R.id.main_actual_event_message);
-        mActualEventAction = (TextView) mActualEvent.findViewById(R.id.main_actual_event_action);
+        mActualEventMessage = mActualEvent.findViewById(R.id.main_actual_event_message);
+        mActualEventAction = mActualEvent.findViewById(R.id.main_actual_event_action);
 
         mActualEvent.setVisibility(View.GONE);
 
@@ -233,17 +235,15 @@ public class MainActivity extends BaseActivity {
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd. MM. yyyy.", Locale.getDefault());
-        String date = sdf.format(calendar.getTime());
+        String date = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(calendar.getTime());
 
         mActionBarTitle.setText(mPrefs.getString(Prefs.LOCATION_NAME, Defaults.LOCATION_NAME).toUpperCase());
 
         String hijriDate = HijriCalendar.getSimpleDate(Calendar.getInstance());
-        mActionBarSubtitle.setText(dayName + ", " + hijriDate);
+        mActionBarSubtitle.setText(dayName + ", "+date +" | "+ hijriDate);
 
-        // mActionBarSubtitle.setText(dayName + ", " + date);
         mActionBarSubtitle.setVisibility(dateEnabled ? View.VISIBLE : View.GONE);
 
-//        Log.i(TAG, "hijri: "+ HijriCalendar.getSimpleDate(Calendar.getInstance()));
     }
 
     @Override
