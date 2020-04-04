@@ -87,8 +87,7 @@ public class Database extends SQLiteAssetHelper {
 
         Cursor prayerTimes = getReadableDatabase().query(TABLE_SCHEDULE, null, COLUMN_DATUM+"=?", new String[]{datum}, null, null, null);
 
-        //Cursor offset = getReadableDatabase().query(TABLE_OFFSET, null, COLUMN_MONTH + "=? AND " + COLUMN_LOCATION_ID + "=?", new String[]{month + "", locationId + ""}, null, null, null);
-
+        //offset and offset_de table are different -> takvim for BIH and takvim for Germany
         Cursor offset;
         if (locationId <100000)
         {
@@ -132,10 +131,6 @@ public class Database extends SQLiteAssetHelper {
                 + Integer.parseInt(isha.split(":")[1]);
 
         offset.moveToFirst();
-
-      //  int offsetFajr = offset.getInt(offset.getColumnIndex(COLUMN_FAJR));
-      //  int offsetDhuhr = offset.getInt(offset.getColumnIndex(COLUMN_DHUHR));
-      //  int offsetAsr = offset.getInt(offset.getColumnIndex(COLUMN_ASR));
 
         int offsetFajr = offset.getInt(offset.getColumnIndex(COLUMN_FAJR));
         int offsetSunrise = offsetFajr;
