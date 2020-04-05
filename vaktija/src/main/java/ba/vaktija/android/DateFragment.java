@@ -1,6 +1,8 @@
 package ba.vaktija.android;
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import ba.vaktija.android.models.Prayer;
 import ba.vaktija.android.models.PrayersSchedule;
@@ -70,7 +72,11 @@ public class DateFragment extends DialogFragment {
 		calendar.set(Calendar.MONTH, month - 1);
 		calendar.set(Calendar.DAY_OF_MONTH, day);
 
-		mDialogBuilder.setTitle(day+". "+month+". "+year+" / "+HijriCalendar.getSimpleDate(calendar));
+		String date = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(calendar.getTime());
+		String hijriDate = HijriCalendar.getSimpleDate(Calendar.getInstance());
+		String title = date +" | "+ hijriDate;
+
+		mDialogBuilder.setTitle(title);
 		mDialogBuilder.setView(view);
 
 		return mDialogBuilder.create();

@@ -234,14 +234,13 @@ public class MainActivity extends BaseActivity {
                 break;
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd. MM. yyyy.", Locale.getDefault());
         String date = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(calendar.getTime());
+        String hijriDate = HijriCalendar.getSimpleDate(Calendar.getInstance());
+        String subTitle = dayName + ", "+date +" | "+ hijriDate;
 
         mActionBarTitle.setText(mPrefs.getString(Prefs.LOCATION_NAME, Defaults.LOCATION_NAME).toUpperCase());
 
-        String hijriDate = HijriCalendar.getSimpleDate(Calendar.getInstance());
-        mActionBarSubtitle.setText(dayName + ", "+date +" | "+ hijriDate);
-
+        mActionBarSubtitle.setText(subTitle);
         mActionBarSubtitle.setVisibility(dateEnabled ? View.VISIBLE : View.GONE);
 
     }
