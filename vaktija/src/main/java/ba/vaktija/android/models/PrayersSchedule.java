@@ -140,7 +140,7 @@ public class PrayersSchedule {
                 whichPrayer);
     }
 
-    public static int getDstRespectingPrayerTime(int defaultPrayerTime, int year, int month, int day){
+    private static int getDstRespectingPrayerTime(int defaultPrayerTime, int year, int month, int day){
         FileLog.d(TAG, "[getDstRespectingPrayerTime defaultPrayerTime="+defaultPrayerTime+" year="+year+" month="+month+" day="+day+"]");
 
         // beacuse months have index 0 in java Calendar
@@ -150,13 +150,8 @@ public class PrayersSchedule {
 
         FileLog.i(TAG, "summer time on: "+summerTimeOn);
 
-        if(summerTimeOn && (month == Calendar.MARCH || month == Calendar.OCTOBER)){
-            if(day >= 25 && day <= 30){
-                FileLog.i(TAG, "adding one hour to default prayer time");
-
-                return defaultPrayerTime + 3600;
-                //return defaultPrayerTime + 60;
-            }
+        if(summerTimeOn){
+            return defaultPrayerTime + 3600;
         }
 
         return defaultPrayerTime;
@@ -194,11 +189,10 @@ public class PrayersSchedule {
         boolean respectJuma = App.prefs.getBoolean(Prefs.SEPARATE_JUMA_SETTINGS, true);
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         boolean isFriday = (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY);
-        boolean jumaDay = respectJuma && isFriday;
-        return jumaDay;
+        return respectJuma && isFriday;
     }
 
-    public boolean isJumaDay(int year, int month, int day){
+    private boolean isJumaDay(int year, int month, int day){
         boolean respectJuma = App.prefs.getBoolean(Prefs.SEPARATE_JUMA_SETTINGS, true);
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.set(Calendar.YEAR, year);
@@ -393,7 +387,7 @@ public class PrayersSchedule {
         return mPrayers.get(prayerId - 1);
     }
 
-    public static boolean isSummerTimeOn(int year, int month, int day){
+    private static boolean isSummerTimeOn(int year, int month, int day){
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month);
@@ -427,7 +421,7 @@ public class PrayersSchedule {
         }
     }
 
-    public boolean isDayEnding(){
+    private boolean isDayEnding(){
         Prayer current = getCurrentPrayer();
         boolean stepOne = current.getId() == Prayer.ISHA;
 
@@ -435,9 +429,8 @@ public class PrayersSchedule {
 
         boolean stepThree = Utils.getCurrentTimeSec() <= 24 * 3600;
 
-        boolean ending = stepOne && stepTwo && stepThree;
+        return stepOne && stepTwo && stepThree;
 
-        return ending;
     }
 
     public Prayer getPrayer(int id){
@@ -449,7 +442,7 @@ public class PrayersSchedule {
         return mPrayers.get(id);
     }
 
-    public int getSilentModeDuration(){
+    private int getSilentModeDuration(){
         int silentTimeout = (getCurrentPrayer().getPrayerTime() + getCurrentPrayer().getSoundOnMins() * 60);
 
         if(SilentModeManager.getInstance(mContext).isSunriseSilentModeOn()){

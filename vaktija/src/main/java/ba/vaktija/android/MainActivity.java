@@ -1,5 +1,6 @@
 package ba.vaktija.android;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,12 +28,11 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.os.PowerManager;
 import android.provider.Settings;
-import android.support.v4.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -41,13 +41,12 @@ import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
+import androidx.appcompat.app.ActionBar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -84,13 +83,14 @@ public class MainActivity extends BaseActivity {
 
         View customAb = LayoutInflater.from(this).inflate(R.layout.custom_action_bar, null);
 
-        mActionBarTitle = (TextView) customAb.findViewById(R.id.custom_action_bar_title);
-        mActionBarSubtitle = (TextView) customAb.findViewById(R.id.custom_action_bar_subtitle);
+        mActionBarTitle = customAb.findViewById(R.id.custom_action_bar_title);
+        mActionBarSubtitle = customAb.findViewById(R.id.custom_action_bar_subtitle);
 
         mActionBarTitle.setTextColor(getResources().getColor(android.R.color.darker_gray));
         mActionBarSubtitle.setTextColor(getResources().getColor(android.R.color.darker_gray));
 
         ActionBar ab = getSupportActionBar();
+        assert ab != null;
         ab.setDisplayShowHomeEnabled(false);
         ab.setDisplayShowTitleEnabled(true);
         ab.setTitle("");
@@ -115,7 +115,7 @@ public class MainActivity extends BaseActivity {
         Log.d(TAG, "[setupActivity]");
         setContentView(R.layout.activity_main);
 
-        LinearLayout rootView = (LinearLayout) findViewById(R.id.main_root);
+        LinearLayout rootView = findViewById(R.id.main_root);
 
         changeActionBarColor(getResources().getColor(R.color.very_light_gray));
 
@@ -125,8 +125,8 @@ public class MainActivity extends BaseActivity {
         }
 
         mActualEvent = findViewById(R.id.main_actual_event_wrapper);
-        mActualEventMessage = (TextView) mActualEvent.findViewById(R.id.main_actual_event_message);
-        mActualEventAction = (TextView) mActualEvent.findViewById(R.id.main_actual_event_action);
+        mActualEventMessage = mActualEvent.findViewById(R.id.main_actual_event_message);
+        mActualEventAction = mActualEvent.findViewById(R.id.main_actual_event_action);
 
         mActualEvent.setVisibility(View.GONE);
 
@@ -234,18 +234,15 @@ public class MainActivity extends BaseActivity {
                 break;
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd. MM. yyyy.", Locale.getDefault());
-        String date = sdf.format(calendar.getTime());
+        String date = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(calendar.getTime());
+        String hijriDate = HijriCalendar.getSimpleDate(Calendar.getInstance());
+        String subTitle = dayName + ", "+date +" | "+ hijriDate;
 
         mActionBarTitle.setText(mPrefs.getString(Prefs.LOCATION_NAME, Defaults.LOCATION_NAME).toUpperCase());
 
-        String hijriDate = HijriCalendar.getSimpleDate(Calendar.getInstance());
-        mActionBarSubtitle.setText(dayName + ", " + hijriDate);
-
-        // mActionBarSubtitle.setText(dayName + ", " + date);
+        mActionBarSubtitle.setText(subTitle);
         mActionBarSubtitle.setVisibility(dateEnabled ? View.VISIBLE : View.GONE);
 
-//        Log.i(TAG, "hijri: "+ HijriCalendar.getSimpleDate(Calendar.getInstance()));
     }
 
     @Override
