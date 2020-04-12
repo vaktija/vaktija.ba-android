@@ -1,18 +1,12 @@
 package ba.vaktija.android.wizard;
-import ba.vaktija.android.App;
-import ba.vaktija.android.MainActivity;
-import ba.vaktija.android.R;
-import ba.vaktija.android.prefs.Prefs;
-import ba.vaktija.android.util.FileLog;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,6 +17,12 @@ import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
+
+import ba.vaktija.android.App;
+import ba.vaktija.android.MainActivity;
+import ba.vaktija.android.R;
+import ba.vaktija.android.prefs.Prefs;
+import ba.vaktija.android.util.FileLog;
 
 public class VakatTweaksFragment extends Fragment implements OnClickListener, OnCheckedChangeListener {
     public static final String TAG = VakatTweaksFragment.class.getSimpleName();

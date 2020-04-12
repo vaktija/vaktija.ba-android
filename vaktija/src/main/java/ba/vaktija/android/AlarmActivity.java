@@ -1,5 +1,29 @@
 package ba.vaktija.android;
 
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.PowerManager;
+import android.preference.PreferenceManager;
+import androidx.core.app.NotificationCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.WindowManager.LayoutParams;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -13,34 +37,6 @@ import ba.vaktija.android.util.FileLog;
 import ba.vaktija.android.util.FormattingUtils;
 import ba.vaktija.android.util.Utils;
 import ba.vaktija.android.widgets.SlidingLayout;
-
-import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.media.AudioManager;
-import android.media.MediaCodec;
-import android.media.MediaPlayer;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.PowerManager;
-import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.WindowManager.LayoutParams;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -182,12 +178,13 @@ public class AlarmActivity extends AppCompatActivity
     }
 
     @Override
-    public void onNewIntent(Intent intent){
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
         FileLog.d(TAG, "[onNewIntent]");
         String action = intent.getAction();
         FileLog.d(TAG, "action: " + action);
 
-        if(action != null && action.equals(ACTION_CANCEL_ALARM)){
+        if (action != null && action.equals(ACTION_CANCEL_ALARM)) {
             cancelAlarmAndFinish();
         }
     }

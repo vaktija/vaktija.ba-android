@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <!--
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     -->
@@ -18,11 +19,12 @@
         android:name="ba.vaktija.android.App"
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name" >
         <activity
             android:name="ba.vaktija.android.MainActivity"
             android:theme="@style/Theme.AppCompat.Light"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,7 +34,7 @@
         </activity>
         <activity
             android:name="ba.vaktija.android.PrayerActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:label="" >
         </activity>
         <activity
@@ -42,25 +44,25 @@
         </activity>
         <activity
             android:name="ba.vaktija.android.prefs.SettingsActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:label="@string/activity_settings" >
         </activity>
         <activity
             android:name="ba.vaktija.android.wizard.WizardActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:label="@string/app_name"
             android:theme="@style/AppThemeLight" >
         </activity>
         <activity
             android:name="ba.vaktija.android.LocationActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:label="@string/location" >
         </activity>
         <activity
             android:name="ba.vaktija.android.prefs.AboutActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:label="@string/about_app" >
-            <intent-filter>
+            <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -70,7 +72,7 @@
         <activity
             android:name="ba.vaktija.android.AlarmActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:launchMode="singleInstance"
             android:excludeFromRecents="true"
             android:theme="@style/AppThemeAlarm" />
