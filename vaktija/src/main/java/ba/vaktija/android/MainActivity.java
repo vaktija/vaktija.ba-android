@@ -25,6 +25,7 @@ import ba.vaktija.android.wizard.WizardActivity;
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.net.Uri;
 import android.os.PowerManager;
 import android.provider.Settings;
 import androidx.fragment.app.DialogFragment;
@@ -55,6 +56,7 @@ import de.greenrobot.event.EventBus;
 
 public class MainActivity extends BaseActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
+    public static int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 5469;
 
     private SharedPreferences mPrefs;
     private App mApp;
@@ -160,7 +162,8 @@ public class MainActivity extends BaseActivity {
 
         showActualEventMessage();
 
-        checkDozeModeState();
+        checkOverlayPermission();
+        checkBatteryOptimizationsPermission();
     }
 
     private void showActualEventMessage(){
@@ -581,6 +584,29 @@ public class MainActivity extends BaseActivity {
 
             if(!pm.isIgnoringBatteryOptimizations(packageName)) {
                 showDozeModeDialog();
+            }
+        }
+    }
+
+    public void checkBatteryOptimizationsPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent intent = new Intent();
+            String packageName = getPackageName();
+            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + packageName));
+                startActivity(intent);
+            }
+        }
+    }
+
+    public void checkOverlayPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
             }
         }
     }
