@@ -119,6 +119,8 @@
     <string name="doze_mode">Vaktija i Doze Mode</string>
     <string name="notif_default_channel_desc">Generalne notifikacije</string>
     <string name="appear_on_top">Vaktija i Overlay</string>
-    <string name="appear_on_top_message">Da bi alarmi radili ispravno Vaktiju je potrebno dodati u listu aplikacija koje imaju Overlay permisiju.</string>
+    <string name="appear_on_top_message">Da bi alarmi radili ispravno Vaktija.ba aplikaciju je potrebno dodati na listu aplikacija koje imaju Overlay permisiju.</string>
+    <string name="allow_dnd">Vaktija i Do not disturb</string>
+    <string name="allow_dnd_message">Da bi gašenje zvukova (tokom namaskog vremena) radilo ispravno, potrebno je Vaktija.ba aplikaciju dodati na listu aplikacija koje imaju Do not disturb permisiju</string>
 
 </resources>

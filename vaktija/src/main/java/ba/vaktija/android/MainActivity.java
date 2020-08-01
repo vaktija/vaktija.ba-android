@@ -23,8 +23,10 @@ import ba.vaktija.android.util.Utils;
 import ba.vaktija.android.wizard.WizardActivity;
 
 import android.annotation.TargetApi;
+import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.PowerManager;
 import android.provider.Settings;
@@ -164,6 +166,7 @@ public class MainActivity extends BaseActivity {
         showActualEventMessage();
         checkDozeModeState();
         checkOverlay();
+        checkDND();
 //        checkOverlayPermission();
 //        checkBatteryOptimizationsPermission();
     }
@@ -590,6 +593,10 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    private void checkAllPermissions(){
+                showAllDialogs();
+    }
+
 
     private void checkOverlay(){
         Log.d(TAG, "checkOverlay");
@@ -603,6 +610,19 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    private void checkDND(){
+        Log.d(TAG, "checkDND");
+
+        boolean askNoMoreAboutDND = mPrefs.getBoolean(Prefs.ASK_NO_MORE_DND, false);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !askNoMoreAboutDND){
+
+            NotificationManager n = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+            if(!n.isNotificationPolicyAccessGranted()) {
+                showDNDDialog();
+            }
+        }
+    }
 
 
     public void checkBatteryOptimizationsPermission() {
@@ -641,12 +661,12 @@ public class MainActivity extends BaseActivity {
                 .setMessage(R.string.doze_mode_message)
                 .setCancelable(false)
                 .setNegativeButton(R.string.cancel, null)
-                .setNegativeButton(R.string.ask_no_more, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        mPrefs.edit().putBoolean(Prefs.ASK_NO_MORE_DOZE, true).commit();
-                    }
-                })
+//                .setNegativeButton(R.string.ask_no_more, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        mPrefs.edit().putBoolean(Prefs.ASK_NO_MORE_DOZE, true).commit();
+//                    }
+//                })
                 .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -669,12 +689,12 @@ public class MainActivity extends BaseActivity {
                 .setMessage(R.string.appear_on_top_message)
                 .setCancelable(false)
                 .setNegativeButton(R.string.cancel, null)
-                .setNegativeButton(R.string.ask_no_more, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        mPrefs.edit().putBoolean(Prefs.ASK_NO_MORE_APPEAR_ON_TOP, true).commit();
-                    }
-                })
+//                .setNegativeButton(R.string.ask_no_more, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        mPrefs.edit().putBoolean(Prefs.ASK_NO_MORE_APPEAR_ON_TOP, true).commit();
+//                    }
+//                })
                 .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -688,4 +708,41 @@ public class MainActivity extends BaseActivity {
                 })
                 .show();
     }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void showDNDDialog() {
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.allow_dnd)
+                .setMessage(R.string.allow_dnd_message)
+                .setCancelable(false)
+                .setNegativeButton(R.string.cancel, null)
+//                .setNegativeButton(R.string.ask_no_more, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        mPrefs.edit().putBoolean(Prefs.ASK_NO_MORE_DND, true).commit();
+//                    }
+//                })
+                .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        try {
+                            Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                            startActivity(intent);
+                        } catch (ActivityNotFoundException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                })
+                .show();
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void showAllDialogs() {
+        //combine all dialogs in one
+    }
+
 }

@@ -4,6 +4,7 @@ public class Prefs {
 	public static final boolean DEBUG = true;
     public static final boolean FILE_LOG = false;
 	public static final String ASK_NO_MORE_APPEAR_ON_TOP = "ASK_NO_MORE_APPEAR_ON_TOP";
+	public static final String ASK_NO_MORE_DND = "ASK_NO_MORE_DND";
 
 	public static String DEFAULT_THEME_COLOR = "#5ebb46";
     public static String DHUHR_NORMALIZED = "1";
