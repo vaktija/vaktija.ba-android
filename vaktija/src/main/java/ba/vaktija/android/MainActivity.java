@@ -57,6 +57,7 @@ import de.greenrobot.event.EventBus;
 public class MainActivity extends BaseActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
     public static int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 5469;
+//    public static int ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS_REQUEST_CODE = 5311;
 
     private SharedPreferences mPrefs;
     private App mApp;
@@ -161,9 +162,10 @@ public class MainActivity extends BaseActivity {
         showActionBarInfo();
 
         showActualEventMessage();
-
-        checkOverlayPermission();
-        checkBatteryOptimizationsPermission();
+        checkDozeModeState();
+        checkOverlay();
+//        checkOverlayPermission();
+//        checkBatteryOptimizationsPermission();
     }
 
     private void showActualEventMessage(){
@@ -588,15 +590,35 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+
+    private void checkOverlay(){
+        Log.d(TAG, "checkOverlay");
+
+        boolean askNoMoreAboutOverlay = mPrefs.getBoolean(Prefs.ASK_NO_MORE_APPEAR_ON_TOP, false);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !askNoMoreAboutOverlay){
+
+            if (!Settings.canDrawOverlays(this)) {
+                showOverlayDialog();
+            }
+        }
+    }
+
+
+
     public void checkBatteryOptimizationsPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Intent intent = new Intent();
-            String packageName = getPackageName();
             PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                intent.setData(Uri.parse("package:" + packageName));
-                startActivity(intent);
+            if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
+
+                try {
+                    Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                    startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+//                Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:" + getPackageName()));
+//                startActivityForResult(intent, ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS_REQUEST_CODE);
             }
         }
     }
@@ -630,6 +652,34 @@ public class MainActivity extends BaseActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         try {
                             Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                            startActivity(intent);
+                        } catch (ActivityNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                })
+                .show();
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void showOverlayDialog() {
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.appear_on_top)
+                .setMessage(R.string.appear_on_top_message)
+                .setCancelable(false)
+                .setNegativeButton(R.string.cancel, null)
+                .setNegativeButton(R.string.ask_no_more, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mPrefs.edit().putBoolean(Prefs.ASK_NO_MORE_APPEAR_ON_TOP, true).commit();
+                    }
+                })
+                .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        try {
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
                             startActivity(intent);
                         } catch (ActivityNotFoundException e) {
                             e.printStackTrace();
