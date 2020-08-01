@@ -4,11 +4,13 @@
     <string name="app_name">Vaktija.ba</string>
     <string name="crash_toast_text">Vaktija crashed. Send report please.</string>
     <string name="play_url">https://play.google.com/store/apps/details?id=ba.vaktija.android</string>
-    <string name="version_name">1.1.9.1</string>
-    <string name="prefs_feedback_subject">Vaktija za Android (v1.1.9.1)</string>
+    <string name="version_name">1.1.9.2</string>
+    <string name="prefs_feedback_subject">Vaktija za Android (v1.1.9.2)</string>
     <string name="dev_email">android@vaktija.ba</string>
     <string name="changelog">
-        1.1.9.1
+        1.1.9.2
+        \n\t• Dodati dijalozi za potrebne permisije, migrirano na AndroidX, nove ikonice, sredjen alarm za Android V10, sdk 28
+        \n1.1.9.1
         \n\t• Ispravka vremena za Sandzak (NV, NP, PB, PP, SJ, TT)
         \n1.1.8
         \n\t• Ispravka za alarm za Android 7
@@ -115,12 +117,12 @@
     <string name="cancel">Odustani</string>
     <string name="ask_no_more">Ne pitaj više</string>
     <string name="open_settings">Otvori postavke</string>
-    <string name="doze_mode_message">Da bi alarmi radili ispravno Vaktiju je potrebno dodati u listu aplikacija za koje se ne primjenjuju optimizacije za potrošnju baterije.</string>
-    <string name="doze_mode">Vaktija i Doze Mode</string>
     <string name="notif_default_channel_desc">Generalne notifikacije</string>
-    <string name="appear_on_top">Vaktija i Overlay</string>
-    <string name="appear_on_top_message">Da bi alarmi radili ispravno Vaktija.ba aplikaciju je potrebno dodati na listu aplikacija koje imaju Overlay permisiju.</string>
-    <string name="allow_dnd">Vaktija i Do not disturb</string>
-    <string name="allow_dnd_message">Da bi gašenje zvukova (tokom namaskog vremena) radilo ispravno, potrebno je Vaktija.ba aplikaciju dodati na listu aplikacija koje imaju Do not disturb permisiju</string>
+    <string name="allow_battery_optimizations">Vaktija.ba i Optimizacija potrosnje baterije</string>
+    <string name="allow_battery_optimizations_message">Da bi alarmi, gašenje zvukova tokom namaza, notifikacije i stalna notifikacija radili ispravno Vaktija.ba aplikaciju je potrebno dodati na listu aplikacija za koje se ne primjenjuje optimizacija za potrošnju baterije.</string>
+    <string name="allow_overlay">Vaktija.ba i Overlay</string>
+    <string name="allow_overlay_message">Da bi alarmi radili ispravno Vaktija.ba aplikaciju je potrebno dodati na listu aplikacija koje imaju Overlay permisiju.</string>
+    <string name="allow_do_not_disturb">Vaktija.ba i Do not disturb</string>
+    <string name="allow_do_not_disturb_message">Da bi gašenje zvukova (tokom namaskog vremena) radilo ispravno, potrebno je Vaktija.ba aplikaciju dodati na listu aplikacija koje imaju Do not disturb permisiju</string>
 
 </resources>

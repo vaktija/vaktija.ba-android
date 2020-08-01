@@ -58,9 +58,6 @@ import de.greenrobot.event.EventBus;
 
 public class MainActivity extends BaseActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
-    public static int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 5469;
-//    public static int ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS_REQUEST_CODE = 5311;
-
     private SharedPreferences mPrefs;
     private App mApp;
     private boolean mIsDualPane = false;
@@ -107,14 +104,14 @@ public class MainActivity extends BaseActivity {
             //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }*/
 
-        if(!mPrefs.getBoolean(Prefs.WIZARD_COMPLETED, false)){
+        if (!mPrefs.getBoolean(Prefs.WIZARD_COMPLETED, false)) {
             startWizard();
         } else {
             setupActivity();
         }
     }
 
-    private void setupActivity(){
+    private void setupActivity() {
         Log.d(TAG, "[setupActivity]");
         setContentView(R.layout.activity_main);
 
@@ -122,7 +119,7 @@ public class MainActivity extends BaseActivity {
 
         changeActionBarColor(getResources().getColor(R.color.very_light_gray));
 
-        if(!getResources().getBoolean(R.bool.use_cards)){
+        if (!getResources().getBoolean(R.bool.use_cards)) {
             rootView.setBackgroundColor(getResources().getColor(R.color.main_activity_bg));
             changeActionBarColor(getResources().getColor(R.color.ab_bg_mdpi));
         }
@@ -149,13 +146,13 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         FileLog.d(TAG, "[onResume]");
 
         EventBus.getDefault().register(this);
 
-        if(mLocationId != mPrefs.getInt(Prefs.SELECTED_LOCATION_ID, 1)){
+        if (mLocationId != mPrefs.getInt(Prefs.SELECTED_LOCATION_ID, 1)) {
             startService(VaktijaService.getStartIntent(this, TAG + ":onResume()"));
             mLocationId = mPrefs.getInt(Prefs.SELECTED_LOCATION_ID, 1);
         }
@@ -164,27 +161,26 @@ public class MainActivity extends BaseActivity {
         showActionBarInfo();
 
         showActualEventMessage();
-        checkDozeModeState();
-        checkOverlay();
-        checkDND();
-//        checkOverlayPermission();
-//        checkBatteryOptimizationsPermission();
+
+        checkOverlayPermission();
+        checkDoNotDisturbPermission();
+        checkBatteryOptimizationsPermission();
     }
 
-    private void showActualEventMessage(){
+    private void showActualEventMessage() {
         FileLog.d(TAG, "[showActualEventMessage]");
         boolean silentOn = SilentModeManager.getInstance(this).isSilentOn();
         boolean alarmActive = mPrefs.getBoolean(Prefs.ALARM_ACTIVE, false);
         boolean silentDisabledByUser = mPrefs.getBoolean(Prefs.SILENT_DISABLED_BY_USER, false);
         boolean silentShouldBeActive = SilentModeManager.getInstance(this).silentShoudBeActive();
 
-        FileLog.d(TAG, "alarm active: "+alarmActive);
+        FileLog.d(TAG, "alarm active: " + alarmActive);
         FileLog.d(TAG, "silent disabled by user: " + silentDisabledByUser);
         FileLog.d(TAG, "silent should be active: " + silentShouldBeActive);
 
-        if(alarmActive) {
+        if (alarmActive) {
             showAlarmEvent();
-        } else if (silentOn && silentShouldBeActive){
+        } else if (silentOn && silentShouldBeActive) {
             showSilentActive();
         } else if (silentDisabledByUser) {
             showSilentDisabledByUser();
@@ -194,7 +190,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         FileLog.d(TAG, "[onPause]");
         EventBus.getDefault().unregister(this);
 
@@ -202,12 +198,12 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public void onStop(){
+    public void onStop() {
         super.onStop();
         FileLog.d(TAG, "[onStop]");
     }
 
-    void showActionBarInfo(){
+    void showActionBarInfo() {
 
         boolean dateEnabled = mPrefs.getBoolean(Prefs.SHOW_DATE, false);
 
@@ -286,7 +282,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    void launchShareIntent(){
+    void launchShareIntent() {
 
         mApp.sendScreenView("Share");
 
@@ -305,7 +301,7 @@ public class MainActivity extends BaseActivity {
         shareText.append(" (").append(city).append(")");
         shareText.append("\n");
 
-        for(Prayer v : PrayersSchedule.getInstance(this).getAllPrayers()){
+        for (Prayer v : PrayersSchedule.getInstance(this).getAllPrayers()) {
             shareText
                     .append(v.getTitle()).append(": ")
                     .append(FormattingUtils.getFormattedTime(v.getPrayerTime() * 1000, false))
@@ -352,11 +348,11 @@ public class MainActivity extends BaseActivity {
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
 
-            if(calledOnce) return;
+            if (calledOnce) return;
 
             FileLog.d("DatePickerFragment", "[onDateSet]");
 
-            ArrayList<String> values =  new ArrayList<String>();
+            ArrayList<String> values = new ArrayList<String>();
             values.add(String.valueOf(day));
             values.add(String.valueOf(month + 1));
             values.add(String.valueOf(year));
@@ -373,7 +369,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    void exit(){
+    void exit() {
         FileLog.w(TAG, "### That's it, user is closing me!");
         mApp.sendEvent("Close applicaton", "Close applicaton");
         mPrefs.edit().putBoolean(Prefs.USER_CLOSED, true).commit();
@@ -384,9 +380,9 @@ public class MainActivity extends BaseActivity {
         finish();
     }
 
-    private void changeActionBarColor(int color){
+    private void changeActionBarColor(int color) {
         Drawable colorDrawable = new ColorDrawable(color);
-        LayerDrawable ld = new LayerDrawable(new Drawable[] { colorDrawable });
+        LayerDrawable ld = new LayerDrawable(new Drawable[]{colorDrawable});
 
         getSupportActionBar().setBackgroundDrawable(ld);
 
@@ -395,7 +391,7 @@ public class MainActivity extends BaseActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(true);
     }
 
-    private void _tintStatusBar(){
+    private void _tintStatusBar() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return;
 
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
@@ -413,7 +409,7 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    void startWizard(){
+    void startWizard() {
         Intent i = new Intent(this, WizardActivity.class);
         startActivity(i);
         finish();
@@ -448,15 +444,15 @@ public class MainActivity extends BaseActivity {
     }
     */
 
-    private void showActualEvent(){
+    private void showActualEvent() {
         FileLog.d(TAG, "[showActualEvent]");
 
         final boolean silentSetByApp = SilentModeManager.getInstance(this).silentSetByApp();
 
-        String msg = "Bez zvukova do "+PrayersSchedule.getInstance(this).getSilentModeDurationString();
+        String msg = "Bez zvukova do " + PrayersSchedule.getInstance(this).getSilentModeDurationString();
         mActualEventMessage.setText(Utils.boldNumbers(msg));
 
-        if(!silentSetByApp){
+        if (!silentSetByApp) {
             mActualEventMessage.setText(R.string.silent_set_manually);
         }
 
@@ -486,7 +482,7 @@ public class MainActivity extends BaseActivity {
         mActualEvent.setVisibility(View.VISIBLE);
     }
 
-    private void showSilentActive(){
+    private void showSilentActive() {
         FileLog.d(TAG, "[showSilentActive]");
 
         mActualEventMessage.setText(
@@ -504,8 +500,8 @@ public class MainActivity extends BaseActivity {
 
                 Prayer currentP = PrayersSchedule.getInstance(MainActivity.this).getCurrentPrayer();
 
-                if(currentP.getId() == Prayer.FAJR
-                        && SilentModeManager.getInstance(MainActivity.this).isSunriseSilentModeOn()){
+                if (currentP.getId() == Prayer.FAJR
+                        && SilentModeManager.getInstance(MainActivity.this).isSunriseSilentModeOn()) {
                     currentP = PrayersSchedule.getInstance(MainActivity.this).getPrayer(Prayer.SUNRISE);
                 }
 
@@ -527,7 +523,7 @@ public class MainActivity extends BaseActivity {
         mActualEvent.setVisibility(View.VISIBLE);
     }
 
-    private void showSilentDisabledByUser(){
+    private void showSilentDisabledByUser() {
         FileLog.d(TAG, "[showSilentDisabledByUser]");
 
         mActualEventMessage.setText(R.string.silent_disabled_manually);
@@ -546,7 +542,7 @@ public class MainActivity extends BaseActivity {
         mActualEvent.setVisibility(View.VISIBLE);
     }
 
-    private void showAlarmEvent(){
+    private void showAlarmEvent() {
         FileLog.d(TAG, "[showAlarmEvent]");
 
         int prayerId = PrayersSchedule.getInstance(this).getNextPrayer().getId();
@@ -569,113 +565,85 @@ public class MainActivity extends BaseActivity {
         mActualEvent.setVisibility(View.VISIBLE);
     }
 
-    public void onEvent(Events.PrayerChangedEvent event){
+    public void onEvent(Events.PrayerChangedEvent event) {
         showActualEventMessage();
     }
 
-    public void onEvent(Events.RingerModeChanged event){
+    public void onEvent(Events.RingerModeChanged event) {
         showActualEventMessage();
     }
 
-    private void checkDozeModeState(){
-        Log.d(TAG, "checkDozeModeState");
+    public void checkBatteryOptimizationsPermission() {
+        Log.d(TAG, "checkBatteryOptimizationsPermission");
 
-        boolean askNoMoreAboutDoze = mPrefs.getBoolean(Prefs.ASK_NO_MORE_DOZE, false);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !askNoMoreAboutDoze){
-            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        boolean askNoMoreAboutBatteryOptimizations = mPrefs.getBoolean(Prefs.ASK_NO_MORE_BATTERY_OPTIMIZATIONS, false);
 
-            String packageName = getPackageName();
-            FileLog.i(TAG, "isIgnoringBatteryOptimizations: " + pm.isIgnoringBatteryOptimizations(packageName));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !askNoMoreAboutBatteryOptimizations) {
 
-            if(!pm.isIgnoringBatteryOptimizations(packageName)) {
-                showDozeModeDialog();
+            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+
+            if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                showBatteryOptimizationsDialog();
             }
         }
     }
 
-    private void checkAllPermissions(){
-                showAllDialogs();
-    }
+    public void checkOverlayPermission() {
+        Log.d(TAG, "checkOverlayPermission");
 
+        boolean askNoMoreAboutOverlay = mPrefs.getBoolean(Prefs.ASK_NO_MORE_OVERLAY, false);
 
-    private void checkOverlay(){
-        Log.d(TAG, "checkOverlay");
-
-        boolean askNoMoreAboutOverlay = mPrefs.getBoolean(Prefs.ASK_NO_MORE_APPEAR_ON_TOP, false);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !askNoMoreAboutOverlay){
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !askNoMoreAboutOverlay) {
             if (!Settings.canDrawOverlays(this)) {
                 showOverlayDialog();
             }
         }
     }
 
-    private void checkDND(){
-        Log.d(TAG, "checkDND");
+    public void checkDoNotDisturbPermission() {
+        Log.d(TAG, "checkDoNotDisturbPermission");
 
-        boolean askNoMoreAboutDND = mPrefs.getBoolean(Prefs.ASK_NO_MORE_DND, false);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !askNoMoreAboutDND){
+        boolean askNoMoreAboutDoNotDisturb = mPrefs.getBoolean(Prefs.ASK_NO_MORE_DO_NOT_DISTURB, false);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !askNoMoreAboutDoNotDisturb) {
 
             NotificationManager n = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
-            if(!n.isNotificationPolicyAccessGranted()) {
-                showDNDDialog();
-            }
-        }
-    }
-
-
-    public void checkBatteryOptimizationsPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-            if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
-
-                try {
-                    Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                    startActivity(intent);
-                } catch (ActivityNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-//                Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:" + getPackageName()));
-//                startActivityForResult(intent, ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS_REQUEST_CODE);
-            }
-        }
-    }
-
-    public void checkOverlayPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!Settings.canDrawOverlays(this)) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
+            if (!n.isNotificationPolicyAccessGranted()) {
+                showDoNotDisturbDialog();
             }
         }
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    private void showDozeModeDialog() {
+    private void showBatteryOptimizationsDialog() {
 
         new AlertDialog.Builder(this)
-                .setTitle(R.string.doze_mode)
-                .setMessage(R.string.doze_mode_message)
+                .setTitle(R.string.allow_battery_optimizations)
+                .setMessage(R.string.allow_battery_optimizations_message)
                 .setCancelable(false)
                 .setNegativeButton(R.string.cancel, null)
-//                .setNegativeButton(R.string.ask_no_more, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        mPrefs.edit().putBoolean(Prefs.ASK_NO_MORE_DOZE, true).commit();
-//                    }
-//                })
+                .setNegativeButton(R.string.ask_no_more, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mPrefs.edit().putBoolean(Prefs.ASK_NO_MORE_BATTERY_OPTIMIZATIONS, true).commit();
+                    }
+                })
                 .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         try {
+//                            android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+//                            Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+//                            intent.setData(Uri.parse("package:" + getPackageName()));
+//                            startActivity(intent);
+
                             Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
                             startActivity(intent);
                         } catch (ActivityNotFoundException e) {
                             e.printStackTrace();
                         }
+
                     }
                 })
                 .show();
@@ -685,21 +653,22 @@ public class MainActivity extends BaseActivity {
     private void showOverlayDialog() {
 
         new AlertDialog.Builder(this)
-                .setTitle(R.string.appear_on_top)
-                .setMessage(R.string.appear_on_top_message)
+                .setTitle(R.string.allow_overlay)
+                .setMessage(R.string.allow_overlay_message)
                 .setCancelable(false)
                 .setNegativeButton(R.string.cancel, null)
-//                .setNegativeButton(R.string.ask_no_more, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        mPrefs.edit().putBoolean(Prefs.ASK_NO_MORE_APPEAR_ON_TOP, true).commit();
-//                    }
-//                })
+                .setNegativeButton(R.string.ask_no_more, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mPrefs.edit().putBoolean(Prefs.ASK_NO_MORE_OVERLAY, true).commit();
+                    }
+                })
                 .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         try {
                             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+//                            intent.setData(Uri.parse("package:" + getPackageName()));
                             startActivity(intent);
                         } catch (ActivityNotFoundException e) {
                             e.printStackTrace();
@@ -710,39 +679,30 @@ public class MainActivity extends BaseActivity {
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    private void showDNDDialog() {
+    private void showDoNotDisturbDialog() {
 
         new AlertDialog.Builder(this)
-                .setTitle(R.string.allow_dnd)
-                .setMessage(R.string.allow_dnd_message)
+                .setTitle(R.string.allow_do_not_disturb)
+                .setMessage(R.string.allow_do_not_disturb_message)
                 .setCancelable(false)
                 .setNegativeButton(R.string.cancel, null)
-//                .setNegativeButton(R.string.ask_no_more, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        mPrefs.edit().putBoolean(Prefs.ASK_NO_MORE_DND, true).commit();
-//                    }
-//                })
+                .setNegativeButton(R.string.ask_no_more, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mPrefs.edit().putBoolean(Prefs.ASK_NO_MORE_DO_NOT_DISTURB, true).commit();
+                    }
+                })
                 .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         try {
-                            Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                            Intent intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
                             startActivity(intent);
                         } catch (ActivityNotFoundException e) {
                             e.printStackTrace();
                         }
-
-
                     }
                 })
                 .show();
     }
-
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void showAllDialogs() {
-        //combine all dialogs in one
-    }
-
 }

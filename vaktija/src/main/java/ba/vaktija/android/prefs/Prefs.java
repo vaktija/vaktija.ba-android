@@ -3,8 +3,9 @@ package ba.vaktija.android.prefs;
 public class Prefs {
 	public static final boolean DEBUG = true;
     public static final boolean FILE_LOG = false;
-	public static final String ASK_NO_MORE_APPEAR_ON_TOP = "ASK_NO_MORE_APPEAR_ON_TOP";
-	public static final String ASK_NO_MORE_DND = "ASK_NO_MORE_DND";
+	public static final String ASK_NO_MORE_OVERLAY = "ASK_NO_MORE_OVERLAY";
+	public static final String ASK_NO_MORE_BATTERY_OPTIMIZATIONS = "ASK_NO_MORE_BATTERY_OPTIMIZATIONS";
+	public static final String ASK_NO_MORE_DO_NOT_DISTURB = "ASK_NO_MORE_DO_NOT_DISTURB";
 
 	public static String DEFAULT_THEME_COLOR = "#5ebb46";
     public static String DHUHR_NORMALIZED = "1";
@@ -41,5 +42,4 @@ public class Prefs {
 	public static final String FEEDBACK = "feedback";
 	public static final String ABOUT = "about";
     public static final String SILENT_VIBRATION_SETTINGS_ADJUSTED = "SILENT_VIBRATION_SETTINGS_ADJUSTED";
-    public static final String ASK_NO_MORE_DOZE = "ASK_NO_MORE_DOZE";
 }
