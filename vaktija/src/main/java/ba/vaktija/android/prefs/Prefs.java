@@ -3,8 +3,9 @@ package ba.vaktija.android.prefs;
 public class Prefs {
 	public static final boolean DEBUG = true;
     public static final boolean FILE_LOG = false;
+	public static final String ASK_NO_MORE_APPEAR_ON_TOP = "ASK_NO_MORE_APPEAR_ON_TOP";
 
-    public static String DEFAULT_THEME_COLOR = "#5ebb46";
+	public static String DEFAULT_THEME_COLOR = "#5ebb46";
     public static String DHUHR_NORMALIZED = "1";
     public static String DHUHD_REAL = "0";
 
