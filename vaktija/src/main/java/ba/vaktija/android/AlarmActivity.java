@@ -14,8 +14,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import androidx.core.app.NotificationCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.WindowManager.LayoutParams;
@@ -23,6 +21,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -50,14 +51,11 @@ public class AlarmActivity extends AppCompatActivity
     public static final String TAG = AlarmActivity.class.getSimpleName();
     public static final String EXTRA_PRAYER_ID = "EXTRA_PRAYER_ID";
     public static final String ACTION_CANCEL_ALARM = "ACTION_CANCEL_ALARM";
-
+    public static final String LAUNCH_ALARM = "LAUNCH_ALARM";
     private static final int ALARM_NOTIF = 1337;
     private static final int ALARM_NOTIF_MISSED = 2337;
-
     private static final int ALARM_TIMEOUT = 2 /*mins*/ * 60 /*sec*/ * 1000 /*millisec*/;
     private static final int ALARM_SLEEP = 5 /*mins*/ * 60 /*sec*/ * 1000 /*millisec*/;
-    public static final String LAUNCH_ALARM = "LAUNCH_ALARM";
-
     private TextView mAlarmTimeHrs;
     private TextView mAlarmTimeMins;
     private TextView mAlarmTitle;
@@ -71,12 +69,12 @@ public class AlarmActivity extends AppCompatActivity
     private CountDownTimer mAlarmTimer;
     private SharedPreferences mPrefs;
     private PowerManager mPowerManager;
-    private PowerManager.WakeLock  mWakeLock;
+    private PowerManager.WakeLock mWakeLock;
     private CountDownTimer mVolumeTimer;
     private NotificationManager mNotificationManager;
     private App mApp;
 
-    public static void cancelAlarm(Activity activity){
+    public static void cancelAlarm(Activity activity) {
         Intent i = new Intent(activity, AlarmActivity.class);
         i.setAction(ACTION_CANCEL_ALARM);
         //i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -103,9 +101,9 @@ public class AlarmActivity extends AppCompatActivity
         FileLog.d(TAG, "[*** onCreate ***]");
 
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                        .setDefaultFontPath("fonts/RobotoCondensed-Regular.ttf")
-                        .setFontAttrId(R.attr.fontPath)
-                        .build()
+                .setDefaultFontPath("fonts/RobotoCondensed-Regular.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
         );
 
         mApp = (App) getApplicationContext();
@@ -134,7 +132,7 @@ public class AlarmActivity extends AppCompatActivity
 
         mPrayer = PrayersSchedule.getInstance(this).getPrayer(prayerId);
 
-        if(prayerId == -1){
+        if (prayerId == -1) {
             Log.w(TAG, "Prayer is null");
             mPrefs.edit().putBoolean(Prefs.ALARM_ACTIVE, false).commit();
             finish();
@@ -146,7 +144,7 @@ public class AlarmActivity extends AppCompatActivity
         time += 5;
 
         int minutes = ((time / 60) % 60);
-        int hours   = (time / 3600) % 24;
+        int hours = (time / 3600) % 24;
 
         mAlarmTimeHrs.setText(String.valueOf(hours));
         mAlarmTimeMins.setText(String.valueOf(minutes));
@@ -167,7 +165,7 @@ public class AlarmActivity extends AppCompatActivity
             AlarmActivity.this.finish();
         }
 
-        FileLog.i(TAG, "initial stream volume: "+ mInitialStreamVolume);
+        FileLog.i(TAG, "initial stream volume: " + mInitialStreamVolume);
 
         mApp.sendScreenView("Alarm");
     }
@@ -178,12 +176,12 @@ public class AlarmActivity extends AppCompatActivity
     }
 
     @Override
-    public void onNewIntent(Intent intent){
+    public void onNewIntent(Intent intent) {
         FileLog.d(TAG, "[onNewIntent]");
         String action = intent.getAction();
         FileLog.d(TAG, "action: " + action);
 
-        if(action != null && action.equals(ACTION_CANCEL_ALARM)){
+        if (action != null && action.equals(ACTION_CANCEL_ALARM)) {
             cancelAlarmAndFinish();
         }
     }
@@ -193,14 +191,14 @@ public class AlarmActivity extends AppCompatActivity
             IllegalArgumentException,
             SecurityException,
             IllegalStateException,
-            IOException{
+            IOException {
         FileLog.d(TAG, "[playAlarmSound]");
 
-        String  selectedAlarmTonePath = mPrefs.getString(
+        String selectedAlarmTonePath = mPrefs.getString(
                 Prefs.ALARM_TONE_URI,
                 Defaults.getDefaultTone(this, true));
 
-        if(mPrefs.getBoolean(Prefs.USE_VAKTIJA_ALARM_TONE, true)) {
+        if (mPrefs.getBoolean(Prefs.USE_VAKTIJA_ALARM_TONE, true)) {
             selectedAlarmTonePath = Defaults.getDefaultTone(this, true);
         }
 
@@ -208,7 +206,7 @@ public class AlarmActivity extends AppCompatActivity
 
         final Uri soundUri = Uri.parse(selectedAlarmTonePath);
 
-        FileLog.d(TAG, "sound uri: "+soundUri.toString());
+        FileLog.d(TAG, "sound uri: " + soundUri.toString());
 
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setOnPreparedListener(this);
@@ -218,7 +216,7 @@ public class AlarmActivity extends AppCompatActivity
         mMediaPlayer.prepareAsync();
     }
 
-    void increaseVolume(){
+    void increaseVolume() {
         FileLog.d(TAG, "[increaseVolume]");
 
         mInitialStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_ALARM);
@@ -233,7 +231,7 @@ public class AlarmActivity extends AppCompatActivity
 
             @Override
             public void onTick(long millisUntilFinished) {
-                int sec = (int) (millisUntilFinished/1000);
+                int sec = (int) (millisUntilFinished / 1000);
 
                 int volume = mInitialStreamVolume - sec;
 
@@ -251,7 +249,7 @@ public class AlarmActivity extends AppCompatActivity
         mVolumeTimer.start();
     }
 
-    void startCountDownTimer(){
+    void startCountDownTimer() {
         FileLog.d(TAG, "[startCountDownTimer]");
 
         mAlarmTimer = new CountDownTimer(ALARM_TIMEOUT, 1000) {
@@ -275,21 +273,21 @@ public class AlarmActivity extends AppCompatActivity
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         FileLog.d(TAG, "[onDestroy]");
 
         cancelAlarmAndFinish();
     }
 
-    void rescheduleAlarm(){
+    void rescheduleAlarm() {
 
         mApp.sendEvent("Alarm rescheduled", "Rescheduled for " + mPrayer.getTitle());
 
-        boolean alreadyResheduled = mPrefs.getBoolean(Prefs.ALARM_RESCHEDULED_ONCE+"_"+ mPrayer.getId(), false);
+        boolean alreadyResheduled = mPrefs.getBoolean(Prefs.ALARM_RESCHEDULED_ONCE + "_" + mPrayer.getId(), false);
 
-        if(alreadyResheduled){
-            mPrefs.edit().putBoolean(Prefs.ALARM_RESCHEDULED_ONCE+"_"+ mPrayer.getId(), false).commit();
+        if (alreadyResheduled) {
+            mPrefs.edit().putBoolean(Prefs.ALARM_RESCHEDULED_ONCE + "_" + mPrayer.getId(), false).commit();
             return;
         }
 
@@ -299,7 +297,7 @@ public class AlarmActivity extends AppCompatActivity
         long triggerAtMillis = cal.getTimeInMillis() + ALARM_SLEEP;
 
         am.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, Prayer.getAlarmPendingIntent(this, mPrayer));
-        mPrefs.edit().putBoolean(Prefs.ALARM_RESCHEDULED_ONCE+"_"+ mPrayer.getId(), true).commit();
+        mPrefs.edit().putBoolean(Prefs.ALARM_RESCHEDULED_ONCE + "_" + mPrayer.getId(), true).commit();
         FileLog.i(TAG, "alarm resheduled at " + new Date(triggerAtMillis));
 
         mWakeLock.release();
@@ -312,22 +310,22 @@ public class AlarmActivity extends AppCompatActivity
         cancelAlarmAndFinish();
     }
 
-    private void cancelAlarmAndFinish(){
+    private void cancelAlarmAndFinish() {
         FileLog.d(TAG, "[cancelAlarmAndFinish]");
 
-        if(mAudioManager != null) {
+        if (mAudioManager != null) {
             mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, mInitialStreamVolume, 0);
 
             FileLog.i(TAG, "restored STREAM_ALARM volume to " + mInitialStreamVolume);
         }
 
-        if(mMediaPlayer != null)
+        if (mMediaPlayer != null)
             mMediaPlayer.release();
 
-        if(mAlarmTimer != null)
+        if (mAlarmTimer != null)
             mAlarmTimer.cancel();
 
-        if(mVolumeTimer != null)
+        if (mVolumeTimer != null)
             mVolumeTimer.cancel();
 
         mNotificationManager.cancel(ALARM_NOTIF);
@@ -340,7 +338,7 @@ public class AlarmActivity extends AppCompatActivity
         finish();
     }
 
-    void showNotification(){
+    void showNotification() {
         FileLog.d(TAG, "[showNotification]");
         Intent intent = new Intent(this, AlarmActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(
@@ -363,7 +361,7 @@ public class AlarmActivity extends AppCompatActivity
         mNotificationManager.notify(ALARM_NOTIF, notifBuilder.build());
     }
 
-    void showAlarmMissedNotification(){
+    void showAlarmMissedNotification() {
         FileLog.d(TAG, "[showAlarmMissedNotification]");
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(
@@ -397,7 +395,7 @@ public class AlarmActivity extends AppCompatActivity
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         mPrefs.edit().putBoolean(Prefs.ALARM_ACTIVE, false).commit();
         super.onBackPressed();
     }
@@ -417,7 +415,7 @@ public class AlarmActivity extends AppCompatActivity
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_POWER ){
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_POWER) {
             finish();
             return true;
         }

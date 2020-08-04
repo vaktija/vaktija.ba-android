@@ -2,15 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <ListView
         android:id="@+id/location_dialog_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fastScrollEnabled="true"
         android:choiceMode="singleChoice"
-        android:fastScrollAlwaysVisible="true" >
-    </ListView>
+        android:fastScrollAlwaysVisible="true"
+        android:fastScrollEnabled="true"></ListView>
 
 </LinearLayout>

@@ -16,34 +16,35 @@
 
 package ba.vaktija.android.prefs;
 
-import ba.vaktija.android.App;
-import ba.vaktija.android.BaseActivity;
-import ba.vaktija.android.R;
-
 import android.os.Bundle;
-import androidx.appcompat.app.ActionBar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
+
+import ba.vaktija.android.App;
+import ba.vaktija.android.BaseActivity;
+import ba.vaktija.android.R;
+
 public class SettingsActivity extends BaseActivity {
-	
-	public static final String TAG = SettingsActivity.class.getSimpleName();
+
+    public static final String TAG = SettingsActivity.class.getSimpleName();
     public static final String EXTRA_FIRST_VISIBLE_ITEM = "EXTRA_FIRST_VISIBLE_ITEM";
     public static final String EXTRA_ITEM_TOP = "EXTRA_ITEM_TOP";
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		setTheme(TAG);
 
-		super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        setTheme(TAG);
 
-		setContentView(R.layout.activity_settings);
+        super.onCreate(savedInstanceState);
 
-		getSupportActionBar().setDisplayShowHomeEnabled(false);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setContentView(R.layout.activity_settings);
+
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         View customAb = LayoutInflater.from(this).inflate(R.layout.action_bar_title, null);
         TextView title = (TextView) customAb.findViewById(R.id.action_bar_title);
@@ -59,7 +60,7 @@ public class SettingsActivity extends BaseActivity {
 
         SettingsFragment sf = new SettingsFragment();
 
-        if(getIntent().hasExtra(EXTRA_FIRST_VISIBLE_ITEM)){
+        if (getIntent().hasExtra(EXTRA_FIRST_VISIBLE_ITEM)) {
             int scrollPosition = getIntent().getIntExtra(EXTRA_FIRST_VISIBLE_ITEM, 0);
             int itemTop = getIntent().getIntExtra(EXTRA_ITEM_TOP, 0);
             Log.i(TAG, "scrollPosition=" + scrollPosition);
@@ -68,19 +69,19 @@ public class SettingsActivity extends BaseActivity {
             sf = SettingsFragment.newInstance(scrollPosition, itemTop);
         }
 
-		getSupportFragmentManager()
-		.beginTransaction()
-		.replace(R.id.activity_settings_content, sf).commit();
-	}
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.activity_settings_content, sf).commit();
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			finish();
-			return true;
-		}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
 
-		return super.onOptionsItemSelected(item);
-	}
+        return super.onOptionsItemSelected(item);
+    }
 }

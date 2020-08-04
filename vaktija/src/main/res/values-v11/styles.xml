@@ -1,4 +1,5 @@
 <resources>
+
     <style name="AppThemeLight" parent="@style/Theme.AppCompat.Light">
         <item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
         <item name="actionBarStyle">@style/TransparentActionBar</item>

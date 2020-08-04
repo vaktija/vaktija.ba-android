@@ -2,53 +2,52 @@
     android:id="@+id/main_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#d7d7d7"
     android:clipToPadding="false"
-    android:orientation="vertical"
-    android:background="#d7d7d7">
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/main_actual_event_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorAccent"
         android:layout_gravity="top"
+        android:background="?attr/colorAccent"
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/main_actual_event_message"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="New Text"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/event_message_margin_left"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
+            android:layout_weight="1"
+            android:text="New Text"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#fff"
-            android:layout_gravity="center_vertical"
-            android:id="@+id/main_actual_event_message" />
+            android:textColor="#fff" />
 
         <TextView
+            android:id="@+id/main_actual_event_action"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Uključi"
-            android:layout_marginLeft="5dp"
-            android:padding="5dp"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
             android:layout_marginRight="20dp"
-            android:textColor="?attr/colorAccent"
             android:background="@drawable/simple_button"
-            android:id="@+id/main_actual_event_action" />
+            android:padding="5dp"
+            android:text="Uključi"
+            android:textColor="?attr/colorAccent" />
     </LinearLayout>
 
-    <androidx.cardview.widget.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:layout_margin="4dp"
         card_view:cardCornerRadius="3dp"
         card_view:cardElevation="3dp"
-        android:layout_margin="4dp"
-        android:layout_gravity="center"
         card_view:cardUseCompatPadding="true">
 
         <LinearLayout
@@ -64,81 +63,81 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dip"
                 android:layout_weight="1"
-                android:tag="0"
-                android:paddingTop="7dp"
                 android:paddingLeft="7dp"
-                android:paddingRight="7dp"/>
+                android:paddingTop="7dp"
+                android:paddingRight="7dp"
+                android:tag="0" />
 
-            <View style="@style/DividerLightHorizontal"/>
+            <View style="@style/DividerLightHorizontal" />
 
             <fragment
                 android:id="@+id/main_container_2"
                 android:name="ba.vaktija.android.FragmentPrayer"
                 android:layout_width="match_parent"
                 android:layout_height="0dip"
-                android:layout_weight="1"
                 android:layout_marginTop="@dimen/fragments_top_margin"
-                android:tag="1"
-                android:paddingTop="7dp"
+                android:layout_weight="1"
                 android:paddingLeft="7dp"
-                android:paddingRight="7dp"/>
+                android:paddingTop="7dp"
+                android:paddingRight="7dp"
+                android:tag="1" />
 
-            <View style="@style/DividerLightHorizontal"/>
+            <View style="@style/DividerLightHorizontal" />
 
             <fragment
                 android:id="@+id/main_container_3"
                 android:name="ba.vaktija.android.FragmentPrayer"
                 android:layout_width="match_parent"
                 android:layout_height="0dip"
-                android:layout_weight="1"
                 android:layout_marginTop="@dimen/fragments_top_margin"
-                android:tag="2"
-                android:paddingTop="7dp"
+                android:layout_weight="1"
                 android:paddingLeft="7dp"
-                android:paddingRight="7dp"/>
+                android:paddingTop="7dp"
+                android:paddingRight="7dp"
+                android:tag="2" />
 
-            <View style="@style/DividerLightHorizontal"/>
+            <View style="@style/DividerLightHorizontal" />
 
             <fragment
                 android:id="@+id/main_container_4"
                 android:name="ba.vaktija.android.FragmentPrayer"
                 android:layout_width="match_parent"
                 android:layout_height="0dip"
-                android:layout_weight="1"
                 android:layout_marginTop="@dimen/fragments_top_margin"
-                android:tag="3"
-                android:paddingTop="7dp"
+                android:layout_weight="1"
                 android:paddingLeft="7dp"
-                android:paddingRight="7dp"/>
+                android:paddingTop="7dp"
+                android:paddingRight="7dp"
+                android:tag="3" />
 
-            <View style="@style/DividerLightHorizontal"/>
+            <View style="@style/DividerLightHorizontal" />
 
             <fragment
                 android:id="@+id/main_container_5"
                 android:name="ba.vaktija.android.FragmentPrayer"
                 android:layout_width="match_parent"
                 android:layout_height="0dip"
-                android:layout_weight="1"
                 android:layout_marginTop="@dimen/fragments_top_margin"
-                android:tag="4"
-                android:paddingTop="7dp"
+                android:layout_weight="1"
                 android:paddingLeft="7dp"
-                android:paddingRight="7dp"/>
+                android:paddingTop="7dp"
+                android:paddingRight="7dp"
+                android:tag="4" />
 
-            <View style="@style/DividerLightHorizontal"/>
+            <View style="@style/DividerLightHorizontal" />
 
             <fragment
                 android:id="@+id/main_container_6"
                 android:name="ba.vaktija.android.FragmentPrayer"
                 android:layout_width="match_parent"
                 android:layout_height="0dip"
-                android:layout_weight="1"
                 android:layout_marginTop="@dimen/fragments_top_margin"
-                android:tag="5"
-                android:paddingTop="7dp"
+                android:layout_weight="1"
                 android:paddingLeft="7dp"
+                android:paddingTop="7dp"
                 android:paddingRight="7dp"
-                android:paddingBottom="7dp"/>
+                android:paddingBottom="7dp"
+                android:tag="5" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

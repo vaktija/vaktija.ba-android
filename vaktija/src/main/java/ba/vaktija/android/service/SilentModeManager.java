@@ -1,17 +1,17 @@
 package ba.vaktija.android.service;
 
-import ba.vaktija.android.models.Prayer;
-import ba.vaktija.android.models.PrayersSchedule;
-import ba.vaktija.android.prefs.Prefs;
-import ba.vaktija.android.util.FileLog;
-import ba.vaktija.android.util.Utils;
-
 import android.app.AlarmManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
+
+import ba.vaktija.android.models.Prayer;
+import ba.vaktija.android.models.PrayersSchedule;
+import ba.vaktija.android.prefs.Prefs;
+import ba.vaktija.android.util.FileLog;
+import ba.vaktija.android.util.Utils;
 
 public class SilentModeManager {
     private static final String TAG = SilentModeManager.class.getSimpleName();
@@ -22,7 +22,7 @@ public class SilentModeManager {
     private SharedPreferences mPrefs;
     private Context mContext;
 
-    private SilentModeManager(Context context){
+    private SilentModeManager(Context context) {
         mContext = context;
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -30,18 +30,18 @@ public class SilentModeManager {
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    public static SilentModeManager getInstance(Context context){
-        if(instance == null)
+    public static SilentModeManager getInstance(Context context) {
+        if (instance == null)
             instance = new SilentModeManager(context);
 
         return instance;
     }
 
-    public boolean isSilentOn(){
+    public boolean isSilentOn() {
         return mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_NORMAL;
     }
 
-    public void disableSilent(){
+    public void disableSilent() {
         mPrefs.edit()
                 .putBoolean(Prefs.SILENT_BY_APP, false)
                 .putBoolean(Prefs.GOING_SILENT, false)
@@ -50,11 +50,11 @@ public class SilentModeManager {
         mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
     }
 
-    public boolean silentSetByApp(){
+    public boolean silentSetByApp() {
         return mPrefs.getBoolean(Prefs.SILENT_BY_APP, false);
     }
 
-    public void updateSilentMode(Context context){
+    public void updateSilentMode(Context context) {
         //FileLog.d(TAG, "updateSilentMode");
 
         Prayer currentVakat = PrayersSchedule.getInstance(context).getCurrentPrayer();
@@ -62,15 +62,15 @@ public class SilentModeManager {
         boolean silentShouldBeActive = silentShoudBeActive();
         boolean deviceInSilentMode = mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_NORMAL;
 
-        FileLog.i(TAG, "silent set by app: "+silentSetByApp);
-        FileLog.i(TAG, "silent should be on: "+silentShouldBeActive);
-        FileLog.i(TAG, "deviceInSilentMode: "+deviceInSilentMode);
+        FileLog.i(TAG, "silent set by app: " + silentSetByApp);
+        FileLog.i(TAG, "silent should be on: " + silentShouldBeActive);
+        FileLog.i(TAG, "deviceInSilentMode: " + deviceInSilentMode);
 
-        if(!silentSetByApp && deviceInSilentMode){
+        if (!silentSetByApp && deviceInSilentMode) {
             return;
         }
 
-        if(silentShouldBeActive){
+        if (silentShouldBeActive) {
             mPrefs.edit()
                     .putBoolean(Prefs.SILENT_BY_APP, true)
                     .putBoolean(Prefs.GOING_SILENT, true)
@@ -78,7 +78,7 @@ public class SilentModeManager {
                     .commit();
 
             // because... https://code.google.com/p/android/issues/detail?id=78652
-            if(Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP){
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) {
                 mAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
                 FileLog.i(TAG, "set ringer mode to RINGER_MODE_VIBRATE");
             } else {
@@ -92,13 +92,13 @@ public class SilentModeManager {
                                 : "RINGER_MODE_VIBRATE"));
             }
 
-            if(isSunriseSilentModeOn()){
+            if (isSunriseSilentModeOn()) {
                 //				currentVakat.scheduleAlternativeSilentOffAlarm(context, mAlarmManager);
             } else {
                 currentVakat.scheduleSilentOffAlarm(context, mAlarmManager);
             }
 
-        } else if(silentSetByApp) {
+        } else if (silentSetByApp) {
 
             int ringerMode = mAudioManager.getRingerMode();
 
@@ -121,12 +121,12 @@ public class SilentModeManager {
         boolean standardVibrationOff = false;
         boolean alternativeVibrationOff = false;
 
-        if(!currentVakat.isSilentVibrationOff()){
+        if (!currentVakat.isSilentVibrationOff()) {
             standardVibrationOff = false;
         } else {
             int silentTimeout = currentVakat.getPrayerTime() + currentVakat.getSoundOnMins() * 60;
 
-            if(currentVakat.getId() == Prayer.ISHA){
+            if (currentVakat.getId() == Prayer.ISHA) {
                 standardVibrationOff = (currentVakat.getPrayerTime() <= currentTime
                         && currentTime < silentTimeout);
             } else {
@@ -134,14 +134,14 @@ public class SilentModeManager {
             }
         }
 
-        FileLog.i(TAG, "standard vibration off: "+standardVibrationOff);
+        FileLog.i(TAG, "standard vibration off: " + standardVibrationOff);
 
-        if(standardVibrationOff){
+        if (standardVibrationOff) {
             return true;
-        } else if(currentVakat.getId() == Prayer.FAJR){
-            Prayer sunrise =  PrayersSchedule.getInstance(mContext).getPrayer(Prayer.SUNRISE);
+        } else if (currentVakat.getId() == Prayer.FAJR) {
+            Prayer sunrise = PrayersSchedule.getInstance(mContext).getPrayer(Prayer.SUNRISE);
 
-            if(!sunrise.isSilentVibrationOff()){
+            if (!sunrise.isSilentVibrationOff()) {
                 alternativeVibrationOff = false;
             } else {
 
@@ -150,7 +150,7 @@ public class SilentModeManager {
                 alternativeVibrationOff = silentActivationTime <= currentTime;
             }
         }
-        FileLog.i(TAG, "alternative vibration off: "+alternativeVibrationOff);
+        FileLog.i(TAG, "alternative vibration off: " + alternativeVibrationOff);
 
         return alternativeVibrationOff;
     }
@@ -158,16 +158,16 @@ public class SilentModeManager {
     public boolean silentShoudBeActive() {
         //FileLog.d(TAG, "silentShoudBeActive");
 
-        Prayer currentVakat =  PrayersSchedule.getInstance(mContext).getCurrentPrayer();
+        Prayer currentVakat = PrayersSchedule.getInstance(mContext).getCurrentPrayer();
         int currentTime = Utils.getCurrentTimeSec();
         boolean standardSilentOn = false;
 
-        if(!currentVakat.isSilentOn() || currentVakat.skipNextSilent()){
+        if (!currentVakat.isSilentOn() || currentVakat.skipNextSilent()) {
             standardSilentOn = false;
         } else {
             int silentTimeout = currentVakat.getPrayerTime() + currentVakat.getSoundOnMins() * 60;
 
-            if(currentVakat.getId() == Prayer.ISHA){
+            if (currentVakat.getId() == Prayer.ISHA) {
                 standardSilentOn = (currentVakat.getPrayerTime() <= currentTime
                         && currentTime < silentTimeout);
             } else {
@@ -175,9 +175,9 @@ public class SilentModeManager {
             }
         }
 
-        FileLog.i(TAG, "standard silent on: "+standardSilentOn);
+        FileLog.i(TAG, "standard silent on: " + standardSilentOn);
 
-        if(standardSilentOn)
+        if (standardSilentOn)
             return true;
 
         return isSunriseSilentModeOn();
@@ -186,14 +186,14 @@ public class SilentModeManager {
     public boolean isSunriseSilentModeOn() {
         //FileLog.d(TAG, "isSunriseSilentModeOn");
 
-        Prayer currentVakat =  PrayersSchedule.getInstance(mContext).getCurrentPrayer();
+        Prayer currentVakat = PrayersSchedule.getInstance(mContext).getCurrentPrayer();
         int currentTime = Utils.getCurrentTimeSec();
         boolean alternativeSilentOn = false;
 
-        if(currentVakat.getId() == Prayer.FAJR){
-            Prayer sunrise =  PrayersSchedule.getInstance(mContext).getPrayer(Prayer.SUNRISE);
+        if (currentVakat.getId() == Prayer.FAJR) {
+            Prayer sunrise = PrayersSchedule.getInstance(mContext).getPrayer(Prayer.SUNRISE);
 
-            if(!sunrise.isSilentOn() || sunrise.skipNextSilent()){
+            if (!sunrise.isSilentOn() || sunrise.skipNextSilent()) {
                 alternativeSilentOn = false;
             } else {
 
@@ -202,7 +202,7 @@ public class SilentModeManager {
                 alternativeSilentOn = silentActivationTime <= currentTime;
             }
         }
-        FileLog.i(TAG, "alternative silent on: "+alternativeSilentOn);
+        FileLog.i(TAG, "alternative silent on: " + alternativeSilentOn);
 
         return alternativeSilentOn;
     }

@@ -3,10 +3,6 @@ package ba.vaktija.android;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.appcompat.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +11,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
 
 import java.util.Locale;
 
@@ -71,18 +72,14 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
     boolean invertValues = false;
     Prayer mPrayer;
     App app;
-
-    private boolean respectJuma;
-
-    private boolean mUseCheckBoxes;
-
     float cardElevEnabled;
     float cardElev;
-
     int colorEnabled;
     int colorDisabled;
+    private boolean respectJuma;
+    private boolean mUseCheckBoxes;
 
-    public static PrayerActivityFragment newInstance(int prayerId, boolean respectJuma){
+    public static PrayerActivityFragment newInstance(int prayerId, boolean respectJuma) {
         PrayerActivityFragment fragment = new PrayerActivityFragment();
         Bundle args = new Bundle();
         args.putInt(EXTRA_PRAYER_ID, prayerId);
@@ -92,7 +89,7 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         Log.d(TAG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_activity_prayer, container, false);
@@ -131,7 +128,7 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState){
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, "onActivityCreated");
 
@@ -146,7 +143,7 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
         colorEnabled = getResources().getColor(R.color.theme_gray);
         colorDisabled = getResources().getColor(R.color.text_disabled);
 
-        if(mPrayer.getId() == Prayer.JUMA && !respectJuma){
+        if (mPrayer.getId() == Prayer.JUMA && !respectJuma) {
             mPrayer = PrayersSchedule.getInstance(app).getPrayer(Prayer.DHUHR);
         }
 
@@ -180,13 +177,13 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
 
         long soundOnMillis = soundOnMins * 60 * 1000;
 
-        alarmTime.setText(FormattingUtils.getFormattedTime(alarmMins * 60000, false)+" prije nastupa");// ("+ mPrayer.getAlarmActivationTime()+")");
+        alarmTime.setText(FormattingUtils.getFormattedTime(alarmMins * 60000, false) + " prije nastupa");// ("+ mPrayer.getAlarmActivationTime()+")");
 
         soundOffTime.setText(FormattingUtils.getFormattedTime(soundOnMillis, false)
                 + (invertValues ? " prije nastupa" : " nakon nastupa"));// ("+ mPrayer.getSilentDeactivationTime()+")"));
 
         notifOnTime.setText(
-                FormattingUtils.getFormattedTime(notifMins * 60000, false)+" prije nastupa");// ("+ mPrayer.getNotificationTime()+")");
+                FormattingUtils.getFormattedTime(notifMins * 60000, false) + " prije nastupa");// ("+ mPrayer.getNotificationTime()+")");
 
         notifUseSound.setChecked(mPrayer.isNotifSoundOn());
         notifUseVibro.setChecked(mPrayer.isNotifVibroOn());
@@ -207,7 +204,7 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
         notif.setCardElevation(mPrayer.isNotifOn() ? cardElevEnabled : cardElev);
         silent.setCardElevation(mPrayer.isSilentOn() ? cardElevEnabled : cardElev);
 
-        if(mUseCheckBoxes) {
+        if (mUseCheckBoxes) {
             alarmCheckBox.setChecked(mPrayer.isAlarmOn());
             silentCheckBox.setChecked(mPrayer.isSilentOn());
             notifCheckBox.setChecked(mPrayer.isNotifOn());
@@ -241,7 +238,7 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
         notifTime.setOnSeekBarChangeListener(this);
         alarmSeekBar.setOnSeekBarChangeListener(this);
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             vibroOff.setTextColor(colorDisabled);
             vibroOff.setDuplicateParentStateEnabled(false);
             vibroOff.setEnabled(false);
@@ -250,17 +247,17 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
         updateCheckBoxColor();
     }
 
-    private void updateCheckBoxColor(){
+    private void updateCheckBoxColor() {
 
         notifUseSound.setTextColor(mPrayer.isNotifOn() ? colorEnabled : colorDisabled);
         notifUseVibro.setTextColor(mPrayer.isNotifOn() ? colorEnabled : colorDisabled);
 
-        if(vibroOff.isEnabled() && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+        if (vibroOff.isEnabled() && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             vibroOff.setTextColor(mPrayer.isSilentOn() ? colorEnabled : colorDisabled);
         }
     }
 
-    void showActionBarTitle(){
+    void showActionBarTitle() {
 
         String title = mPrayer.getTitle().toUpperCase(Locale.getDefault());
 
@@ -269,40 +266,41 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
         boolean hideTitle = mPrayer.getId() == Prayer.DHUHR;
         hideTitle |= mPrayer.getId() == Prayer.JUMA;
 
-        if(respect && hideTitle){
+        if (respect && hideTitle) {
             title = "";
         }
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if(seekBar.getId() == R.id.activity_vakat_alarmSeekBar){
+        if (seekBar.getId() == R.id.activity_vakat_alarmSeekBar) {
             mPrayer.setAlarmMins(seekBar.getProgress());
 
-            alarmTime.setText(FormattingUtils.getFormattedTime(progress * 60 * 1000, false)+" prije nastupa");// ("+ mPrayer.getAlarmActivationTime()+")");
+            alarmTime.setText(FormattingUtils.getFormattedTime(progress * 60 * 1000, false) + " prije nastupa");// ("+ mPrayer.getAlarmActivationTime()+")");
         }
 
-        if(seekBar.getId() == R.id.activity_vakat_silentOffSeekBar){
+        if (seekBar.getId() == R.id.activity_vakat_silentOffSeekBar) {
             mPrayer.setSoundOnMins((seekBar.getProgress() * (invertValues ? -1 : 1)));
 
             soundOffTime.setText(
-                    FormattingUtils.getFormattedTime(progress * 60 * 1000, false)+
-                            (invertValues ? " prije" : " nakon")+
+                    FormattingUtils.getFormattedTime(progress * 60 * 1000, false) +
+                            (invertValues ? " prije" : " nakon") +
                             " nastupa");// ("+ mPrayer.getSilentDeactivationTime()+")");
         }
 
-        if(seekBar.getId() == R.id.activity_vakat_notifTime){
+        if (seekBar.getId() == R.id.activity_vakat_notifTime) {
             mPrayer.setNotifMins(seekBar.getProgress());
 
-            notifOnTime.setText(FormattingUtils.getFormattedTime(progress * 60 * 1000, false)+" prije nastupa");// ("+ mPrayer.getNotificationTime()+")");
+            notifOnTime.setText(FormattingUtils.getFormattedTime(progress * 60 * 1000, false) + " prije nastupa");// ("+ mPrayer.getNotificationTime()+")");
         }
     }
 
     @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {	}
+    public void onStartTrackingTouch(SeekBar seekBar) {
+    }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
@@ -350,8 +348,8 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
         PrayersSchedule.getInstance(app).reset();
 
         app.prefs.edit()
-                .putBoolean(Prefs.SILENT_NOTIF_DELETED+"_"+ mPrayer.getId(), false)
-                .putBoolean(Prefs.APPROACHING_NOTIF_DELETED+"_"+(mPrayer.getId() - 1), false)
+                .putBoolean(Prefs.SILENT_NOTIF_DELETED + "_" + mPrayer.getId(), false)
+                .putBoolean(Prefs.APPROACHING_NOTIF_DELETED + "_" + (mPrayer.getId() - 1), false)
                 .commit();
 
         Intent service = VaktijaService.getStartIntent(app, TAG + ":" + startedFrom);
@@ -369,10 +367,10 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
 
         String startedFrom = "";
         String action = "";
-        final String gaEventCategory = mPrayer.getTitle()+" settings";
+        final String gaEventCategory = mPrayer.getTitle() + " settings";
         String gaEventAction = "";
 
-        switch (buttonView.getId()){
+        switch (buttonView.getId()) {
             case R.id.fragment_activity_prayer_notifUseSound:
                 mPrayer.setNotifSoundOn(isChecked);
 
@@ -478,6 +476,6 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
 
         long endTime = System.nanoTime();
 
-        Log.i(TAG, "onChecked changed done in "+(endTime - start)/1000.0+" us");
+        Log.i(TAG, "onChecked changed done in " + (endTime - start) / 1000.0 + " us");
     }
 }

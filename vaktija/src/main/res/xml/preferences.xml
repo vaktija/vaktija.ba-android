@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <Preference
         android:key="locationName"
         android:title="@string/location" />
 
-    <PreferenceCategory android:key="notifications"
-        android:title="@string/notifications" >
+    <PreferenceCategory
+        android:key="notifications"
+        android:title="@string/notifications">
 
         <CheckBoxPreference
             android:defaultValue="true"
@@ -17,8 +17,8 @@
             android:title="@string/statusbar_notification" />
 
         <CheckBoxPreference
-            android:dependency="statusbarNotification"
             android:defaultValue="false"
+            android:dependency="statusbarNotification"
             android:key="ALL_PRAYERS_IN_NOTIF"
             android:summaryOff="@string/all_prayers_not_shown_in_notif"
             android:summaryOn="@string/all_prayers_shown_in_notif"
@@ -26,23 +26,25 @@
 
         <Preference
             android:key="notificationToneUri"
-            android:title="@string/prefs_notification_tone"
-            android:summary="@string/prefs_notification_tone_summary"/>
+            android:summary="@string/prefs_notification_tone_summary"
+            android:title="@string/prefs_notification_tone" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:key="alarms"
-        android:title="@string/prefs_alarms" >
+    <PreferenceCategory
+        android:key="alarms"
+        android:title="@string/prefs_alarms">
 
         <Preference
             android:key="alarmToneUri"
-            android:title="@string/prefs_alarm_tone"
-            android:summary="@string/prefs_alarm_tone_summary"/>
+            android:summary="@string/prefs_alarm_tone_summary"
+            android:title="@string/prefs_alarm_tone" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:key="dhuhrTimeCounting"
-        android:title="@string/dhuhr_prayer" >
+    <PreferenceCategory
+        android:key="dhuhrTimeCounting"
+        android:title="@string/dhuhr_prayer">
 
         <ListPreference
             android:entries="@array/dhuhrTimeEntries"
@@ -60,8 +62,9 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:key="app"
-        android:title="@string/application" >
+    <PreferenceCategory
+        android:key="app"
+        android:title="@string/application">
 
         <CheckBoxPreference
             android:defaultValue="false"
@@ -81,12 +84,14 @@
         <Preference
             android:key="feedback"
             android:summary="@string/prefs_feedback_summary"
-            android:title="@string/prefs_feedback_title" >
+            android:title="@string/prefs_feedback_title">
 
-            <intent android:action="android.intent.action.VIEW"
-                android:data="@string/prefs_feedback_email_ready" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/prefs_feedback_email_ready">
 
-                <extra android:name="android.intent.extra.SUBJECT"
+                <extra
+                    android:name="android.intent.extra.SUBJECT"
                     android:value="@string/prefs_feedback_subject" />
             </intent>
 
@@ -95,7 +100,7 @@
         <Preference
             android:key="about"
             android:summary="@string/version_name"
-            android:title="@string/about_app" >
+            android:title="@string/about_app">
 
             <intent
                 android:action="android.intent.action.VIEW"

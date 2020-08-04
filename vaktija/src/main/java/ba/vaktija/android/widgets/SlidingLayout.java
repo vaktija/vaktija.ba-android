@@ -1,133 +1,131 @@
 package ba.vaktija.android.widgets;
 
 import android.content.Context;
-import androidx.core.view.ViewCompat;
-import androidx.customview.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import androidx.core.view.ViewCompat;
+import androidx.customview.widget.ViewDragHelper;
+
 public class SlidingLayout extends RelativeLayout {
 
-	public static final String TAG = SlidingLayout.class.getSimpleName();
+    public static final String TAG = SlidingLayout.class.getSimpleName();
+    ViewDragHelper mDragHelper;
+    SlidingLayoutListener mSlidingListener;
+    ViewGroup parent;
 
-	public static interface SlidingLayoutListener{
-		void onSlidingCompleted();
-	}
+    public SlidingLayout(Context context) {
+        super(context);
+        parent = this;
+    }
 
-	ViewDragHelper mDragHelper;
-	SlidingLayoutListener mSlidingListener;
-	
-	ViewGroup parent;
+    public SlidingLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        parent = this;
+    }
 
-	public SlidingLayout(Context context) {
-		super(context);
-		parent = this;
-	}
+    public SlidingLayout(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        parent = this;
+    }
 
-	public SlidingLayout(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		parent = this;
-	}
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
 
-	public SlidingLayout(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		parent = this;
-	}
+        mDragHelper = ViewDragHelper.create(this, 1.0f, new ViewDragHelperCallbacks());
+    }
 
-	@Override
-	protected void onAttachedToWindow() {
-		super.onAttachedToWindow();
-		
-		mDragHelper = ViewDragHelper.create(this, 1.0f, new ViewDragHelperCallbacks());
-	}
+    @Override
+    public void computeScroll() {
+        super.computeScroll();
+        if (mDragHelper.continueSettling(true)) {
+            ViewCompat.postInvalidateOnAnimation(this);
+        }
+    }
 
-	@Override
-	public void computeScroll() {
-		super.computeScroll();
-		if(mDragHelper.continueSettling(true)) {
-			ViewCompat.postInvalidateOnAnimation(this);
-		}
-	}
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        boolean shouldInterceptTouchEvent = mDragHelper.shouldInterceptTouchEvent(ev);
+        return shouldInterceptTouchEvent;
+    }
 
-	@Override
-	public boolean onInterceptTouchEvent(MotionEvent ev) {
-		boolean shouldInterceptTouchEvent = mDragHelper.shouldInterceptTouchEvent(ev);
-		return shouldInterceptTouchEvent;
-	}
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        mDragHelper.processTouchEvent(event);
+        return true;
+    }
 
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		mDragHelper.processTouchEvent(event);
-		return true;
-	}
+    public void setSlidingListener(SlidingLayoutListener slidingListener) {
+        mSlidingListener = slidingListener;
+    }
 
-	public void setSlidingListener(SlidingLayoutListener slidingListener){
-		mSlidingListener = slidingListener;
-	}
+    public static interface SlidingLayoutListener {
+        void onSlidingCompleted();
+    }
 
+    class ViewDragHelperCallbacks extends ViewDragHelper.Callback {
 
-	class ViewDragHelperCallbacks extends ViewDragHelper.Callback {
+        @Override
+        public boolean tryCaptureView(View view, int pointerId) {
 
-		@Override
-		public boolean tryCaptureView(View view, int pointerId) {
+            if (view.getTag() != null && view.getTag().toString().equals("handle")) {
+                return true;
+            }
 
-			if(view.getTag() != null && view.getTag().toString().equals("handle")){
-				return true;
-			}
+            return false;
+        }
 
-			return false;
-		}
-
-		@Override
-		public int clampViewPositionVertical(View child, int top, int dy) {
+        @Override
+        public int clampViewPositionVertical(View child, int top, int dy) {
 //			MyLog.d(TAG, "clampViewPositionVertical top: "+top+" dy: "+dy);
-			
-			return parent.getPaddingTop();
-		}
 
-		@Override
-		public int clampViewPositionHorizontal(View child, int left, int dx) {
+            return parent.getPaddingTop();
+        }
+
+        @Override
+        public int clampViewPositionHorizontal(View child, int left, int dx) {
 //			MyLog.d(TAG, "clampViewPositionHorizontal left: "+left+" dx: "+dx);
 
-			if(left < parent.getPaddingLeft())
-				return parent.getPaddingLeft();
+            if (left < parent.getPaddingLeft())
+                return parent.getPaddingLeft();
 
-			int x = parent.getMeasuredWidth() - child.getMeasuredWidth() - parent.getPaddingRight();
+            int x = parent.getMeasuredWidth() - child.getMeasuredWidth() - parent.getPaddingRight();
 
-			if(child.getRight() > x){
-				return x;
-			}
+            if (child.getRight() > x) {
+                return x;
+            }
 
-			return left;
-		}
+            return left;
+        }
 
-		@Override
-		public int getViewHorizontalDragRange(View child) {
-			return parent.getMeasuredWidth() - child.getMeasuredWidth();
-		}
+        @Override
+        public int getViewHorizontalDragRange(View child) {
+            return parent.getMeasuredWidth() - child.getMeasuredWidth();
+        }
 
-		@Override
-		public void onViewReleased(View releasedChild, float xvel, float yvel) {
-			super.onViewReleased(releasedChild, xvel, yvel);
-			
-			boolean nearEnd = releasedChild.getLeft() > parent.getMeasuredWidth() * 0.75;
+        @Override
+        public void onViewReleased(View releasedChild, float xvel, float yvel) {
+            super.onViewReleased(releasedChild, xvel, yvel);
 
-			if(xvel > 0 || nearEnd) {
-				int x = parent.getMeasuredWidth() - releasedChild.getMeasuredWidth() - parent.getPaddingLeft();
+            boolean nearEnd = releasedChild.getLeft() > parent.getMeasuredWidth() * 0.75;
 
-				mDragHelper.settleCapturedViewAt(x, parent.getPaddingTop());
+            if (xvel > 0 || nearEnd) {
+                int x = parent.getMeasuredWidth() - releasedChild.getMeasuredWidth() - parent.getPaddingLeft();
 
-				if(mSlidingListener != null){
-					mSlidingListener.onSlidingCompleted();
-				}
-			} else {
-				mDragHelper.settleCapturedViewAt(parent.getPaddingLeft(), parent.getPaddingTop());
-			}
+                mDragHelper.settleCapturedViewAt(x, parent.getPaddingTop());
 
-			invalidate();
-		}
-	}
+                if (mSlidingListener != null) {
+                    mSlidingListener.onSlidingCompleted();
+                }
+            } else {
+                mDragHelper.settleCapturedViewAt(parent.getPaddingLeft(), parent.getPaddingTop());
+            }
+
+            invalidate();
+        }
+    }
 }

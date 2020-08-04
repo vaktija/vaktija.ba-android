@@ -37,14 +37,14 @@
     </string>
     <string name="dialog_title_analytics_opt_out_title">Google Analytics</string>
     <string name="dialog_message_analytics_opt_out">Vaktija koristi Google Analytics za izvještavanje o korištenju aplikacije.\n\nDa li želite isključiti izvještavanje?</string>
-	<string name="dialog_yes">Da</string>
-	<string name="dialog_no">Ne</string>
-	<string name="prefs_ga_enabled">Google Analytics je uključen</string>
-	<string name="prefs_ga_disabled">Google Analytics je isključen</string>
-	<string name="prefs_ga_title">Google Analytics</string>
-	<string name="prefs_feedback_title">Dojam</string>
+    <string name="dialog_yes">Da</string>
+    <string name="dialog_no">Ne</string>
+    <string name="prefs_ga_enabled">Google Analytics je uključen</string>
+    <string name="prefs_ga_disabled">Google Analytics je isključen</string>
+    <string name="prefs_ga_title">Google Analytics</string>
+    <string name="prefs_feedback_title">Dojam</string>
     <string name="prefs_feedback_summary">Pošalji prijedlog, prijavi bug&#8230;</string>
-	<string name="prefs_feedback_email_ready">mailto:android@vaktija.ba</string>
+    <string name="prefs_feedback_email_ready">mailto:android@vaktija.ba</string>
     <string name="prefs_notification_tone">Zvuk za notifikacije</string>
     <string name="prefs_notification_tone_summary">Klikni da odabereš zvuk…</string>
     <string name="prefs_alarms">Alarm</string>

@@ -1,4 +1,19 @@
 package ba.vaktija.android;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.fragment.app.DialogFragment;
+
 import java.util.Calendar;
 import java.util.List;
 
@@ -8,105 +23,92 @@ import ba.vaktija.android.util.FileLog;
 import ba.vaktija.android.util.FormattingUtils;
 import ba.vaktija.android.util.HijriCalendar;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.graphics.Color;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-
-import androidx.fragment.app.DialogFragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
 public class DateFragment extends DialogFragment {
-	public static final String TAG = DateFragment.class.getSimpleName();
+    public static final String TAG = DateFragment.class.getSimpleName();
 
-	public static final String EXTRA_VALUES = "EXTRA_VALUES";
+    public static final String EXTRA_VALUES = "EXTRA_VALUES";
 
-	LayoutInflater mLayoutInflater;
+    LayoutInflater mLayoutInflater;
 
-	Handler uiHandler;
-	LinearLayout rootLayout;
+    Handler uiHandler;
+    LinearLayout rootLayout;
 
-	App app;
+    App app;
 
-	AlertDialog.Builder mDialogBuilder;
+    AlertDialog.Builder mDialogBuilder;
 
-	int month = 0;
-	int day = 0;
+    int month = 0;
+    int day = 0;
     int year = 0;
-	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		// Use the current date as the default date in the picker
 
-		mLayoutInflater = LayoutInflater.from(getActivity());
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // Use the current date as the default date in the picker
 
-		View view = mLayoutInflater.inflate(R.layout.fragment_date, null);
-		rootLayout = (LinearLayout) view.findViewById(R.id.fragment_date_root);
+        mLayoutInflater = LayoutInflater.from(getActivity());
 
-		List<String> values = getArguments().getStringArrayList(EXTRA_VALUES);
+        View view = mLayoutInflater.inflate(R.layout.fragment_date, null);
+        rootLayout = (LinearLayout) view.findViewById(R.id.fragment_date_root);
 
-		month = Integer.parseInt(values.get(1));
-		day = Integer.parseInt(values.get(0));
-		year = Integer.parseInt(values.get(2));
+        List<String> values = getArguments().getStringArrayList(EXTRA_VALUES);
 
-        FileLog.i(TAG, "month="+month+" day="+day+" year="+year);
+        month = Integer.parseInt(values.get(1));
+        day = Integer.parseInt(values.get(0));
+        year = Integer.parseInt(values.get(2));
 
-		mDialogBuilder = new  AlertDialog.Builder(getActivity())
+        FileLog.i(TAG, "month=" + month + " day=" + day + " year=" + year);
 
-		.setNegativeButton(R.string.ok,
-				new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				dialog.dismiss();
-			}
-		});
+        mDialogBuilder = new AlertDialog.Builder(getActivity())
 
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.YEAR, year);
-		calendar.set(Calendar.MONTH, month - 1);
-		calendar.set(Calendar.DAY_OF_MONTH, day);
+                .setNegativeButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                            }
+                        });
 
-		mDialogBuilder.setTitle(day+". "+month+". "+year+" / "+HijriCalendar.getSimpleDate(calendar));
-		mDialogBuilder.setView(view);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month - 1);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
 
-		return mDialogBuilder.create();
-	}
+        mDialogBuilder.setTitle(day + ". " + month + ". " + year + " / " + HijriCalendar.getSimpleDate(calendar));
+        mDialogBuilder.setView(view);
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		FileLog.d(TAG, "onCreate");
-		setHasOptionsMenu(true);
-	}
+        return mDialogBuilder.create();
+    }
 
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		FileLog.d(TAG, "onActivityCreated");
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FileLog.d(TAG, "onCreate");
+        setHasOptionsMenu(true);
+    }
 
-		uiHandler = new Handler();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        FileLog.d(TAG, "onActivityCreated");
 
-		app = (App) getActivity().getApplicationContext();
+        uiHandler = new Handler();
+
+        app = (App) getActivity().getApplicationContext();
 
 
-		for(int i = Prayer.FAJR; i <= Prayer.ISHA; i++){
+        for (int i = Prayer.FAJR; i <= Prayer.ISHA; i++) {
             Prayer p = PrayersSchedule.getInstance(app).getPrayerForDate(i, year, month, day);
-			View view = mLayoutInflater.inflate(R.layout.fragment_date_row, null);
-			TextView title = (TextView) view.findViewById(R.id.fragment_date_row_title);
-			TextView time = (TextView) view.findViewById(R.id.fragment_date_row_time);
+            View view = mLayoutInflater.inflate(R.layout.fragment_date_row, null);
+            TextView title = (TextView) view.findViewById(R.id.fragment_date_row_title);
+            TextView time = (TextView) view.findViewById(R.id.fragment_date_row_time);
 
-			title.setText(p.getTitle());
-			time.setText(FormattingUtils.getFormattedTime(p.getRawPrayerTime() * 1000, false));
+            title.setText(p.getTitle());
+            time.setText(FormattingUtils.getFormattedTime(p.getRawPrayerTime() * 1000, false));
 
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB){
-				title.setTextColor(Color.WHITE);
-				time.setTextColor(Color.WHITE);
-			}
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+                title.setTextColor(Color.WHITE);
+                time.setTextColor(Color.WHITE);
+            }
 
-			rootLayout.addView(view);
-		}
-	}
+            rootLayout.addView(view);
+        }
+    }
 }

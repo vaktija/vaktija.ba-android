@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent">
 
     <TextView
         android:id="@+id/fragment_date_row_time"
         android:layout_width="0dip"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Medium Text"
         android:layout_marginLeft="15dp"
+        android:layout_weight="1"
         android:padding="10dp"
+        android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/fragment_date_row_title"
         android:layout_width="0dip"
         android:layout_height="wrap_content"
+        android:layout_marginRight="15dp"
         android:layout_weight="1"
         android:gravity="right"
-        android:text="Medium Text"
-        android:layout_marginRight="15dp"
         android:padding="10dp"
+        android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </LinearLayout>

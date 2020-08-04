@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -9,22 +9,22 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginTop="20dp"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <ImageView
+            android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="80dp"
-            android:id="@+id/imageView"
-            android:src="@drawable/logo_light"/>
+            android:src="@drawable/logo_light" />
 
         <TextView
             android:id="@+id/activity_alarmTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="10dp"
             android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="20dp"
+            android:gravity="center_horizontal"
             android:text="IZLAZAK SUNCA JE ZA"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#fff"
@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/activity_alarm_timeHrs"
@@ -57,9 +57,9 @@
                 android:id="@+id/activity_alarm_timeMins"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:text="00"
                 android:textColor="#fff"
-                android:layout_marginLeft="5dp"
                 android:textSize="55sp" />
 
             <TextView
@@ -79,11 +79,11 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
+        android:layout_marginBottom="30dp"
         android:background="@drawable/drag_bg"
-        android:padding="10dp" >
+        android:padding="10dp">
 
         <TextView
             android:layout_width="wrap_content"

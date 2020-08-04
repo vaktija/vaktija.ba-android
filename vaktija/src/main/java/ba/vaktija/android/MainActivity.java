@@ -1,12 +1,43 @@
 package ba.vaktija.android;
 
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.NotificationManager;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.PowerManager;
+import android.preference.PreferenceManager;
+import android.provider.Settings;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.DatePicker;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.fragment.app.DialogFragment;
+
+import com.readystatesoftware.systembartint.SystemBarTintManager;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import ba.vaktija.android.models.Events;
 import ba.vaktija.android.models.Prayer;
@@ -21,39 +52,6 @@ import ba.vaktija.android.util.FormattingUtils;
 import ba.vaktija.android.util.HijriCalendar;
 import ba.vaktija.android.util.Utils;
 import ba.vaktija.android.wizard.WizardActivity;
-
-import android.annotation.TargetApi;
-import android.app.NotificationManager;
-import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.media.AudioManager;
-import android.net.Uri;
-import android.os.PowerManager;
-import android.provider.Settings;
-import androidx.fragment.app.DialogFragment;
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
-import android.os.Build;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import androidx.appcompat.app.ActionBar;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.DatePicker;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import de.greenrobot.event.EventBus;
 
 public class MainActivity extends BaseActivity {
@@ -329,46 +327,6 @@ public class MainActivity extends BaseActivity {
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
-    public static class DatePickerFragment extends DialogFragment
-            implements DatePickerDialog.OnDateSetListener {
-
-        boolean calledOnce = false;
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
-            final Calendar c = Calendar.getInstance(Locale.getDefault());
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-
-            // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
-        }
-
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-
-            if (calledOnce) return;
-
-            FileLog.d("DatePickerFragment", "[onDateSet]");
-
-            ArrayList<String> values = new ArrayList<String>();
-            values.add(String.valueOf(day));
-            values.add(String.valueOf(month + 1));
-            values.add(String.valueOf(year));
-
-            Bundle args = new Bundle();
-            args.putStringArrayList(DateFragment.EXTRA_VALUES, values);
-
-            DateFragment dateFragment = new DateFragment();
-            dateFragment.setArguments(args);
-
-            dateFragment.show(getActivity().getSupportFragmentManager(), DateFragment.TAG);
-
-            calledOnce = true;
-        }
-    }
-
     void exit() {
         FileLog.w(TAG, "### That's it, user is closing me!");
         mApp.sendEvent("Close applicaton", "Close applicaton");
@@ -415,35 +373,6 @@ public class MainActivity extends BaseActivity {
         finish();
     }
 
-    /*
-    private void showAnalyticsOptOutDialog(){
-        if(mPrefs.getBoolean(Prefs.GA_OPT_OUT_SHOWN, false))
-            return;
-
-        FileLog.d(TAG, "[showAnalyticsOptOutDialog]");
-
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.dialog_title_analytics_opt_out_title)
-                .setMessage(R.string.dialog_message_analytics_opt_out)
-                .setCancelable(false)
-                .setPositiveButton(R.string.dialog_yes, new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mPrefs.edit().putBoolean(Prefs.GA_ENABLED, false).commit();
-                    }
-                })
-                .setNegativeButton(R.string.dialog_no, new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mPrefs.edit().putBoolean(Prefs.GA_ENABLED, true).commit();
-                    }
-                })
-                .show();
-
-        mPrefs.edit().putBoolean(Prefs.GA_OPT_OUT_SHOWN, true).commit();
-    }
-    */
-
     private void showActualEvent() {
         FileLog.d(TAG, "[showActualEvent]");
 
@@ -481,6 +410,35 @@ public class MainActivity extends BaseActivity {
 
         mActualEvent.setVisibility(View.VISIBLE);
     }
+
+    /*
+    private void showAnalyticsOptOutDialog(){
+        if(mPrefs.getBoolean(Prefs.GA_OPT_OUT_SHOWN, false))
+            return;
+
+        FileLog.d(TAG, "[showAnalyticsOptOutDialog]");
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_title_analytics_opt_out_title)
+                .setMessage(R.string.dialog_message_analytics_opt_out)
+                .setCancelable(false)
+                .setPositiveButton(R.string.dialog_yes, new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPrefs.edit().putBoolean(Prefs.GA_ENABLED, false).commit();
+                    }
+                })
+                .setNegativeButton(R.string.dialog_no, new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPrefs.edit().putBoolean(Prefs.GA_ENABLED, true).commit();
+                    }
+                })
+                .show();
+
+        mPrefs.edit().putBoolean(Prefs.GA_OPT_OUT_SHOWN, true).commit();
+    }
+    */
 
     private void showSilentActive() {
         FileLog.d(TAG, "[showSilentActive]");
@@ -704,5 +662,45 @@ public class MainActivity extends BaseActivity {
                     }
                 })
                 .show();
+    }
+
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        boolean calledOnce = false;
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance(Locale.getDefault());
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+
+            if (calledOnce) return;
+
+            FileLog.d("DatePickerFragment", "[onDateSet]");
+
+            ArrayList<String> values = new ArrayList<String>();
+            values.add(String.valueOf(day));
+            values.add(String.valueOf(month + 1));
+            values.add(String.valueOf(year));
+
+            Bundle args = new Bundle();
+            args.putStringArrayList(DateFragment.EXTRA_VALUES, values);
+
+            DateFragment dateFragment = new DateFragment();
+            dateFragment.setArguments(args);
+
+            dateFragment.show(getActivity().getSupportFragmentManager(), DateFragment.TAG);
+
+            calledOnce = true;
+        }
     }
 }

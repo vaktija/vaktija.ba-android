@@ -1,13 +1,5 @@
 package ba.vaktija.android;
 
-import ba.vaktija.android.db.Database;
-import ba.vaktija.android.models.Prayer;
-import ba.vaktija.android.models.PrayersSchedule;
-import ba.vaktija.android.prefs.Defaults;
-import ba.vaktija.android.prefs.Prefs;
-import ba.vaktija.android.util.FileLog;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,6 +12,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
+import ba.vaktija.android.db.Database;
+import ba.vaktija.android.models.Prayer;
+import ba.vaktija.android.models.PrayersSchedule;
+import ba.vaktija.android.prefs.Defaults;
+import ba.vaktija.android.prefs.Prefs;
+import ba.vaktija.android.util.FileLog;
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+
 /*
 @ReportsCrashes(
 		formKey = "", 
@@ -29,56 +29,56 @@ import android.preference.PreferenceManager;
 		*/
 public class App extends Application {
     public static final String TAG = App.class.getSimpleName();
-	
-	public static final String VAKAT_PREFS = "VAKAT_PREFS";
 
-	public static Typeface robotoCondensedLight;
+    public static final String VAKAT_PREFS = "VAKAT_PREFS";
+
+    public static Typeface robotoCondensedLight;
     public static Typeface robotoCondensedRegular;
 
     public static SharedPreferences prefs;
 //	Tracker mTracker;
-	
-	public static SharedPreferences vakatPrefs;
+
+    public static SharedPreferences vakatPrefs;
 
     public static App app;
 
     public Database db;
 
-	@Override
-	public void onCreate(){
-		super.onCreate();
+    @Override
+    public void onCreate() {
+        super.onCreate();
         FileLog.newLine(3);
         FileLog.d(TAG, "[>>> onCreate <<<]");
 
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            FileLog.i(TAG, "version code: "+pInfo.versionCode +", version name: "+pInfo.versionName);
+            FileLog.i(TAG, "version code: " + pInfo.versionCode + ", version name: " + pInfo.versionName);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
 
-		//ACRA.init(this);
+        //ACRA.init(this);
 
         app = this;
 
         db = new Database(this);
 
-		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         int locationId = prefs.getInt(Prefs.SELECTED_LOCATION_ID, Defaults.LOCATION_ID);
         prefs.edit().putString(Prefs.LOCATION_NAME, db.getLocationName(locationId)).commit();
 
 //		initGoogleAnalytics();
 
-		robotoCondensedLight = Typeface.createFromAsset(getAssets(), "fonts/RobotoCondensed-Light.ttf");
+        robotoCondensedLight = Typeface.createFromAsset(getAssets(), "fonts/RobotoCondensed-Light.ttf");
         robotoCondensedRegular = Typeface.createFromAsset(getAssets(), "fonts/RobotoCondensed-Regular.ttf");
 
         vakatPrefs = getSharedPreferences(VAKAT_PREFS, Context.MODE_PRIVATE);
 
-		CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                        .setDefaultFontPath("fonts/RobotoCondensed-Regular.ttf")
-                        .setFontAttrId(R.attr.fontPath)
-                        .build()
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("fonts/RobotoCondensed-Regular.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
         );
 
         checkNotifTone();
@@ -91,7 +91,7 @@ public class App extends Application {
         FileLog.d(TAG, "Build.BRAND=" + Build.BRAND);
         FileLog.d(TAG, "Build.MODEL=" + Build.MODEL);
         FileLog.d(TAG, "Build.PRODUCT=" + Build.PRODUCT);
-	}
+    }
 
 	/*
 	void initGoogleAnalytics(){
@@ -100,7 +100,7 @@ public class App extends Application {
 	}
     */
 
-	public void sendScreenView(String screenName){
+    public void sendScreenView(String screenName) {
         /*
 		if(!prefs.getBoolean(Prefs.GA_ENABLED, true))
 			return;
@@ -108,9 +108,9 @@ public class App extends Application {
 		mTracker.setScreenName(screenName);
 		mTracker.send(new HitBuilders.AppViewBuilder().build());
 		*/
-	}
+    }
 
-	public void sendEvent(String category, String action) {
+    public void sendEvent(String category, String action) {
         /*
 		if(!prefs.getBoolean(Prefs.GA_ENABLED, true))
 			return;
@@ -121,24 +121,24 @@ public class App extends Application {
 		.setLabel("")
 		.build());
 		*/
-	}
+    }
 
-    private void checkNotifTone(){
-        if(!prefs.getBoolean(Prefs.USE_VAKTIJA_NOTIF_TONE, true)) {
+    private void checkNotifTone() {
+        if (!prefs.getBoolean(Prefs.USE_VAKTIJA_NOTIF_TONE, true)) {
             String selectedNotifTone = prefs.getString(Prefs.NOTIF_TONE_URI,
                     Defaults.getDefaultTone(this, false));
 
             Ringtone ringtone = RingtoneManager
                     .getRingtone(this, Uri.parse(selectedNotifTone));
 
-            if(ringtone == null) {
+            if (ringtone == null) {
                 prefs.edit().putBoolean(Prefs.USE_VAKTIJA_NOTIF_TONE, true).commit();
             }
         }
     }
 
-    private void checkAlarmTone(){
-        if(!prefs.getBoolean(Prefs.USE_VAKTIJA_ALARM_TONE, true)) {
+    private void checkAlarmTone() {
+        if (!prefs.getBoolean(Prefs.USE_VAKTIJA_ALARM_TONE, true)) {
             String selectedAlarmTone = prefs.getString(
                     Prefs.ALARM_TONE_URI,
                     Defaults.getDefaultTone(this, true));
@@ -146,26 +146,26 @@ public class App extends Application {
             Ringtone alarmRingtone = RingtoneManager
                     .getRingtone(this, Uri.parse(selectedAlarmTone));
 
-            if(alarmRingtone == null){
+            if (alarmRingtone == null) {
                 prefs.edit().putBoolean(Prefs.USE_VAKTIJA_ALARM_TONE, true).commit();
             }
         }
     }
 
-    private void applySettingsChanges(){
+    private void applySettingsChanges() {
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
             boolean silentVibrationSettingsAdjusted = prefs.getBoolean(Prefs.SILENT_VIBRATION_SETTINGS_ADJUSTED, false);
 
-            if(!silentVibrationSettingsAdjusted) {
+            if (!silentVibrationSettingsAdjusted) {
                 try {
                     for (Prayer prayer : PrayersSchedule.getInstance(this).getAllPrayers()) {
                         prayer.setSilentVibrationOff(false);
                         prayer.save();
                     }
                     prefs.edit().putBoolean(Prefs.SILENT_VIBRATION_SETTINGS_ADJUSTED, true).commit();
-                } catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

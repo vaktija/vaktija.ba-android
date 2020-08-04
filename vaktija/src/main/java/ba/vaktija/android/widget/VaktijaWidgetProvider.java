@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import java.util.Locale;
+
 import ba.vaktija.android.MainActivity;
 import ba.vaktija.android.R;
 import ba.vaktija.android.models.Prayer;
@@ -23,8 +25,6 @@ import ba.vaktija.android.prefs.Defaults;
 import ba.vaktija.android.prefs.Prefs;
 import ba.vaktija.android.util.FormattingUtils;
 import ba.vaktija.android.util.Utils;
-
-import java.util.Locale;
 
 /**
  * Created by e on 1/29/15.
@@ -40,7 +40,7 @@ public class VaktijaWidgetProvider extends AppWidgetProvider {
         Log.d(TAG, "onUpdate");
         final int n = appWidgetIds.length;
 
-        if(n == 0)
+        if (n == 0)
             return;
 
         PrayersSchedule schedule = PrayersSchedule.getInstance(context);
@@ -54,7 +54,7 @@ public class VaktijaWidgetProvider extends AppWidgetProvider {
         Prayer maghrib = schedule.getPrayer(Prayer.MAGHRIB);
         Prayer ishaa = schedule.getPrayer(Prayer.ISHA);
 
-        if(schedule.isJumaDay()){
+        if (schedule.isJumaDay()) {
             dhuhr = schedule.getPrayer(Prayer.JUMA);
         }
 
@@ -77,17 +77,17 @@ public class VaktijaWidgetProvider extends AppWidgetProvider {
 
 
         // Perform this loop procedure for each App Widget that belongs to this provider
-        for (int i=0; i<n; i++) {
+        for (int i = 0; i < n; i++) {
             int appWidgetId = appWidgetIds[i];
 
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 
                 Bundle myOptions = appWidgetManager.getAppWidgetOptions(appWidgetId);
 
                 int category = myOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_HOST_CATEGORY, -1);
                 isKeyguard = category == AppWidgetProviderInfo.WIDGET_CATEGORY_KEYGUARD;
 
-                if(isKeyguard) {
+                if (isKeyguard) {
                     RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout_keyguard);
 
                     views.setTextViewText(R.id.widget_layout_keyguard_info, Utils.getTimeTillNext(
@@ -226,7 +226,7 @@ public class VaktijaWidgetProvider extends AppWidgetProvider {
             views.setInt(R.id.widget_layout_maghrib_current, "setBackgroundColor", Color.TRANSPARENT);
             views.setInt(R.id.widget_layout_ishaa_current, "setBackgroundColor", Color.TRANSPARENT);
 
-            switch (PrayersSchedule.getInstance(context).getCurrentPrayer().getId()){
+            switch (PrayersSchedule.getInstance(context).getCurrentPrayer().getId()) {
                 case Prayer.FAJR:
                     views.setInt(R.id.widget_layout_fajr_current, "setBackgroundColor", themeColor);
                     break;

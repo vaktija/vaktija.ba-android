@@ -5,7 +5,7 @@
     <color name="widget_header_background">#BBFFFFFF</color>
     <color name="widget_body_background">#FFFFFFFF</color>
     <color name="gray_divider">#d2d2d2</color>
-     <color name="gray">#e5e5e5</color>
+    <color name="gray">#e5e5e5</color>
     <color name="text_button_pressed">#FF989898</color>
     <color name="text_button_default">#FF666666</color>
     <color name="grey_background">#eeeeee</color>

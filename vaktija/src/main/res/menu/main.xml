@@ -1,26 +1,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="ba.app.vaktija.MainActivity" >
+    tools:context="ba.app.vaktija.MainActivity">
 
     <item
         android:id="@+id/menu_main_date_picker"
         android:title="Odaberi datum..."
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_main_share"
         android:title="Podijeli..."
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_main_settings"
         android:title="Postavke"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_main_close"
         android:title="Ugasi aplikaciju"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
 </menu>

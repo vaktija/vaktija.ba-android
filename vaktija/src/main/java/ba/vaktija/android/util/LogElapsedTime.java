@@ -12,7 +12,7 @@ public class LogElapsedTime {
     public static void i(String tag, String message, long executionStartTime) {
         sb.setLength(0);
         sb.append("[")
-                .append((System.nanoTime() - executionStartTime)/1000.0)
+                .append((System.nanoTime() - executionStartTime) / 1000.0)
                 .append(" us] [")
                 .append(Thread.currentThread().getStackTrace()[3].getMethodName())
                 .append("] ")
@@ -24,7 +24,7 @@ public class LogElapsedTime {
     public static void d(String tag, String message, long executionStartTime) {
         sb.setLength(0);
         sb.append("[")
-                .append((System.nanoTime() - executionStartTime)/1000.0)
+                .append((System.nanoTime() - executionStartTime) / 1000.0)
                 .append(" us] [")
                 .append(Thread.currentThread().getStackTrace()[3].getMethodName())
                 .append("] ")
@@ -36,7 +36,7 @@ public class LogElapsedTime {
     public static void w(String tag, String message, long executionStartTime) {
         sb.setLength(0);
         sb.append("[")
-                .append((System.nanoTime() - executionStartTime)/1000.0)
+                .append((System.nanoTime() - executionStartTime) / 1000.0)
                 .append(" us] [")
                 .append(Thread.currentThread().getStackTrace()[3].getMethodName())
                 .append("] ")
@@ -48,7 +48,7 @@ public class LogElapsedTime {
     public static void v(String tag, String message, long executionStartTime) {
         sb.setLength(0);
         sb.append("[")
-                .append((System.nanoTime() - executionStartTime)/1000.0)
+                .append((System.nanoTime() - executionStartTime) / 1000.0)
                 .append(" us] [")
                 .append(Thread.currentThread().getStackTrace()[3].getMethodName())
                 .append("] ")
@@ -60,7 +60,7 @@ public class LogElapsedTime {
     public static void e(String tag, String message, long executionStartTime) {
         sb.setLength(0);
         sb.append("[")
-                .append((System.nanoTime() - executionStartTime)/1000.0)
+                .append((System.nanoTime() - executionStartTime) / 1000.0)
                 .append(" us] [")
                 .append(Thread.currentThread().getStackTrace()[3].getMethodName())
                 .append("] ")

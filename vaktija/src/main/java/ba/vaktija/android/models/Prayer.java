@@ -12,6 +12,13 @@ import android.os.Parcelable;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
 import ba.vaktija.android.AlarmActivity;
 import ba.vaktija.android.App;
 import ba.vaktija.android.prefs.Defaults;
@@ -20,16 +27,10 @@ import ba.vaktija.android.service.VaktijaService;
 import ba.vaktija.android.util.FileLog;
 import ba.vaktija.android.util.FormattingUtils;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
-
 /**
  * Created by e on 2/6/15.
  */
-public class Prayer implements Parcelable{
+public class Prayer implements Parcelable {
 
     public static final String TAG = Prayer.class.getSimpleName();
 
@@ -40,17 +41,9 @@ public class Prayer implements Parcelable{
     public static final int MAGHRIB = 4;
     public static final int ISHA = 5;
     public static final int JUMA = 6;
-
-    protected static final int ALARM_PENDING_INTENT_ID = 13579;
-    protected static final int NOTIF_PENDING_INTET_ID = 24680;
-    protected static final int PRAYER_CHANGE_PENDING_INTENT_ID = 86420;
-    protected static final int SILENT_OFF_PENDING_INTENT_ID = 97531;
-    protected static final int SILENT_ON_PENDING_INTENT_ID = 97000;
-
     public static final String FIELD_ALARM = "alarm";
     public static final String FIELD_NOTIF = "notif";
     public static final String FIELD_SILENT = "silent";
-
     public static final String FIELD_SKIP_NEXT_ALARM = "skipNextAlarm";
     public static final String FIELD_SKIP_NEXT_SILENT = "skipNextSilent";
     public static final String FIELD_ALARM_ON = "alarmOn";
@@ -65,29 +58,6 @@ public class Prayer implements Parcelable{
     public static final String FIELD_NOTIF_ON_MINS = "notifTime";
     public static final String FIELD_SKIP_NEXT_NOTIF = "skipNextNotif";
     public static final String FIELD_SILENT_VIBRO_OFF = "silentVibroOff";
-
-    protected int id = -1;
-    protected boolean skipNextAlarm;
-    protected boolean skipNextSilent;
-    protected boolean alarmOn;
-    protected boolean silentOn;
-
-    protected int alarmMins;
-    protected String alarmSound = "";
-    protected int soundOnMins;
-    protected Calendar mCalendar;
-    protected  boolean skipNextNotif;
-    protected  boolean notifOn;
-    protected  int notifMins;
-    protected  String notifSound = "";
-    protected  boolean notifSoundOn = true;
-    protected  boolean notifVibroOn = true;
-    protected  boolean notifLedOn;
-    protected  boolean silentVibrationOff;
-    protected  int prayerTime;
-
-    protected  SimpleDateFormat mDateFormat = new SimpleDateFormat("HH'h' mm'm'", Locale.getDefault());
-
     public static final Parcelable.Creator<Prayer> CREATOR = new Parcelable.Creator<Prayer>() {
         public Prayer createFromParcel(Parcel in) {
             return new Prayer(in);
@@ -97,8 +67,32 @@ public class Prayer implements Parcelable{
             return new Prayer[size];
         }
     };
+    protected static final int ALARM_PENDING_INTENT_ID = 13579;
+    protected static final int NOTIF_PENDING_INTET_ID = 24680;
+    protected static final int PRAYER_CHANGE_PENDING_INTENT_ID = 86420;
+    protected static final int SILENT_OFF_PENDING_INTENT_ID = 97531;
+    protected static final int SILENT_ON_PENDING_INTENT_ID = 97000;
+    protected int id = -1;
+    protected boolean skipNextAlarm;
+    protected boolean skipNextSilent;
+    protected boolean alarmOn;
+    protected boolean silentOn;
+    protected int alarmMins;
+    protected String alarmSound = "";
+    protected int soundOnMins;
+    protected Calendar mCalendar;
+    protected boolean skipNextNotif;
+    protected boolean notifOn;
+    protected int notifMins;
+    protected String notifSound = "";
+    protected boolean notifSoundOn = true;
+    protected boolean notifVibroOn = true;
+    protected boolean notifLedOn;
+    protected boolean silentVibrationOff;
+    protected int prayerTime;
+    protected SimpleDateFormat mDateFormat = new SimpleDateFormat("HH'h' mm'm'", Locale.getDefault());
 
-    public Prayer(Parcel in){
+    public Prayer(Parcel in) {
         id = in.readInt();
         skipNextAlarm = in.readInt() == 1;
         skipNextSilent = in.readInt() == 1;
@@ -123,22 +117,8 @@ public class Prayer implements Parcelable{
         initFromPreference();
     }
 
-    public JsonElement getSettingsAsJson(){
-        JsonObject settings = new JsonObject();
-        settings.addProperty(FIELD_ALARM_ON, alarmOn);
-        settings.addProperty(FIELD_SILENT_ON, silentOn);
-        settings.addProperty(FIELD_NOTIF_ON, notifOn);
-        settings.addProperty(FIELD_ALARM_ON_MINS, alarmMins);
-        settings.addProperty(FIELD_SILENT_TIMEOUT, soundOnMins);
-        settings.addProperty(FIELD_NOTIF_SOUND_ON, notifSoundOn);
-        settings.addProperty(FIELD_NOTIF_VIBRO_ON, notifVibroOn);
-        settings.addProperty(FIELD_NOTIF_ON_MINS, notifMins);
-        settings.addProperty(FIELD_SILENT_VIBRO_OFF, silentVibrationOff);
-
-        return settings;
+    public Prayer() {
     }
-
-    public Prayer(){}
 
     public Prayer(int time, int prayerTimeId) {
         FileLog.d(TAG, "[<init> id: " + prayerTimeId + ", time: " + FormattingUtils.getTimeStringDots(time) + "]");
@@ -197,7 +177,7 @@ public class Prayer implements Parcelable{
 
     public static PendingIntent getNotifPendingIntent(Context context, int vakatId) {
         Intent notifIntent = VaktijaService.getStartIntent(context, "NotifPendingIntent");
-        notifIntent.setAction(VaktijaService.ACTION_SHOW_APPROACHING_NOTIFICATION+"_"+vakatId);
+        notifIntent.setAction(VaktijaService.ACTION_SHOW_APPROACHING_NOTIFICATION + "_" + vakatId);
 
         return PendingIntent.getService(
                 context,
@@ -206,16 +186,16 @@ public class Prayer implements Parcelable{
                 PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
-    public static boolean isSummerTime(){
+    public static boolean isSummerTime() {
         return TimeZone.getDefault().inDaylightTime(new Date());
     }
 
-    public static String getNextVakatTitle(int currentVakatId){
+    public static String getNextVakatTitle(int currentVakatId) {
 
         boolean friday = Calendar.getInstance(Locale.getDefault()).get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY;
         boolean respectJuma = App.prefs.getBoolean(Prefs.SEPARATE_JUMA_SETTINGS, true);
 
-        if(friday && respectJuma && currentVakatId == Prayer.SUNRISE)
+        if (friday && respectJuma && currentVakatId == Prayer.SUNRISE)
             return "Džuma";
 
         switch (currentVakatId) {
@@ -237,7 +217,22 @@ public class Prayer implements Parcelable{
         return "";
     }
 
-    protected void initCalendar(){
+    public JsonElement getSettingsAsJson() {
+        JsonObject settings = new JsonObject();
+        settings.addProperty(FIELD_ALARM_ON, alarmOn);
+        settings.addProperty(FIELD_SILENT_ON, silentOn);
+        settings.addProperty(FIELD_NOTIF_ON, notifOn);
+        settings.addProperty(FIELD_ALARM_ON_MINS, alarmMins);
+        settings.addProperty(FIELD_SILENT_TIMEOUT, soundOnMins);
+        settings.addProperty(FIELD_NOTIF_SOUND_ON, notifSoundOn);
+        settings.addProperty(FIELD_NOTIF_VIBRO_ON, notifVibroOn);
+        settings.addProperty(FIELD_NOTIF_ON_MINS, notifMins);
+        settings.addProperty(FIELD_SILENT_VIBRO_OFF, silentVibrationOff);
+
+        return settings;
+    }
+
+    protected void initCalendar() {
         mCalendar = Calendar.getInstance(TimeZone.getDefault());
 
         mCalendar.set(Calendar.HOUR_OF_DAY, getHours());
@@ -245,7 +240,7 @@ public class Prayer implements Parcelable{
         mCalendar.set(Calendar.SECOND, 0);
     }
 
-    protected void initFromPreference(){
+    protected void initFromPreference() {
 //        FileLog.d(TAG, "initFromPreference "+getTitle(true));
 
         Gson gson = new Gson();
@@ -274,7 +269,7 @@ public class Prayer implements Parcelable{
 
 //        FileLog.i(TAG, "saved: "+saved);
 
-        if(saved == null)
+        if (saved == null)
             saved = defData.toString();
 
         JsonObject data = gson.fromJson(saved, JsonElement.class).getAsJsonObject();
@@ -283,14 +278,14 @@ public class Prayer implements Parcelable{
         //		FileLog.i(TAG, "after init: "+toString());
     }
 
-    public Prayer initFromJson(JsonObject data){
-        if(data.has(FIELD_SKIP_NEXT_ALARM))
+    public Prayer initFromJson(JsonObject data) {
+        if (data.has(FIELD_SKIP_NEXT_ALARM))
             skipNextAlarm = data.get(FIELD_SKIP_NEXT_ALARM).getAsBoolean();
 
-        if(data.has(FIELD_SKIP_NEXT_NOTIF))
+        if (data.has(FIELD_SKIP_NEXT_NOTIF))
             skipNextNotif = data.get(FIELD_SKIP_NEXT_NOTIF).getAsBoolean();
 
-        if(data.has(FIELD_SKIP_NEXT_SILENT))
+        if (data.has(FIELD_SKIP_NEXT_SILENT))
             skipNextSilent = data.get(FIELD_SKIP_NEXT_SILENT).getAsBoolean();
 
         alarmOn = data.get(FIELD_ALARM_ON).getAsBoolean();
@@ -301,10 +296,10 @@ public class Prayer implements Parcelable{
         soundOnMins = data.get(FIELD_SILENT_TIMEOUT).getAsInt();
         notifMins = data.get(FIELD_NOTIF_ON_MINS).getAsInt();
 
-        if(data.has(FIELD_NOTIF_SOUND))
+        if (data.has(FIELD_NOTIF_SOUND))
             notifSound = data.get(FIELD_NOTIF_SOUND).getAsString();
 
-        if(data.has(FIELD_ALARM_SOUND))
+        if (data.has(FIELD_ALARM_SOUND))
             alarmSound = data.get(FIELD_ALARM_SOUND).getAsString();
 
         notifSoundOn = data.get(FIELD_NOTIF_SOUND_ON).getAsBoolean();
@@ -314,8 +309,8 @@ public class Prayer implements Parcelable{
         return this;
     }
 
-    public void save(){
-        FileLog.d(TAG, "save "+"id="+id+" "+toString());
+    public void save() {
+        FileLog.d(TAG, "save " + "id=" + id + " " + toString());
         long start = System.nanoTime();
         JsonObject data = new JsonObject();
 
@@ -338,14 +333,14 @@ public class Prayer implements Parcelable{
         data.addProperty(FIELD_NOTIF_VIBRO_ON, notifVibroOn);
         data.addProperty(FIELD_SILENT_VIBRO_OFF, silentVibrationOff);
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
             App.vakatPrefs.edit().putString(String.valueOf(id), data.toString()).apply();
         } else {
             App.vakatPrefs.edit().putString(String.valueOf(id), data.toString()).commit();
         }
 
         long end = System.nanoTime();
-        FileLog.i(TAG, "save data "+data.toString());
+        FileLog.i(TAG, "save data " + data.toString());
         FileLog.i(TAG, "save data done in " + ((end - start) / 1000.0) + " us");
     }
 
@@ -378,7 +373,7 @@ public class Prayer implements Parcelable{
         dest.writeInt(prayerTime);
     }
 
-    public String getTitle(){
+    public String getTitle() {
         switch (id) {
             case FAJR:
                 return "Zora";
@@ -399,7 +394,7 @@ public class Prayer implements Parcelable{
         return "No title";
     }
 
-    public String getShortTitle(){
+    public String getShortTitle() {
         switch (id) {
             case FAJR:
                 return "Zora";
@@ -432,7 +427,7 @@ public class Prayer implements Parcelable{
         return skipNextAlarm;
     }
 
-    public boolean isAlarmOn(){
+    public boolean isAlarmOn() {
         return alarmOn;
     }
 
@@ -441,7 +436,7 @@ public class Prayer implements Parcelable{
 
     }
 
-    public boolean isSilentOn(){
+    public boolean isSilentOn() {
         return silentOn;
     }
 
@@ -478,36 +473,36 @@ public class Prayer implements Parcelable{
         boolean timeNormalized = App.prefs.getString(Prefs.DHUHR_TIME_COUNTING, "1").equals("1");
         boolean summerTime = isSummerTime();
 
-        if((id == DHUHR || id == JUMA) && timeNormalized){
+        if ((id == DHUHR || id == JUMA) && timeNormalized) {
             return summerTime ? (13 * 3600) : (12 * 3600);
         }
 
         return prayerTime;
     }
 
-    public String getPrayerTimeString(){
-        return getHrsString()+":"+getMinsString();
+    public String getPrayerTimeString() {
+        return getHrsString() + ":" + getMinsString();
     }
 
     public int getRawPrayerTime() {
         return prayerTime;
     }
 
-    public int getHours(){
+    public int getHours() {
         return (getPrayerTime() / (3600)) % 24;
     }
 
-    public int getMinutes(){
+    public int getMinutes() {
         return (getPrayerTime() / 60) % 60;
     }
 
     @SuppressLint("DefaultLocale")
-    public String getHrsString(){
+    public String getHrsString() {
         return String.format("%02d", ((getPrayerTime() / (3600)) % 24));
     }
 
     @SuppressLint("DefaultLocale")
-    public String getMinsString(){
+    public String getMinsString() {
         return String.format("%02d", ((getPrayerTime() / 60) % 60));
     }
 
@@ -528,12 +523,12 @@ public class Prayer implements Parcelable{
         this.notifMins = notifMins;
     }
 
-    public void setNotifSoundOn(boolean notifSoundOn) {
-        this.notifSoundOn = notifSoundOn;
+    public boolean isNotifSoundOn() {
+        return notifSoundOn;
     }
 
-    public boolean isNotifSoundOn(){
-        return notifSoundOn;
+    public void setNotifSoundOn(boolean notifSoundOn) {
+        this.notifSoundOn = notifSoundOn;
     }
 
     public boolean isNotifVibroOn() {
@@ -548,7 +543,7 @@ public class Prayer implements Parcelable{
         return skipNextNotif;
     }
 
-    public void setSkipNextAlarm(boolean skipNextAlarm){
+    public void setSkipNextAlarm(boolean skipNextAlarm) {
         this.skipNextAlarm = skipNextAlarm;
     }
 
@@ -580,8 +575,8 @@ public class Prayer implements Parcelable{
                 + mDateFormat + "]";
     }
 
-    public void cancelAllAlarms(Context context, AlarmManager alarmManager){
-        FileLog.d(TAG, "cancelling all alarms for "+getTitle());
+    public void cancelAllAlarms(Context context, AlarmManager alarmManager) {
+        FileLog.d(TAG, "cancelling all alarms for " + getTitle());
 
         alarmManager.cancel(getAlarmPendingIntent(context, this));
         alarmManager.cancel(getNotifPendingIntent(context, getId()));
@@ -590,8 +585,8 @@ public class Prayer implements Parcelable{
     }
 
     @SuppressLint("NewApi")
-    public void scheduleSunriseSilent(Context conext, AlarmManager alarmManager){
-        FileLog.d(TAG, "scheduleSunriseSilent for "+getTitle());
+    public void scheduleSunriseSilent(Context conext, AlarmManager alarmManager) {
+        FileLog.d(TAG, "scheduleSunriseSilent for " + getTitle());
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
 
         int prayerH = getHours();
@@ -615,22 +610,22 @@ public class Prayer implements Parcelable{
 
         alarmManager.cancel(getSilentOnPendingIntent(conext, Prayer.SUNRISE));
 
-        FileLog.i(TAG, "alarm for "+getTitle()+" enabled: "+isAlarmOn());
-        FileLog.i(TAG, "alarm for "+getTitle()+" skipped: "+skipNextAlarm);
+        FileLog.i(TAG, "alarm for " + getTitle() + " enabled: " + isAlarmOn());
+        FileLog.i(TAG, "alarm for " + getTitle() + " skipped: " + skipNextAlarm);
 
-        if(isSilentOn() && !skipNextSilent){
+        if (isSilentOn() && !skipNextSilent) {
 
-            if(silentOnAtMillis < currentTime){
-                FileLog.w(TAG, "alarm activation time has passed for "+getTitle()+", not setting alarm");
+            if (silentOnAtMillis < currentTime) {
+                FileLog.w(TAG, "alarm activation time has passed for " + getTitle() + ", not setting alarm");
                 return;
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
                         silentOnAtMillis,
                         getSilentOnPendingIntent(conext, Prayer.SUNRISE));
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 alarmManager.setExact(
                         AlarmManager.RTC_WAKEUP,
                         silentOnAtMillis,
@@ -642,12 +637,12 @@ public class Prayer implements Parcelable{
                         getSilentOnPendingIntent(conext, Prayer.SUNRISE));
             }
 
-            FileLog.i(TAG, "alarm set for "+getTitle()+", activation time: "+alarmActivationTime);
+            FileLog.i(TAG, "alarm set for " + getTitle() + ", activation time: " + alarmActivationTime);
         }
     }
 
     @SuppressLint("NewApi")
-    public void scheduleAlarms(Context conext, AlarmManager alarmManager){
+    public void scheduleAlarms(Context conext, AlarmManager alarmManager) {
 //        FileLog.d(TAG, "scheduleAlarms for "+getTitle(true));
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
 
@@ -670,22 +665,22 @@ public class Prayer implements Parcelable{
 
         alarmManager.cancel(getAlarmPendingIntent(conext, this));
 
-        FileLog.i(TAG, "alarm for "+getTitle()+" enabled: "+isAlarmOn());
+        FileLog.i(TAG, "alarm for " + getTitle() + " enabled: " + isAlarmOn());
         FileLog.i(TAG, "alarm for " + getTitle() + " skipped: " + skipNextAlarm);
 
-        if(isAlarmOn() && !skipNextAlarm){
+        if (isAlarmOn() && !skipNextAlarm) {
 
-            if(alarmOnAtMillis < currentTime){
-                FileLog.w(TAG, "alarm activation time has passed for "+getTitle()+", not setting alarm");
+            if (alarmOnAtMillis < currentTime) {
+                FileLog.w(TAG, "alarm activation time has passed for " + getTitle() + ", not setting alarm");
                 return;
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
                         alarmOnAtMillis,
                         getAlarmPendingIntent(conext, this));
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 alarmManager.setExact(
                         AlarmManager.RTC_WAKEUP,
                         alarmOnAtMillis,
@@ -705,12 +700,12 @@ public class Prayer implements Parcelable{
                         getAlarmPendingIntent(conext, this));
             }
 
-            FileLog.i(TAG, "alarm set for "+getTitle()+", activation time: "+alarmActivationTime);
+            FileLog.i(TAG, "alarm set for " + getTitle() + ", activation time: " + alarmActivationTime);
         }
     }
 
     @SuppressLint("NewApi")
-    public void scheduleNotifications(Context context, AlarmManager alarmManager){
+    public void scheduleNotifications(Context context, AlarmManager alarmManager) {
         //FileLog.d(TAG, "scheduleNotifications for "+getTitle(true));
         Calendar mCalendar = Calendar.getInstance(TimeZone.getDefault());
 
@@ -733,14 +728,14 @@ public class Prayer implements Parcelable{
 
         alarmManager.cancel(Prayer.getNotifPendingIntent(context, getId()));
 
-        if(isNotifOn() && (notifOnAtMillis > currentTime)){
+        if (isNotifOn() && (notifOnAtMillis > currentTime)) {
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
                         notifOnAtMillis,
                         Prayer.getNotifPendingIntent(context, getId()));
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 alarmManager.setExact(
                         AlarmManager.RTC_WAKEUP,
                         notifOnAtMillis,
@@ -752,12 +747,12 @@ public class Prayer implements Parcelable{
                         Prayer.getNotifPendingIntent(context, getId()));
             }
 
-            FileLog.i(TAG, "notif set for "+getTitle()+", activation time: "+notifActivationTime);
+            FileLog.i(TAG, "notif set for " + getTitle() + ", activation time: " + notifActivationTime);
         }
     }
 
     @SuppressLint("NewApi")
-    public void schedulePrayerChangeAlarm(Context context, AlarmManager alarmManager){
+    public void schedulePrayerChangeAlarm(Context context, AlarmManager alarmManager) {
         //.d(TAG, "schedulePrayerChangeAlarm for "+getTitle(true));
         Calendar mCalendar = Calendar.getInstance(TimeZone.getDefault());
 
@@ -767,7 +762,7 @@ public class Prayer implements Parcelable{
         mCalendar.set(Calendar.MINUTE, getMinutes());
         mCalendar.set(Calendar.SECOND, 0);
 
-        long vakatChangeTime  = mCalendar.getTimeInMillis();
+        long vakatChangeTime = mCalendar.getTimeInMillis();
 
         FileLog.i(TAG, "prayer change time for " + getTitle() + ": " + new Date(vakatChangeTime));
 
@@ -776,14 +771,14 @@ public class Prayer implements Parcelable{
 
         alarmManager.cancel(getPrayerChangePendingIntent(context, getId()));
 
-        if(vakatChangeTime > currentTime){
+        if (vakatChangeTime > currentTime) {
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
                         vakatChangeTime,
                         Prayer.getPrayerChangePendingIntent(context, getId()));
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 alarmManager.setExact(
                         AlarmManager.RTC_WAKEUP,
                         vakatChangeTime,
@@ -802,7 +797,7 @@ public class Prayer implements Parcelable{
     }
 
     @SuppressLint("NewApi")
-    public void scheduleSilentOffAlarm(Context context, AlarmManager alarmManager){
+    public void scheduleSilentOffAlarm(Context context, AlarmManager alarmManager) {
         //FileLog.d(TAG, "scheduleSilentOffAlarm for "+getTitle(true));
         Calendar mCalendar = Calendar.getInstance(TimeZone.getDefault());
 
@@ -823,12 +818,12 @@ public class Prayer implements Parcelable{
 
         alarmManager.cancel(getSilentOffPendingIntent(context, getId()));
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     soundOnFutureTime,
                     Prayer.getSilentOffPendingIntent(context, getId()));
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             alarmManager.setExact(
                     AlarmManager.RTC_WAKEUP,
                     soundOnFutureTime,
@@ -842,7 +837,7 @@ public class Prayer implements Parcelable{
         }
     }
 
-    public String getAlarmActivationTime(){
+    public String getAlarmActivationTime() {
 
         long alarmOnAtMillis = mCalendar.getTimeInMillis() - getAlarmMins() * 60 * 1000;
 
@@ -850,7 +845,7 @@ public class Prayer implements Parcelable{
         return mDateFormat.format(d);
     }
 
-    public String getNotificationTime(){
+    public String getNotificationTime() {
 
         long notifOnAtMillis = mCalendar.getTimeInMillis() - getNotifMins() * 60 * 1000;
 
@@ -858,7 +853,7 @@ public class Prayer implements Parcelable{
         return mDateFormat.format(d);
     }
 
-    public String getSilentDeactivationTime(){
+    public String getSilentDeactivationTime() {
 
         long soundOnFutureTime = mCalendar.getTimeInMillis() + getSoundOnMins() * 60 * 1000;
 
@@ -866,7 +861,7 @@ public class Prayer implements Parcelable{
         return mDateFormat.format(d);
     }
 
-    public boolean isSummerTime(int month, int day){
+    public boolean isSummerTime(int month, int day) {
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
 
         calendar.set(Calendar.MONTH, month);
@@ -889,17 +884,17 @@ public class Prayer implements Parcelable{
 
     public int getSoundOffMins() {
 
-        if(id == SUNRISE)
+        if (id == SUNRISE)
             return soundOnMins;
 
         return 0;
     }
 
-    public boolean anyEventsOn(){
+    public boolean anyEventsOn() {
         return isAlarmOn() || isSilentOn() || isNotifOn();
     }
 
-    public void resetSkips(){
+    public void resetSkips() {
         skipNextNotif = false;
         skipNextAlarm = false;
         skipNextSilent = false;

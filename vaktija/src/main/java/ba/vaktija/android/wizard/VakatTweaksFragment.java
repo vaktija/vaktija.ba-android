@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,6 +14,10 @@ import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import ba.vaktija.android.App;
 import ba.vaktija.android.MainActivity;
@@ -94,7 +95,7 @@ public class VakatTweaksFragment extends Fragment implements OnClickListener, On
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.wizard_next){
+        if (v.getId() == R.id.wizard_next) {
 
             App.prefs.edit()
                     .putBoolean(Prefs.WIZARD_COMPLETED, true)
@@ -104,11 +105,11 @@ public class VakatTweaksFragment extends Fragment implements OnClickListener, On
             getActivity().finish();
         }
 
-        if(v.getId() == R.id.wizard_prev){
+        if (v.getId() == R.id.wizard_prev) {
             FragmentTransaction ft = mActivity.getSupportFragmentManager()
                     .beginTransaction();
 
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
                 ft.setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
             }
 
@@ -121,7 +122,7 @@ public class VakatTweaksFragment extends Fragment implements OnClickListener, On
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         FileLog.d(TAG, "onCheckedChanged");
 
-        if(checkedId == R.id.radioNormalized){
+        if (checkedId == R.id.radioNormalized) {
             FileLog.i(TAG, "radioNormalized");
             App.prefs.edit().putString(Prefs.DHUHR_TIME_COUNTING, "1").commit();
         } else {

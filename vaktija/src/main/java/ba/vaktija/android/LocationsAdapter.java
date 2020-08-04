@@ -7,10 +7,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import ba.vaktija.android.models.Location;
-
 import java.util.HashMap;
 import java.util.List;
+
+import ba.vaktija.android.models.Location;
 
 public class LocationsAdapter extends BaseAdapter {
 
@@ -28,21 +28,21 @@ public class LocationsAdapter extends BaseAdapter {
     }
 
     @Override
-    public int getViewTypeCount(){
+    public int getViewTypeCount() {
         return 2;
     }
 
     @Override
-    public int getItemViewType(int position){
+    public int getItemViewType(int position) {
         return sections.containsKey(position) ? TYPE_SECTION_HEADER : TYPE_NORMAL;
     }
 
     @Override
-    public boolean isEnabled(int position){
+    public boolean isEnabled(int position) {
         return !sections.containsKey(position);
     }
 
-    public void setSections(HashMap<Integer, Location> sections){
+    public void setSections(HashMap<Integer, Location> sections) {
         this.sections = sections;
     }
 
@@ -64,7 +64,7 @@ public class LocationsAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        if(getItemViewType(position) == TYPE_NORMAL) {
+        if (getItemViewType(position) == TYPE_NORMAL) {
 
             if (convertView == null) {
                 convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_location, null);
@@ -82,9 +82,9 @@ public class LocationsAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public int getPositionForLocationId(int locationId){
-        for(int i = 0; i < locations.size(); i++){
-            if(locations.get(i).id == locationId)
+    public int getPositionForLocationId(int locationId) {
+        for (int i = 0; i < locations.size(); i++) {
+            if (locations.get(i).id == locationId)
                 return i;
         }
 

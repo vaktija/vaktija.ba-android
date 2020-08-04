@@ -6,10 +6,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.appcompat.widget.PopupMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +13,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
 
 import java.util.Locale;
 
@@ -35,22 +36,8 @@ public class FragmentPrayer extends Fragment {
     public static final String TAG = FragmentPrayer.class.getSimpleName();
 
     public static final String EXTRA_ID = "EXTRA_ID";
-
-    private Prayer mPrayer;
-
-    private SharedPreferences mPrefs;
-    private AppCompatActivity mActivity;
-
-    private App mApp;
-
-    private CountDownTimer mCountDownTimer;
-
     int mVakatId = -1;
-
     boolean mLandscapeMode = false;
-
-    private EventBus mEventBus = EventBus.getDefault();
-
     View root;
     TextView mPrayerTitle;
     TextView mPrayerTimer;
@@ -65,7 +52,12 @@ public class FragmentPrayer extends Fragment {
     ImageView mAlarmIcon;
     ImageView mNotifIcon;
     ImageView mMoreIcon;
-
+    private Prayer mPrayer;
+    private SharedPreferences mPrefs;
+    private AppCompatActivity mActivity;
+    private App mApp;
+    private CountDownTimer mCountDownTimer;
+    private EventBus mEventBus = EventBus.getDefault();
     private boolean mRespectJuma;
 
     @Override
@@ -80,7 +72,7 @@ public class FragmentPrayer extends Fragment {
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-        if(getTag() != null){
+        if (getTag() != null) {
             mVakatId = Integer.valueOf(getTag());
         }
 
@@ -90,12 +82,12 @@ public class FragmentPrayer extends Fragment {
         mPrayerTimer = (TextView) view.findViewById(R.id.fragment_prayer_timer);
         mPrayerTitle = (TextView) view.findViewById(R.id.fragment_prayer_title);
         mTimeText = (TextView) view.findViewById(R.id.vakat_time);
-        mNotificationOnText = (TextView)view.findViewById(R.id.vakat_notif_on_mins);
+        mNotificationOnText = (TextView) view.findViewById(R.id.vakat_notif_on_mins);
         mAlarmOnText = (TextView) view.findViewById(R.id.vakat_alarm_on_mins);
         mSoundOnText = (TextView) view.findViewById(R.id.vakat_sound_on_mins);
         mAlarmDetailsWrapper = view.findViewById(R.id.vakat_alarm_details_container);
         mSoundDetailsWrapper = view.findViewById(R.id.vakat_silent_details_container);
-        mNotifsDetailsWrapper =  view.findViewById(R.id.vakat_notif_details_container);
+        mNotifsDetailsWrapper = view.findViewById(R.id.vakat_notif_details_container);
         mSoundOffIcon = (ImageView) view.findViewById(R.id.vakat_sound_off_icon);
         mAlarmIcon = (ImageView) view.findViewById(R.id.vakat_alarm_icon);
         mNotifIcon = (ImageView) view.findViewById(R.id.vakat_notif_icon);
@@ -113,7 +105,7 @@ public class FragmentPrayer extends Fragment {
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
 
-        if(getArguments() != null && getArguments().containsKey(EXTRA_ID))
+        if (getArguments() != null && getArguments().containsKey(EXTRA_ID))
             mVakatId = getArguments().getInt(EXTRA_ID);
 
 //		FileLog.i(TAG, "mPrayer: "+mPrayer);
@@ -201,16 +193,16 @@ public class FragmentPrayer extends Fragment {
         });
     }
 
-    void showPrayer(){
+    void showPrayer() {
         FileLog.d(TAG, "[showPrayer]");
 
         mPrayer = PrayersSchedule.getInstance(mApp).getPrayer(mVakatId);
 
-        if(PrayersSchedule.getInstance(mActivity).isJumaDay() && mVakatId == Prayer.DHUHR){
+        if (PrayersSchedule.getInstance(mActivity).isJumaDay() && mVakatId == Prayer.DHUHR) {
             mPrayer = PrayersSchedule.getInstance(mActivity).getPrayer(Prayer.JUMA);
         }
 
-        FileLog.i(TAG, "mPrayer="+mPrayer);
+        FileLog.i(TAG, "mPrayer=" + mPrayer);
 
         boolean isNext = PrayersSchedule.getInstance(mApp).isNextPrayer(mPrayer.getId());
         boolean current = mPrayer.getId() == PrayersSchedule.getInstance(mApp).getCurrentPrayer().getId();
@@ -221,7 +213,7 @@ public class FragmentPrayer extends Fragment {
                         : mPrayer.getTitle().toUpperCase(Locale.getDefault())
         );
 
-        mTimeText.setText(mPrayer.getHrsString()+":"+ mPrayer.getMinsString());
+        mTimeText.setText(mPrayer.getHrsString() + ":" + mPrayer.getMinsString());
 
         mSoundOffIcon.setVisibility(mPrayer.isSilentOn() ? View.VISIBLE : View.GONE);
         mSoundDetailsWrapper.setVisibility(mPrayer.isSilentOn() ? View.VISIBLE : View.GONE);
@@ -233,18 +225,18 @@ public class FragmentPrayer extends Fragment {
 
         mPrayerTimer.setVisibility(View.GONE);
 
-        if(current){
+        if (current) {
             mTimeText.setTypeface(App.robotoCondensedRegular);
             mTimeText.setTextColor(getResources().getColor(R.color.curent_prayer_highlight));
 
-            if(root instanceof CardView) {
+            if (root instanceof CardView) {
 //                ((CardView)root).setCardElevation(getResources().getDimension(R.dimen.card_elevation_current));
             }
         } else {
             mTimeText.setTypeface(App.robotoCondensedLight);
             mTimeText.setTextColor(getResources().getColor(android.R.color.darker_gray));
 
-            if(root instanceof CardView) {
+            if (root instanceof CardView) {
 //                ((CardView) root).setCardElevation(getResources().getDimension(R.dimen.card_elevation));
             }
         }
@@ -256,13 +248,13 @@ public class FragmentPrayer extends Fragment {
             }
         });
 
-        mNotificationOnText.setText("-"+ mPrayer.getNotifMins()+"'");
-        mAlarmOnText.setText("-"+ mPrayer.getAlarmMins()+"'");
-        mSoundOnText.setText(""+ mPrayer.getSoundOnMins()+"'");
+        mNotificationOnText.setText("-" + mPrayer.getNotifMins() + "'");
+        mAlarmOnText.setText("-" + mPrayer.getAlarmMins() + "'");
+        mSoundOnText.setText("" + mPrayer.getSoundOnMins() + "'");
 
         updateIndicators();
 
-        if(isNext){
+        if (isNext) {
             startTimer();
         }
     }
@@ -270,7 +262,7 @@ public class FragmentPrayer extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-		FileLog.d(TAG, "onStart");
+        FileLog.d(TAG, "onStart");
         showPrayer();
         mEventBus.register(this);
     }
@@ -278,11 +270,11 @@ public class FragmentPrayer extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-		FileLog.d(TAG, "onResume");
+        FileLog.d(TAG, "onResume");
 
         boolean respectJuma = mPrefs.getBoolean(Prefs.SEPARATE_JUMA_SETTINGS, true);
 
-        if(mPrayer.getId() == Prayer.DHUHR && (respectJuma != mRespectJuma)){
+        if (mPrayer.getId() == Prayer.DHUHR && (respectJuma != mRespectJuma)) {
             showPrayer();
             mRespectJuma = mPrefs.getBoolean(Prefs.SEPARATE_JUMA_SETTINGS, true);
         }
@@ -291,22 +283,22 @@ public class FragmentPrayer extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-		FileLog.d(TAG, "onStop");
+        FileLog.d(TAG, "onStop");
 
-        if(mCountDownTimer != null)
+        if (mCountDownTimer != null)
             mCountDownTimer.cancel();
 
         mEventBus.unregister(this);
     }
 
-    void startTimer(){
+    void startTimer() {
         //FileLog.d(TAG, "startTimer, day is ending: "+mDayEnd);
 
         mPrayerTimer.setVisibility(View.VISIBLE);
 
         long secondsInFuture = PrayersSchedule.getInstance(mActivity).getTimeTillNextPrayer();
 
-        if(mCountDownTimer != null){
+        if (mCountDownTimer != null) {
             mCountDownTimer.cancel();
         }
 
@@ -325,7 +317,7 @@ public class FragmentPrayer extends Fragment {
         mCountDownTimer.start();
     }
 
-    private void updateIndicators(){
+    private void updateIndicators() {
         int colorLight = getResources().getColor(R.color.event_skipped);
 
         mMoreIcon.setVisibility(mPrayer.anyEventsOn() ? View.VISIBLE : View.GONE);
@@ -343,22 +335,22 @@ public class FragmentPrayer extends Fragment {
         mSoundOffIcon.getDrawable().mutate().setAlpha(mPrayer.skipNextSilent() ? 80 : 255);
     }
 
-    public void onEventMainThread(Events.SkipSilentEvent event){
-		FileLog.d(TAG, "onEvent SilentDisabledEvent");
+    public void onEventMainThread(Events.SkipSilentEvent event) {
+        FileLog.d(TAG, "onEvent SilentDisabledEvent");
 
-        if(event.getPrayerId() == mPrayer.getId())
+        if (event.getPrayerId() == mPrayer.getId())
             showPrayer();
     }
 
-    public void onEventMainThread(Events.PrayerChangedEvent event){
-		FileLog.d(TAG, "onEvent VakatChangedEvent");
+    public void onEventMainThread(Events.PrayerChangedEvent event) {
+        FileLog.d(TAG, "onEvent VakatChangedEvent");
 
         showPrayer();
     }
 
-    public void onEventMainThread(Events.PrayerUpdatedEvent event){
-		FileLog.d(TAG, "onEventMainThread PrayerUpdatedEvent");
-        if(event.getPrayerId() == mPrayer.getId()
+    public void onEventMainThread(Events.PrayerUpdatedEvent event) {
+        FileLog.d(TAG, "onEventMainThread PrayerUpdatedEvent");
+        if (event.getPrayerId() == mPrayer.getId()
                 || (mPrayer.getId() == Prayer.JUMA && event.getPrayerId() == Prayer.DHUHR)) {
 
             showPrayer();

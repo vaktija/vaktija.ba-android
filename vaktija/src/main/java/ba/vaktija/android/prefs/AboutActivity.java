@@ -1,14 +1,9 @@
 package ba.vaktija.android.prefs;
 
-import ba.vaktija.android.App;
-import ba.vaktija.android.BaseActivity;
-import ba.vaktija.android.R;
-
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.appcompat.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,19 +14,25 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
+
 import java.util.Calendar;
 import java.util.Locale;
 
+import ba.vaktija.android.App;
+import ba.vaktija.android.BaseActivity;
+import ba.vaktija.android.R;
+
 public class AboutActivity extends BaseActivity {
-	public static final String TAG = AboutActivity.class.getSimpleName();
+    public static final String TAG = AboutActivity.class.getSimpleName();
 
     private RelativeLayout root;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState){
-		setTheme(TAG);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        setTheme(TAG);
 
-		super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
         root = (RelativeLayout) findViewById(R.id.activity_about_root);
@@ -54,41 +55,41 @@ public class AboutActivity extends BaseActivity {
         TextView copyleftSign = (TextView) findViewById(R.id.activity_about_copyleftSign);
         ImageView vaktija = (ImageView) findViewById(R.id.logo);
         TextView copyleft = (TextView) findViewById(R.id.activity_about_copyleft);
-		
-		App app = (App) getApplication();
 
-		getSupportActionBar().setDisplayShowHomeEnabled(false);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        App app = (App) getApplication();
 
-		Animation rotate = AnimationUtils.loadAnimation(this, R.anim.rotate);
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        copyleft.setText(" 2008 - "+ Calendar.getInstance().get(Calendar.YEAR));
+        Animation rotate = AnimationUtils.loadAnimation(this, R.anim.rotate);
 
-		vaktija.setImageResource(R.drawable.logo);
+        copyleft.setText(" 2008 - " + Calendar.getInstance().get(Calendar.YEAR));
+
+        vaktija.setImageResource(R.drawable.logo);
 
         copyleftSign.startAnimation(rotate);
-		
-		vaktija.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				try {
-				    Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.vaktija.ba"));
-				    startActivity(myIntent);
-				} catch (ActivityNotFoundException e) {
-				    e.printStackTrace();
-				}
-			}
-		});
 
-		app.sendScreenView("About");
-	}
+        vaktija.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.vaktija.ba"));
+                    startActivity(myIntent);
+                } catch (ActivityNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == android.R.id.home) {
-			finish();
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+        app.sendScreenView("About");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

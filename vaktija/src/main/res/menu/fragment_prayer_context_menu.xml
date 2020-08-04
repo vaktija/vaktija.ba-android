@@ -1,28 +1,28 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/menu_fragment_prayer_context_menu_alarm"
+        android:icon="@drawable/ic_alarm_white_24dp"
         android:title="Alarm"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_alarm_white_24dp"/>
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_fragment_prayer_context_menu_notification"
+        android:icon="@drawable/ic_info_outline_white_24dp"
         android:title="Alarm"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_info_outline_white_24dp"/>
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_fragment_prayer_context_menu_silent"
+        android:icon="@drawable/ic_volume_up_white_24dp"
         android:title="Alarm"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_volume_up_white_24dp"/>
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_fragment_prayer_context_menu_settings"
+        android:icon="@drawable/ic_action_overflow"
         android:title="Postavke"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_action_overflow"/>
+        app:showAsAction="always" />
 
 </menu>

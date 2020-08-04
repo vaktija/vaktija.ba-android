@@ -1,4 +1,29 @@
 package ba.vaktija.android.wizard;
+
+import android.app.Activity;
+import android.content.SharedPreferences;
+import android.os.Build;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.Display;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.ListView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import ba.vaktija.android.App;
 import ba.vaktija.android.LocationsAdapter;
 import ba.vaktija.android.R;
@@ -8,29 +33,6 @@ import ba.vaktija.android.prefs.Defaults;
 import ba.vaktija.android.prefs.Prefs;
 import ba.vaktija.android.util.FileLog;
 import ba.vaktija.android.util.Utils;
-
-import android.app.Activity;
-import android.content.SharedPreferences;
-import android.os.Build;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Display;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class LocationFragment extends Fragment implements OnClickListener {
     public static final String TAG = LocationFragment.class.getSimpleName();
@@ -44,13 +46,11 @@ public class LocationFragment extends Fragment implements OnClickListener {
     App app;
 
     SharedPreferences prefs;
-
+    boolean noWizard;
     private int locationId = Defaults.LOCATION_ID;
     private String locationName = Defaults.LOCATION_NAME;
 
-    boolean noWizard;
-
-    public static Fragment newInstance(boolean noWizard){
+    public static Fragment newInstance(boolean noWizard) {
         Bundle args = new Bundle();
         args.putBoolean(EXTRA_NO_WIZARD, noWizard);
         Fragment f = new LocationFragment();
@@ -99,19 +99,19 @@ public class LocationFragment extends Fragment implements OnClickListener {
 
         noWizard = getArguments().getBoolean(EXTRA_NO_WIZARD);
 
-        if(noWizard){
+        if (noWizard) {
             getView().findViewById(R.id.wizard_bottom_nav).setVisibility(View.GONE);
         }
 
         List<Location> locations = app.db.getLocations();
         List<Location> locationsList = new ArrayList<>();
 
-        for(int i = 0; i < locations.size(); i++){
-            if(i == 0){
+        for (int i = 0; i < locations.size(); i++) {
+            if (i == 0) {
                 locationsList.add(new Location("Bosna i Hercegovina", -1));
             }
 
-            if(i == 107){
+            if (i == 107) {
                 locationsList.add(new Location("Sandžak", -1));
             }
 
@@ -132,10 +132,10 @@ public class LocationFragment extends Fragment implements OnClickListener {
         mListView.setAdapter(adapter);
 
         locationId = prefs.getInt(Prefs.SELECTED_LOCATION_ID, Defaults.LOCATION_ID); // 77 - Sarajevo
-        String selectedName = locationId+"";
+        String selectedName = locationId + "";
 
-        FileLog.i(TAG, "locationId: "+ locationId +" adapter.count: "+adapter.getCount());
-        FileLog.i(TAG, "selectedName: "+selectedName);
+        FileLog.i(TAG, "locationId: " + locationId + " adapter.count: " + adapter.getCount());
+        FileLog.i(TAG, "selectedName: " + selectedName);
 
         //		mListView.setSelection(adapter.getIdPosition(locationId));
         mListView.setItemChecked(adapter.getPositionForLocationId(locationId), true);
@@ -143,7 +143,7 @@ public class LocationFragment extends Fragment implements OnClickListener {
         mListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "onItemClick position="+position);
+                Log.d(TAG, "onItemClick position=" + position);
 
                 Location loc = (Location) mListView.getItemAtPosition(position);
 
@@ -158,19 +158,19 @@ public class LocationFragment extends Fragment implements OnClickListener {
         mListView.setSelectionFromTop(adapter.getPositionForLocationId(locationId), getHalfScreenHeight());
     }
 
-    private int getHalfScreenHeight(){
+    private int getHalfScreenHeight() {
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         return (display.getHeight() - 500) / 2;
     }
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.wizard_next){
+        if (v.getId() == R.id.wizard_next) {
             saveSelectedLocation();
         }
     }
 
-    private void saveSelectedLocation(){
+    private void saveSelectedLocation() {
         FileLog.i(TAG, "locationId=" + locationId);
 
         prefs.edit()
@@ -184,7 +184,7 @@ public class LocationFragment extends Fragment implements OnClickListener {
 
         Utils.updateWidget(getActivity());
 
-        if(noWizard){
+        if (noWizard) {
             mActivity.finish();
         } else {
             next.post(new Runnable() {
@@ -196,12 +196,12 @@ public class LocationFragment extends Fragment implements OnClickListener {
         }
     }
 
-    private void replaceFragments(){
+    private void replaceFragments() {
 
         FragmentTransaction ft = mActivity.getSupportFragmentManager()
                 .beginTransaction();
 
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             ft.setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
         }
 

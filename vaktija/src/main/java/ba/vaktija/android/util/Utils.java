@@ -22,33 +22,33 @@ import ba.vaktija.android.models.Prayer;
 import ba.vaktija.android.widget.VaktijaWidgetProvider;
 
 public class Utils {
-	private static final String TAG = Utils.class.getSimpleName();
+    private static final String TAG = Utils.class.getSimpleName();
 
-	public static int getCurrentTimeSec(){
-		Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+    public static int getCurrentTimeSec() {
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
 
-		int currentHours = calendar.get(Calendar.HOUR_OF_DAY);
-		int currentMins = calendar.get(Calendar.MINUTE);
-		int currentSec = calendar.get(Calendar.SECOND);
+        int currentHours = calendar.get(Calendar.HOUR_OF_DAY);
+        int currentMins = calendar.get(Calendar.MINUTE);
+        int currentSec = calendar.get(Calendar.SECOND);
 
-		return currentHours * 3600 + currentMins * 60 + currentSec;
-	}
+        return currentHours * 3600 + currentMins * 60 + currentSec;
+    }
 
     public static String[] concatArrays(String[] a, String[] b) {
         int aLen = a.length;
         int bLen = b.length;
-        String[] c= new String[aLen+bLen];
+        String[] c = new String[aLen + bLen];
         System.arraycopy(a, 0, c, 0, aLen);
         System.arraycopy(b, 0, c, aLen, bLen);
         return c;
     }
 
-    public static void updateWidget(Context context){
+    public static void updateWidget(Context context) {
         Intent intent = new Intent(context, VaktijaWidgetProvider.class);
         intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
         int ids[] = AppWidgetManager.getInstance(context).getAppWidgetIds(
                 new ComponentName(context, VaktijaWidgetProvider.class));
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
         context.sendBroadcast(intent);
     }
 
@@ -77,15 +77,15 @@ public class Utils {
         return value;
     }
 
-    public static CharSequence getTimeTillNext(Prayer currentPrayer, int seconds, boolean ceil){
+    public static CharSequence getTimeTillNext(Prayer currentPrayer, int seconds, boolean ceil) {
 
-        String time = Prayer.getNextVakatTitle(currentPrayer.getId())+" je za "+FormattingUtils.getTimeString(seconds, ceil);
+        String time = Prayer.getNextVakatTitle(currentPrayer.getId()) + " je za " + FormattingUtils.getTimeString(seconds, ceil);
 
         return boldNumbers(time);
 //        return time;
     }
 
-    public static CharSequence boldNumbers(String text){
+    public static CharSequence boldNumbers(String text) {
         Pattern pattern = Pattern.compile("\\d");
 
         SpannableStringBuilder sbOut = new SpannableStringBuilder(text);

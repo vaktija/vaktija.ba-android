@@ -1,30 +1,31 @@
 package ba.vaktija.android;
 
-import com.astuetz.PagerSlidingTabStrip;
-
-import ba.vaktija.android.models.Prayer;
-import ba.vaktija.android.prefs.Prefs;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.ActionBar.OnNavigationListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBar.OnNavigationListener;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+
+import com.astuetz.PagerSlidingTabStrip;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import ba.vaktija.android.models.Prayer;
+import ba.vaktija.android.prefs.Prefs;
 
 public class PrayerActivity extends BaseActivity implements OnNavigationListener {
     public static final String TAG = PrayerActivity.class.getSimpleName();
@@ -58,7 +59,7 @@ public class PrayerActivity extends BaseActivity implements OnNavigationListener
 
         listNav &= App.prefs.getBoolean(Prefs.SEPARATE_JUMA_SETTINGS, true);
 
-        if(listNav){
+        if (listNav) {
             setupActionBarLisNav();
         } else {
 
@@ -77,7 +78,7 @@ public class PrayerActivity extends BaseActivity implements OnNavigationListener
 
             Fragment f = getSupportFragmentManager().findFragmentById(R.id.content);
 
-            if(f == null)
+            if (f == null)
                 f = PrayerActivityFragment.newInstance(prayer.getId(), false);
 
             getSupportFragmentManager()
@@ -87,7 +88,7 @@ public class PrayerActivity extends BaseActivity implements OnNavigationListener
         }
     }
 
-    private void setupActionBarLisNav(){
+    private void setupActionBarLisNav() {
 
         View customAb = LayoutInflater.from(this).inflate(R.layout.action_bar_tabs, null);
         pager.setVisibility(View.VISIBLE);
@@ -133,7 +134,7 @@ public class PrayerActivity extends BaseActivity implements OnNavigationListener
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         boolean isFriday = (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY);
 
-        if(isFriday) {
+        if (isFriday) {
             pager.setCurrentItem(1);
         }
 
@@ -169,18 +170,18 @@ public class PrayerActivity extends BaseActivity implements OnNavigationListener
 
     @Override
     public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-        Log.d(TAG, "onNavigationItemSelected itemPosition="+itemPosition);
+        Log.d(TAG, "onNavigationItemSelected itemPosition=" + itemPosition);
 
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.content);
 
-        if(f != null){
+        if (f != null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .remove(f)
                     .commit();
         }
 
-        if(itemPosition == 0){
+        if (itemPosition == 0) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.content, PrayerActivityFragment.newInstance(prayer.getId(), false))

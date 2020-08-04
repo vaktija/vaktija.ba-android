@@ -1,23 +1,24 @@
 package ba.vaktija.android;
 
-import ba.vaktija.android.wizard.LocationFragment;
-
 import android.os.Bundle;
-import androidx.appcompat.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
+
+import ba.vaktija.android.wizard.LocationFragment;
+
 public class LocationActivity extends BaseActivity {
-	public static final String TAG = LocationActivity.class.getSimpleName();
+    public static final String TAG = LocationActivity.class.getSimpleName();
 
-	@Override
-	public void onCreate(Bundle savedInstanceState){
-		setTheme(TAG);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        setTheme(TAG);
 
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_location);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_location);
 
         getSupportActionBar().setDisplayShowHomeEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -33,25 +34,25 @@ public class LocationActivity extends BaseActivity {
         ab.setDisplayShowCustomEnabled(true);
         ab.setCustomView(customAb);
 
-		getSupportActionBar().setDisplayShowHomeEnabled(false);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		if(savedInstanceState == null){
-			getSupportFragmentManager()
-			.beginTransaction()
-			.add(R.id.activity_location_content, LocationFragment.newInstance(true))
-			.commit();
-		}
-	}
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.activity_location_content, LocationFragment.newInstance(true))
+                    .commit();
+        }
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			finish();
-			return true;
-		}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
 
-		return super.onOptionsItemSelected(item);
-	}
+        return super.onOptionsItemSelected(item);
+    }
 }

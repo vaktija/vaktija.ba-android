@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+
 import ba.vaktija.android.models.Prayer;
 import ba.vaktija.android.models.PrayersSchedule;
 import ba.vaktija.android.prefs.Defaults;
@@ -29,23 +30,19 @@ public class SettingsManager {
     private Context mContext;
     private SharedPreferences prefs;
 
-    public static class SettingsCorruptedException extends Exception{ }
+    private SettingsManager(Context context) {
+        mContext = context;
+        prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    }
 
-    public static class UnsupportedFormatException extends Exception{ }
-
-    public static SettingsManager getInstance(Context context){
-        if(instance == null)
+    public static SettingsManager getInstance(Context context) {
+        if (instance == null)
             instance = new SettingsManager(context);
 
         return instance;
     }
 
-    private SettingsManager(Context context){
-        mContext = context;
-        prefs = PreferenceManager.getDefaultSharedPreferences(context);
-    }
-
-    public String getSettings(){
+    public String getSettings() {
 
         PrayersSchedule schedule = PrayersSchedule.getInstance(mContext);
 
@@ -89,7 +86,7 @@ public class SettingsManager {
         return settings.toString();
     }
 
-    public void restoreSettings(String data) throws SettingsCorruptedException, UnsupportedFormatException{
+    public void restoreSettings(String data) throws SettingsCorruptedException, UnsupportedFormatException {
 
         Gson gson = new Gson();
 
@@ -102,14 +99,14 @@ public class SettingsManager {
             String versionName = settings.get(APP_VERSION_NAME).getAsString();
             int versionCode = settings.get(APP_VERSION_CODE).getAsInt();
 
-            if(versionCode < MIN_VERSION_CODE){
+            if (versionCode < MIN_VERSION_CODE) {
                 throw new UnsupportedFormatException();
             }
 
             try {
                 editor.putString(Prefs.ALARM_TONE_URI, settings.get(Prefs.ALARM_TONE_URI).getAsString());
                 editor.putString(Prefs.NOTIF_TONE_URI, settings.get(Prefs.NOTIF_TONE_URI).getAsString());
-            } catch (UnsupportedOperationException uoe){
+            } catch (UnsupportedOperationException uoe) {
                 uoe.printStackTrace();
                 editor.putString(Prefs.ALARM_TONE_URI, "");
                 editor.putString(Prefs.NOTIF_TONE_URI, "");
@@ -126,7 +123,7 @@ public class SettingsManager {
 
             JsonArray prayersSettings = settings.get(PRAYERS_SETTINGS).getAsJsonArray();
 
-            for(int i = Prayer.FAJR; i <= Prayer.ISHA; i++){
+            for (int i = Prayer.FAJR; i <= Prayer.ISHA; i++) {
                 PrayersSchedule.getInstance(mContext).getPrayer(i).initFromJson(prayersSettings.get(i).getAsJsonObject()).save();
             }
 
@@ -134,11 +131,17 @@ public class SettingsManager {
 
             editor.commit();
 
-        } catch (JsonSyntaxException jse){
+        } catch (JsonSyntaxException jse) {
             throw new SettingsCorruptedException();
-        } catch (NullPointerException npe){
+        } catch (NullPointerException npe) {
             throw new SettingsCorruptedException();
         }
 
+    }
+
+    public static class SettingsCorruptedException extends Exception {
+    }
+
+    public static class UnsupportedFormatException extends Exception {
     }
 }

@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
-<!--    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>-->
+    <!--    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>-->
     <!--
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     -->
@@ -21,13 +21,13 @@
         android:name="ba.vaktija.android.App"
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:label="@string/app_name" >
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round">
         <activity
             android:name="ba.vaktija.android.MainActivity"
-            android:theme="@style/Theme.AppCompat.Light"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:label="@string/app_name" >
+            android:theme="@style/Theme.AppCompat.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,36 +36,32 @@
         </activity>
         <activity
             android:name="ba.vaktija.android.PrayerActivity"
-            android:screenOrientation="portrait"
-            android:label="" >
-        </activity>
+            android:label=""
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name="ba.vaktija.android.MainActivityHelper"
             android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity
             android:name="ba.vaktija.android.prefs.SettingsActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/activity_settings" >
-        </activity>
+            android:label="@string/activity_settings"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name="ba.vaktija.android.wizard.WizardActivity"
-            android:screenOrientation="portrait"
             android:label="@string/app_name"
-            android:theme="@style/AppThemeLight" >
-        </activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeLight"></activity>
         <activity
             android:name="ba.vaktija.android.LocationActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/location" >
-        </activity>
+            android:label="@string/location"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name="ba.vaktija.android.prefs.AboutActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/about_app" >
+            android:label="@string/about_app"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
@@ -74,38 +70,37 @@
         <activity
             android:name="ba.vaktija.android.AlarmActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            android:launchMode="singleInstance"
             android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
             android:theme="@style/AppThemeAlarm" />
 
         <service
             android:name="ba.vaktija.android.service.VaktijaService"
-            android:exported="false" >
-        </service>
+            android:exported="false"></service>
 
-        <receiver android:name="ba.vaktija.android.receiver.RingerChangeReceiver" >
+        <receiver android:name="ba.vaktija.android.receiver.RingerChangeReceiver">
             <intent-filter>
                 <action android:name="android.media.RINGER_MODE_CHANGED" />
             </intent-filter>
         </receiver>
-        <receiver android:name="ba.vaktija.android.receiver.LockChangeReceiver" >
+        <receiver android:name="ba.vaktija.android.receiver.LockChangeReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
-        <receiver android:name="ba.vaktija.android.receiver.BootCompletedReceiver" >
+        <receiver android:name="ba.vaktija.android.receiver.BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name="ba.vaktija.android.receiver.TimeChangedReceiver" >
+        <receiver android:name="ba.vaktija.android.receiver.TimeChangedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
                 <action android:name="android.intent.action.TIME_SET" />
             </intent-filter>
         </receiver>
-        <receiver android:name="ba.vaktija.android.widget.VaktijaWidgetProvider" >
+        <receiver android:name="ba.vaktija.android.widget.VaktijaWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

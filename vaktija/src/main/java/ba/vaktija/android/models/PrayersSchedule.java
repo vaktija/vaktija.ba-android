@@ -5,6 +5,13 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+
 import ba.vaktija.android.App;
 import ba.vaktija.android.prefs.Defaults;
 import ba.vaktija.android.prefs.Prefs;
@@ -12,13 +19,6 @@ import ba.vaktija.android.service.SilentModeManager;
 import ba.vaktija.android.util.FileLog;
 import ba.vaktija.android.util.FormattingUtils;
 import ba.vaktija.android.util.Utils;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * Created by e on 2/6/15.
@@ -42,14 +42,7 @@ public class PrayersSchedule {
     private int currentDay;
     private int currentYear;
 
-    public static PrayersSchedule getInstance(Context context){
-        if(instance == null)
-            instance = new PrayersSchedule(context);
-
-        return instance;
-    }
-
-    private PrayersSchedule(Context context){
+    private PrayersSchedule(Context context) {
         mContext = context;
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
@@ -72,10 +65,48 @@ public class PrayersSchedule {
         mTomorrowsFajr = getTomorrowsFajr();
     }
 
-    private Prayer getTodaysPrayer(int whichPrayer){
+    public static PrayersSchedule getInstance(Context context) {
+        if (instance == null)
+            instance = new PrayersSchedule(context);
+
+        return instance;
+    }
+
+    public static int getDstRespectingPrayerTime(int defaultPrayerTime, int year, int month, int day) {
+        FileLog.d(TAG, "[getDstRespectingPrayerTime defaultPrayerTime=" + defaultPrayerTime + " year=" + year + " month=" + month + " day=" + day + "]");
+
+        // beacuse months have index 0 in java Calendar
+        --month;
+
+        boolean summerTimeOn = isSummerTimeOn(year, month, day);
+
+        FileLog.i(TAG, "summer time on: " + summerTimeOn);
+
+        if (summerTimeOn && (month == Calendar.MARCH || month == Calendar.OCTOBER)) {
+            if (day >= 25 && day <= 30) {
+                FileLog.i(TAG, "adding one hour to default prayer time");
+
+                return defaultPrayerTime + 3600;
+                //return defaultPrayerTime + 60;
+            }
+        }
+
+        return defaultPrayerTime;
+    }
+
+    public static boolean isSummerTimeOn(int year, int month, int day) {
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+
+        return TimeZone.getDefault().inDaylightTime(new Date(calendar.getTimeInMillis()));
+    }
+
+    private Prayer getTodaysPrayer(int whichPrayer) {
         Log.d(TAG, "[getTodaysPrayer whichPrayer=" + whichPrayer + "]");
 
-        if(whichPrayer == Prayer.DHUHR){
+        if (whichPrayer == Prayer.DHUHR) {
             mJuma = new Prayer(
                     getDstRespectingPrayerTime(times[whichPrayer], currentYear, currentMonth, currentDay),
                     Prayer.JUMA);
@@ -86,7 +117,7 @@ public class PrayersSchedule {
                 whichPrayer);
     }
 
-    private Prayer getYesterdaysIsha(){
+    private Prayer getYesterdaysIsha() {
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
 
         calendar.add(Calendar.DATE, -1);
@@ -103,7 +134,7 @@ public class PrayersSchedule {
 
     }
 
-    private Prayer getTomorrowsFajr(){
+    private Prayer getTomorrowsFajr() {
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
 
         calendar.add(Calendar.DATE, 1);
@@ -120,16 +151,16 @@ public class PrayersSchedule {
 
     }
 
-    public List<Prayer> getAllPrayers(){
+    public List<Prayer> getAllPrayers() {
         return mPrayers;
     }
 
-    public Prayer getPrayerForDate(int whichPrayer, int year, int month, int day){
+    public Prayer getPrayerForDate(int whichPrayer, int year, int month, int day) {
         FileLog.d(TAG, "[getPrayerForDate year=" + year + " month=" + month + " day=" + day + "]");
 
         int[] time = app.db.getPrayerTimesSec(month, day, locationId);
 
-        if(isJumaDay(year, month, day) && whichPrayer == Prayer.DHUHR){
+        if (isJumaDay(year, month, day) && whichPrayer == Prayer.DHUHR) {
             return new Prayer(
                     getDstRespectingPrayerTime(time[whichPrayer], year, month, day),
                     Prayer.JUMA);
@@ -140,45 +171,23 @@ public class PrayersSchedule {
                 whichPrayer);
     }
 
-    public static int getDstRespectingPrayerTime(int defaultPrayerTime, int year, int month, int day){
-        FileLog.d(TAG, "[getDstRespectingPrayerTime defaultPrayerTime="+defaultPrayerTime+" year="+year+" month="+month+" day="+day+"]");
-
-        // beacuse months have index 0 in java Calendar
-        --month;
-
-        boolean summerTimeOn = isSummerTimeOn(year, month, day);
-
-        FileLog.i(TAG, "summer time on: "+summerTimeOn);
-
-        if(summerTimeOn && (month == Calendar.MARCH || month == Calendar.OCTOBER)){
-            if(day >= 25 && day <= 30){
-                FileLog.i(TAG, "adding one hour to default prayer time");
-
-                return defaultPrayerTime + 3600;
-                //return defaultPrayerTime + 60;
-            }
-        }
-
-        return defaultPrayerTime;
-    }
-
-    public synchronized Prayer getCurrentPrayer(){
+    public synchronized Prayer getCurrentPrayer() {
         //FileLog.d(TAG, "getCurrentPrayer");
 
         int currentSeconds = Utils.getCurrentTimeSec();
 
-        for(int i = 0; i < mPrayers.size(); i++){
+        for (int i = 0; i < mPrayers.size(); i++) {
 
-            if(currentSeconds >= mPrayers.get(Prayer.ISHA).getPrayerTime()){
+            if (currentSeconds >= mPrayers.get(Prayer.ISHA).getPrayerTime()) {
                 return mPrayers.get(Prayer.ISHA);
             }
 
-            if(currentSeconds < mPrayers.get(i).getPrayerTime()){
-                if(i == 0) {
+            if (currentSeconds < mPrayers.get(i).getPrayerTime()) {
+                if (i == 0) {
                     return mYesterdaysIsha;
                 } else {
 
-                    if(i == Prayer.ASR && isJumaDay()){
+                    if (i == Prayer.ASR && isJumaDay()) {
                         return mJuma;
                     }
 
@@ -190,7 +199,7 @@ public class PrayersSchedule {
         return null;
     }
 
-    public boolean isJumaDay(){
+    public boolean isJumaDay() {
         boolean respectJuma = App.prefs.getBoolean(Prefs.SEPARATE_JUMA_SETTINGS, true);
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         boolean isFriday = (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY);
@@ -198,7 +207,7 @@ public class PrayersSchedule {
         return jumaDay;
     }
 
-    public boolean isJumaDay(int year, int month, int day){
+    public boolean isJumaDay(int year, int month, int day) {
         boolean respectJuma = App.prefs.getBoolean(Prefs.SEPARATE_JUMA_SETTINGS, true);
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.set(Calendar.YEAR, year);
@@ -208,7 +217,7 @@ public class PrayersSchedule {
         return (respectJuma && isFriday);
     }
 
-    public int getTimeTillNextPrayer(){
+    public int getTimeTillNextPrayer() {
 
         Prayer currentPrayer = getCurrentPrayer();
 
@@ -216,7 +225,7 @@ public class PrayersSchedule {
 
         int nextPrayerTime = nextPrayer.getPrayerTime();
 
-        if(isDayEnding()){
+        if (isDayEnding()) {
             nextPrayerTime = ((24 * 3600) + nextPrayerTime) - Utils.getCurrentTimeSec();
         } else {
             nextPrayerTime -= Utils.getCurrentTimeSec();
@@ -225,31 +234,31 @@ public class PrayersSchedule {
         return nextPrayerTime;
     }
 
-    public boolean isNextPrayerApproaching(){
+    public boolean isNextPrayerApproaching() {
         //FileLog.d(TAG, "isNextPrayerApproaching");
         Prayer currentPrayer = getCurrentPrayer();
         Prayer nextPrayer = getNextPrayer(currentPrayer.getId());
 
-        FileLog.i(TAG, "current prayer: "+currentPrayer.getTitle());
-        FileLog.i(TAG, "next prayer: "+nextPrayer.getTitle());
+        FileLog.i(TAG, "current prayer: " + currentPrayer.getTitle());
+        FileLog.i(TAG, "next prayer: " + nextPrayer.getTitle());
 
         int currentTime = Utils.getCurrentTimeSec();
 
-        if(!nextPrayer.isNotifOn() || nextPrayer.skipNextNotif()){
+        if (!nextPrayer.isNotifOn() || nextPrayer.skipNextNotif()) {
             FileLog.i(TAG, "next prayer approaching: NO");
             return false;
         }
 
         int notifActivationTime = nextPrayer.getPrayerTime() - nextPrayer.getNotifMins() * 60;
 
-        FileLog.i(TAG, "notification mins for next prayer: "+nextPrayer.getNotifMins());
+        FileLog.i(TAG, "notification mins for next prayer: " + nextPrayer.getNotifMins());
 
-        FileLog.i(TAG, "notif activation time: "+FormattingUtils.getTimeStringDots(notifActivationTime));
-        FileLog.i(TAG, "current time: "+FormattingUtils.getTimeStringDots(currentTime));
+        FileLog.i(TAG, "notif activation time: " + FormattingUtils.getTimeStringDots(notifActivationTime));
+        FileLog.i(TAG, "current time: " + FormattingUtils.getTimeStringDots(currentTime));
 
         // FileLog.i(TAG, "notif - current time: "+(notifActivationTime - currentTime));
 
-        if(currentTime >= notifActivationTime && currentTime < nextPrayer.getPrayerTime()){
+        if (currentTime >= notifActivationTime && currentTime < nextPrayer.getPrayerTime()) {
             FileLog.i(TAG, "next prayer approaching: YES");
             return true;
         }
@@ -262,19 +271,19 @@ public class PrayersSchedule {
 
         boolean respectJuma = App.prefs.getBoolean(Prefs.SEPARATE_JUMA_SETTINGS, true);
 
-        if(prayerId == Prayer.ISHA) {
-            if(isDayEnding()){
+        if (prayerId == Prayer.ISHA) {
+            if (isDayEnding()) {
                 return mTomorrowsFajr;
             } else {
                 return mPrayers.get(Prayer.FAJR);
             }
         }
 
-        if(prayerId == Prayer.SUNRISE && isJumaDay()){
+        if (prayerId == Prayer.SUNRISE && isJumaDay()) {
             return mJuma;
         }
 
-        if(prayerId == Prayer.JUMA){
+        if (prayerId == Prayer.JUMA) {
             return mPrayers.get(Prayer.ASR);
         }
 
@@ -286,22 +295,22 @@ public class PrayersSchedule {
         boolean respectJuma = App.prefs.getBoolean(Prefs.SEPARATE_JUMA_SETTINGS, true);
         int prayerId = getCurrentPrayer().getId();
 
-        if(prayerId == Prayer.ISHA) {
-            if(isDayEnding()){
+        if (prayerId == Prayer.ISHA) {
+            if (isDayEnding()) {
                 return mTomorrowsFajr;
             } else {
                 return mPrayers.get(Prayer.FAJR);
             }
         }
 
-        if(prayerId == Prayer.SUNRISE && respectJuma){
+        if (prayerId == Prayer.SUNRISE && respectJuma) {
             return mJuma;
         }
 
         return mPrayers.get(prayerId + 1);
     }
 
-    public CharSequence getAllPrayersTimes(){
+    public CharSequence getAllPrayersTimes() {
         Prayer currentPrayer = getCurrentPrayer();
         Prayer nextVakat = getNextPrayer(currentPrayer.getId());
 
@@ -317,7 +326,7 @@ public class PrayersSchedule {
                 .append(getPrayer(Prayer.SUNRISE).getTitle())
                 .append("\n");
 
-        if(isJumaDay()) {
+        if (isJumaDay()) {
             time.append(mJuma.getPrayerTimeString())
                     .append(" - ")
                     .append(mJuma.getTitle());
@@ -343,14 +352,14 @@ public class PrayersSchedule {
         return Utils.boldNumbers(time.toString());
     }
 
-    public CharSequence getCurrentAndNextTime(){
+    public CharSequence getCurrentAndNextTime() {
         Prayer currentPrayer = getCurrentPrayer();
         Prayer nextVakat = getNextPrayer(currentPrayer.getId());
 
         String nextDay = "";
         String prevDay = "";
 
-        if(isDayEnding()){
+        if (isDayEnding()) {
             //nextDay = " (sutra)";
             nextDay = "";
         } else if (currentPrayer.getId() == Prayer.ISHA) {
@@ -359,75 +368,66 @@ public class PrayersSchedule {
         }
 
         String time = currentPrayer.getShortTitle()
-                +prevDay
-                +" "+ currentPrayer.getHrsString()
-                +":"+ currentPrayer.getMinsString()+
-                " | "+nextVakat.getShortTitle()
-                +nextDay
-                +" "+nextVakat.getHrsString()
-                +":"+nextVakat.getMinsString();
+                + prevDay
+                + " " + currentPrayer.getHrsString()
+                + ":" + currentPrayer.getMinsString() +
+                " | " + nextVakat.getShortTitle()
+                + nextDay
+                + " " + nextVakat.getHrsString()
+                + ":" + nextVakat.getMinsString();
 
         return Utils.boldNumbers(time);
     }
 
     public Prayer getPreviousPrayer(int prayerId) {
-        if(prayerId == Prayer.FAJR)
+        if (prayerId == Prayer.FAJR)
             return mYesterdaysIsha;
 
         return mPrayers.get(prayerId - 1);
     }
 
-    public Prayer getPreviousPrayerIgnoringDate(int prayerId){
-        if(prayerId == Prayer.FAJR) {
+    public Prayer getPreviousPrayerIgnoringDate(int prayerId) {
+        if (prayerId == Prayer.FAJR) {
             return mPrayers.get(Prayer.ISHA);
         }
 
-        if(isJumaDay() && prayerId == Prayer.JUMA){
+        if (isJumaDay() && prayerId == Prayer.JUMA) {
             return mPrayers.get(Prayer.SUNRISE);
         }
 
-        if(isJumaDay() && prayerId == Prayer.ASR){
+        if (isJumaDay() && prayerId == Prayer.ASR) {
             return mJuma;
         }
 
         return mPrayers.get(prayerId - 1);
     }
 
-    public static boolean isSummerTimeOn(int year, int month, int day){
-        Calendar calendar = Calendar.getInstance(Locale.getDefault());
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_MONTH, day);
-
-        return TimeZone.getDefault().inDaylightTime(new Date(calendar.getTimeInMillis()));
-    }
-
-    public void reset(){
+    public void reset() {
         Log.d(TAG, "resetting schedule");
         instance = new PrayersSchedule(mContext);
     }
 
     public boolean isNextPrayer(int prayerId) {
-        if(prayerId == Prayer.FAJR && getCurrentPrayer().getId() == Prayer.ISHA) {
+        if (prayerId == Prayer.FAJR && getCurrentPrayer().getId() == Prayer.ISHA) {
             return true;
         }
 
-        if(getCurrentPrayer().getId() == Prayer.SUNRISE && prayerId == Prayer.JUMA){
+        if (getCurrentPrayer().getId() == Prayer.SUNRISE && prayerId == Prayer.JUMA) {
             return true;
         }
 
-        if(getCurrentPrayer().getId() == Prayer.JUMA && prayerId == Prayer.ASR){
+        if (getCurrentPrayer().getId() == Prayer.JUMA && prayerId == Prayer.ASR) {
             return true;
         }
 
-        if(prayerId != Prayer.JUMA){
+        if (prayerId != Prayer.JUMA) {
             return getCurrentPrayer().getId() + 1 == prayerId;
         } else {
             return false;
         }
     }
 
-    public boolean isDayEnding(){
+    public boolean isDayEnding() {
         Prayer current = getCurrentPrayer();
         boolean stepOne = current.getId() == Prayer.ISHA;
 
@@ -440,19 +440,19 @@ public class PrayersSchedule {
         return ending;
     }
 
-    public Prayer getPrayer(int id){
+    public Prayer getPrayer(int id) {
 
-        if(id == Prayer.JUMA){
+        if (id == Prayer.JUMA) {
             return mJuma;
         }
 
         return mPrayers.get(id);
     }
 
-    public int getSilentModeDuration(){
+    public int getSilentModeDuration() {
         int silentTimeout = (getCurrentPrayer().getPrayerTime() + getCurrentPrayer().getSoundOnMins() * 60);
 
-        if(SilentModeManager.getInstance(mContext).isSunriseSilentModeOn()){
+        if (SilentModeManager.getInstance(mContext).isSunriseSilentModeOn()) {
             Prayer sunrise = PrayersSchedule.getInstance(mContext).getPrayer(Prayer.SUNRISE);
             silentTimeout = sunrise.getPrayerTime();// + sunrise.getSoundOnMins(false) * 60;
         }
@@ -460,7 +460,7 @@ public class PrayersSchedule {
         return silentTimeout;
     }
 
-    public String getSilentModeDurationString(){
+    public String getSilentModeDurationString() {
         return FormattingUtils.getTimeStringDots(getSilentModeDuration());
     }
 }
