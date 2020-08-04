@@ -59,12 +59,10 @@
             android:name="ba.vaktija.android.prefs.AboutActivity"
             android:label="@string/about_app"
             android:screenOrientation="portrait">
-            <intent-filter>
+            <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
             </intent-filter>
         </activity>
         <activity
