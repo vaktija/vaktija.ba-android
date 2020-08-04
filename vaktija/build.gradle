@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "ba.vaktija.android"
         minSdkVersion 14
-        targetSdkVersion 28
+        targetSdkVersion 30
     }
 
     buildTypes {
@@ -28,8 +28,9 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'de.greenrobot:eventbus:2.4.0'
     implementation 'com.astuetz:pagerslidingtabstrip:1.0.1'
-    implementation 'uk.co.chrisjenx:calligraphy:2.1.0'
     implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
     implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'io.github.inflationx:calligraphy3:3.1.1'
+    implementation 'io.github.inflationx:viewpump:2.0.3'
     implementation files('libs/systembartint-1.0.4.jar')
 }

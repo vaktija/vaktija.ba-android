@@ -11,6 +11,9 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import io.github.inflationx.calligraphy3.CalligraphyConfig;
+import io.github.inflationx.calligraphy3.CalligraphyInterceptor;
+import io.github.inflationx.viewpump.ViewPump;
 
 import ba.vaktija.android.db.Database;
 import ba.vaktija.android.models.Prayer;
@@ -18,7 +21,6 @@ import ba.vaktija.android.models.PrayersSchedule;
 import ba.vaktija.android.prefs.Defaults;
 import ba.vaktija.android.prefs.Prefs;
 import ba.vaktija.android.util.FileLog;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /*
 @ReportsCrashes(
@@ -75,11 +77,13 @@ public class App extends Application {
 
         vakatPrefs = getSharedPreferences(VAKAT_PREFS, Context.MODE_PRIVATE);
 
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/RobotoCondensed-Regular.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
+        ViewPump.init(ViewPump.builder()
+                .addInterceptor(new CalligraphyInterceptor(
+                        new CalligraphyConfig.Builder()
+                                .setDefaultFontPath("fonts/RobotoCondensed-Regular.ttf")
+                                .setFontAttrId(R.attr.fontPath)
+                                .build()))
+                .build());
 
         checkNotifTone();
         checkAlarmTone();

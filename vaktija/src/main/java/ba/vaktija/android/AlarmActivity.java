@@ -38,8 +38,7 @@ import ba.vaktija.android.util.FileLog;
 import ba.vaktija.android.util.FormattingUtils;
 import ba.vaktija.android.util.Utils;
 import ba.vaktija.android.widgets.SlidingLayout;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
 /*
  This activity plays alarm sound
@@ -100,11 +99,6 @@ public class AlarmActivity extends AppCompatActivity
 
         FileLog.d(TAG, "[*** onCreate ***]");
 
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/RobotoCondensed-Regular.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
 
         mApp = (App) getApplicationContext();
 
@@ -172,7 +166,7 @@ public class AlarmActivity extends AppCompatActivity
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
     }
 
     @Override
