@@ -109,6 +109,10 @@ public class MainActivity extends BaseActivity {
         } else {
             setupActivity();
         }
+
+        checkOverlayPermission();
+        checkDoNotDisturbPermission();
+        checkBatteryOptimizationsPermission();
     }
 
     private void setupActivity() {
@@ -161,10 +165,6 @@ public class MainActivity extends BaseActivity {
         showActionBarInfo();
 
         showActualEventMessage();
-
-        checkOverlayPermission();
-        checkDoNotDisturbPermission();
-        checkBatteryOptimizationsPermission();
     }
 
     private void showActualEventMessage() {
