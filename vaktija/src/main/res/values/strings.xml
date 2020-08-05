@@ -4,12 +4,12 @@
     <string name="app_name">Vaktija.ba</string>
     <string name="crash_toast_text">Vaktija crashed. Send report please.</string>
     <string name="play_url">https://play.google.com/store/apps/details?id=ba.vaktija.android</string>
-    <string name="version_name">1.2.1</string>
-    <string name="prefs_feedback_subject">Vaktija za Android (v1.2.1)</string>
+    <string name="version_name">1.2.2</string>
+    <string name="prefs_feedback_subject">Vaktija za Android (v1.2.2)</string>
     <string name="dev_email">android@vaktija.ba</string>
     <string name="changelog">
-        1.2.1
-        \n\t• Dodati dijalozi za dodavanje potrebnih permisija, popravljen/prilagodjen alarm za Android v10, SDK 30
+        1.2.2
+        \n\t• Dodan dijalog za provjeru i dodavanje potrebnih permisija, popravljen/prilagođen alarm za Android 10
         \n1.1.9.1
         \n\t• Ispravka vremena za Sandzak (NV, NP, PB, PP, SJ, TT)
         \n1.1.8
@@ -124,5 +124,26 @@
     <string name="allow_overlay_message">Da bi alarmi radili ispravno Vaktija.ba aplikaciju je potrebno dodati na listu aplikacija koje imaju Overlay permisiju.</string>
     <string name="allow_do_not_disturb">Vaktija.ba i Do not disturb/Ne ometaj permisija</string>
     <string name="allow_do_not_disturb_message">Da bi gašenje zvukova (tokom namaskog vremena) radilo ispravno, potrebno je Vaktija.ba aplikaciju dodati na listu aplikacija koje imaju Do not disturb/Ne ometaj permisiju</string>
+    <string name="system_settings">Sistemske postavke</string>
+    <string name="label_system_settings_info">Da bi Vaktija radila optimalno, potrebno je da se podese neke sistemske postavke.</string>
+    <string name="label_doze_mode">Doze mod</string>
+    <string name="label_overlay">Overlay permisija</string>
+    <string name="label_doze_mode_description">Potrebno je aplikaciju dodati na listu aplikacija na koje se ne odnose restrikcije za koršitenje baterije</string>
+    <string name="button_open_settings">Otvori postavke</string>
+    <string name="label_dnd_mode">Do Not Disturb permisija</string>
+    <string name="label_dnd_mode_description">Potrebno je aplikaciji dozvoliti upravljanje DnD postavkama kako bi gašenje zvukova radilo pouzdano.\n\nBez Do Not Disturb permisije, gašenje zvukova neće raditi.</string>
+    <string name="label_dont_ask_again">Ne prikazuj ovaj ekran ponovo</string>
+    <string name="button_close">Zatvori</string>
+    <string name="label_doze_mode_set">Doze mod podešen</string>
+    <string name="label_dnd_mode_set">Upravljanje Do Not Disturb modom omogućeno</string>
+    <string name="label_overlay_set">Overlay permisija omogućena</string>
+    <string name="doze_mode_configured">Doze podešen</string>
+    <string name="doze_mode_not_configured">Doze nije podešen</string>
+    <string name="dnd_mode_configured">DnD omogućen</string>
+    <string name="dnd_mode_not_configured">Nedostaje permisija za DnD</string>
+    <string name="silent_was_blocked_by_dnd_revoke">Uključivanje zvukova nije uspjelo zbog nedostatka DnD permisije</string>
+    <string name="settings">Postavke</string>
+    <string name="notif_approaching_channel_desc">Notifikacije za namaze koji nastupaju uskoro</string>
+    <string name="label_overlay_description">Da bi alarmi radili ispravno, aplikaciji je potrebno dati Overlay permisiju</string>
 
 </resources>

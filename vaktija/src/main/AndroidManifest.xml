@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="ba.vaktija.android"
-    android:versionCode="52"
+    android:versionCode="53"
     android:versionName="@string/version_name">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -72,6 +72,11 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeAlarm" />
+
+        <activity
+            android:name=".SystemSettingsHelperActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait" />
 
         <service
             android:name="ba.vaktija.android.service.VaktijaService"

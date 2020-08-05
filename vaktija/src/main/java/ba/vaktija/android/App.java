@@ -1,6 +1,7 @@
 package ba.vaktija.android;
 
 import android.app.Application;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -11,9 +12,6 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import io.github.inflationx.calligraphy3.CalligraphyConfig;
-import io.github.inflationx.calligraphy3.CalligraphyInterceptor;
-import io.github.inflationx.viewpump.ViewPump;
 
 import ba.vaktija.android.db.Database;
 import ba.vaktija.android.models.Prayer;
@@ -21,6 +19,9 @@ import ba.vaktija.android.models.PrayersSchedule;
 import ba.vaktija.android.prefs.Defaults;
 import ba.vaktija.android.prefs.Prefs;
 import ba.vaktija.android.util.FileLog;
+import io.github.inflationx.calligraphy3.CalligraphyConfig;
+import io.github.inflationx.calligraphy3.CalligraphyInterceptor;
+import io.github.inflationx.viewpump.ViewPump;
 
 /*
 @ReportsCrashes(
@@ -46,6 +47,8 @@ public class App extends Application {
 
     public Database db;
 
+    public NotificationManager notificationManager;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -66,6 +69,8 @@ public class App extends Application {
         db = new Database(this);
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         int locationId = prefs.getInt(Prefs.SELECTED_LOCATION_ID, Defaults.LOCATION_ID);
         prefs.edit().putString(Prefs.LOCATION_NAME, db.getLocationName(locationId)).commit();

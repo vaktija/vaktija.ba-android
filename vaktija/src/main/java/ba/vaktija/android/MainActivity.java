@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.DialogFragment;
 
@@ -56,6 +57,9 @@ import de.greenrobot.event.EventBus;
 
 public class MainActivity extends BaseActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
+
+    private static final int REQUEST_SYSTEM_SETTINGS = 100;
+
     private SharedPreferences mPrefs;
     private App mApp;
     private boolean mIsDualPane = false;
@@ -102,15 +106,24 @@ public class MainActivity extends BaseActivity {
             //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }*/
 
+//        if (!mPrefs.getBoolean(Prefs.WIZARD_COMPLETED, false)) {
+//            startWizard();
+//        } else {
+//            setupActivity();
+//        }
+//
+//        checkOverlayPermission();
+//        checkDoNotDisturbPermission();
+//        checkBatteryOptimizationsPermission();
+
         if (!mPrefs.getBoolean(Prefs.WIZARD_COMPLETED, false)) {
             startWizard();
         } else {
             setupActivity();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                checkPermissionsAndShowDialog();
+            }
         }
-
-        checkOverlayPermission();
-        checkDoNotDisturbPermission();
-        checkBatteryOptimizationsPermission();
     }
 
     private void setupActivity() {
@@ -529,6 +542,24 @@ public class MainActivity extends BaseActivity {
 
     public void onEvent(Events.RingerModeChanged event) {
         showActualEventMessage();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void checkPermissionsAndShowDialog() {
+        Log.d(TAG, "checkPermissionsAndShowDialog");
+
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+
+        boolean showAboutDoze = !pm.isIgnoringBatteryOptimizations(getPackageName());
+        boolean showAboutDnd = !App.app.notificationManager.isNotificationPolicyAccessGranted();
+        boolean showAboutOverlay = !Settings.canDrawOverlays(this);
+
+        if (showAboutDoze || showAboutDnd || showAboutOverlay) {
+            startActivityForResult(
+                    new Intent(this, SystemSettingsHelperActivity.class),
+                    REQUEST_SYSTEM_SETTINGS
+            );
+        }
     }
 
     public void checkBatteryOptimizationsPermission() {

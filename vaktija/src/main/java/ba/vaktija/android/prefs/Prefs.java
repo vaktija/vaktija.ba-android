@@ -39,4 +39,5 @@ public class Prefs {
     public static String DEFAULT_THEME_COLOR = "#5ebb46";
     public static String DHUHR_NORMALIZED = "1";
     public static String DHUHD_REAL = "0";
+    public static final String DND_GRANTED = "DND_GRANTED";
 }
