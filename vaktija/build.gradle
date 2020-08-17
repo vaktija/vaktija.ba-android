@@ -1,5 +1,22 @@
 apply plugin: 'com.android.application'
 
+ext {
+    versionCodeFromString = { String versionString ->
+        def pattern = ~/^(\d+)\.(\d+)\.(\d+)$/
+        def matcher = pattern.matcher(versionString)
+        assert matcher.matches(), "Version must match format *.*.*"
+        def x = matcher.group(1).toInteger()
+        def y = matcher.group(2).toInteger()
+        def z = matcher.group(3).toInteger()
+        assert x >= 0 && x < 100, "Version number component can't be greater than 100: $x.*.*"
+        assert y >= 0 && y < 100, "Version number component can't be greater than 100: *.$y.*"
+        assert z >= 0 && z < 100, "Version number component can't be greater than 100: *.*.$z"
+        return (x * 10000) + (y * 100) + z
+    }
+}
+
+def version = "1.2.4"
+
 android {
     compileSdkVersion 30
 
@@ -7,6 +24,8 @@ android {
         applicationId "ba.vaktija.android"
         minSdkVersion 14
         targetSdkVersion 30
+        versionCode versionCodeFromString(version)
+        versionName version
     }
 
     buildTypes {
@@ -17,12 +36,7 @@ android {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    implementation project(':vaktija_androidsupportv4preferencefragment')
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -32,5 +46,6 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'io.github.inflationx:calligraphy3:3.1.1'
     implementation 'io.github.inflationx:viewpump:2.0.3'
+    implementation "androidx.preference:preference:1.1.1"
     implementation files('libs/systembartint-1.0.4.jar')
 }

@@ -21,75 +21,79 @@ import java.util.Locale;
 
 import ba.vaktija.android.App;
 import ba.vaktija.android.BaseActivity;
+import ba.vaktija.android.BuildConfig;
 import ba.vaktija.android.R;
 
 public class AboutActivity extends BaseActivity {
-    public static final String TAG = AboutActivity.class.getSimpleName();
+	public static final String TAG = AboutActivity.class.getSimpleName();
 
-    private RelativeLayout root;
+	private RelativeLayout root;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        setTheme(TAG);
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		setTheme(TAG);
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_about);
 
-        root = (RelativeLayout) findViewById(R.id.activity_about_root);
+		root = (RelativeLayout) findViewById(R.id.activity_about_root);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        View customAb = LayoutInflater.from(this).inflate(R.layout.action_bar_title, null);
-        TextView title = (TextView) customAb.findViewById(R.id.action_bar_title);
+		View customAb = LayoutInflater.from(this).inflate(R.layout.action_bar_title, null);
+		TextView title = (TextView) customAb.findViewById(R.id.action_bar_title);
 
-        title.setText(getString(R.string.about_app).toUpperCase(Locale.getDefault()));
-        title.setTypeface(App.robotoCondensedRegular);
+		title.setText(getString(R.string.about_app).toUpperCase(Locale.getDefault()));
+		title.setTypeface(App.robotoCondensedRegular);
 
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayShowHomeEnabled(false);
-        ab.setDisplayShowTitleEnabled(false);
-        ab.setDisplayShowCustomEnabled(true);
-        ab.setCustomView(customAb);
+		ActionBar ab = getSupportActionBar();
+		ab.setDisplayShowHomeEnabled(false);
+		ab.setDisplayShowTitleEnabled(false);
+		ab.setDisplayShowCustomEnabled(true);
+		ab.setCustomView(customAb);
 
-        TextView copyleftSign = (TextView) findViewById(R.id.activity_about_copyleftSign);
-        ImageView vaktija = (ImageView) findViewById(R.id.logo);
-        TextView copyleft = (TextView) findViewById(R.id.activity_about_copyleft);
+		TextView versionTextView = findViewById(R.id.version_name);
+		versionTextView.setText(BuildConfig.VERSION_NAME);
 
-        App app = (App) getApplication();
+		TextView copyleftSign = (TextView) findViewById(R.id.activity_about_copyleftSign);
+		ImageView vaktija = (ImageView) findViewById(R.id.logo);
+		TextView copyleft = (TextView) findViewById(R.id.activity_about_copyleft);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		App app = (App) getApplication();
 
-        Animation rotate = AnimationUtils.loadAnimation(this, R.anim.rotate);
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        copyleft.setText(" 2008 - " + Calendar.getInstance().get(Calendar.YEAR));
+		Animation rotate = AnimationUtils.loadAnimation(this, R.anim.rotate);
 
-        vaktija.setImageResource(R.drawable.logo);
+		copyleft.setText(" 2008 - " + Calendar.getInstance().get(Calendar.YEAR));
 
-        copyleftSign.startAnimation(rotate);
+		vaktija.setImageResource(R.drawable.logo);
 
-        vaktija.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.vaktija.ba"));
-                    startActivity(myIntent);
-                } catch (ActivityNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+		copyleftSign.startAnimation(rotate);
 
-        app.sendScreenView("About");
-    }
+		vaktija.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				try {
+					Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.vaktija.ba"));
+					startActivity(myIntent);
+				} catch (ActivityNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+		app.sendScreenView("About");
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
+			finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 }

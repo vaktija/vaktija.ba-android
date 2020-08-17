@@ -7,35 +7,35 @@
     android:orientation="horizontal">
 
     <TextView
-        android:id="@+id/main_actual_event_message"
         android:layout_width="0dp"
+        android:layout_weight="1"
+        android:id="@+id/main_actual_event_message"
+        android:text="New Text"
         android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_gravity="center_vertical"
         android:layout_margin="14dp"
-        android:layout_weight="1"
-        android:text="New Text"
-        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#fff" />
 
     <TextView
-        android:id="@+id/main_actual_event_hide"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:background="@drawable/simple_button"
+        android:id="@+id/main_actual_event_hide"
         android:padding="5dp"
+        android:layout_gravity="center_vertical"
         android:text="Sakrij"
+        android:background="@drawable/simple_button"
         android:textColor="?attr/colorAccent" />
 
     <TextView
-        android:id="@+id/main_actual_event_action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:id="@+id/main_actual_event_action"
         android:layout_marginLeft="5dp"
+        android:layout_gravity="center_vertical"
         android:layout_marginRight="14dp"
-        android:background="@drawable/simple_button"
         android:padding="5dp"
         android:text="Uključi"
+        android:background="@drawable/simple_button"
         android:textColor="?attr/colorAccent" />
 </LinearLayout>

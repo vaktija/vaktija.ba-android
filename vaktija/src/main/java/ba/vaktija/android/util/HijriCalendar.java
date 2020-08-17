@@ -15,18 +15,18 @@ public final class HijriCalendar {
     public final static String[] WEEKDAYS = {"", "Ahad", "Ithnin", "Thulatha", "Arbaa", "Khams", "Jumuah", "Sabt"};
     public final static String[] MONTHS = {
             "",
-            "Muharrem",
-            "Safer",
-            "Rebiu-l-evvel",
-            "Rabiu-l-ahir",
-            "Džumade-l-ula",
-            "Džumade-l-uhra",
-            "Redžeb",
-            "Ša'ban",
-            "Ramazan",
-            "Ševval",
-            "Zu-l-ka'de",
-            "Zu-l-hidždže"
+            "muharrem",
+            "safer",
+            "rebiu-l-evvel",
+            "rebiu-l-ahir",
+            "džumade-l-ula",
+            "džumade-l-uhra",
+            "redžeb",
+            "ša'ban",
+            "ramazan",
+            "ševval",
+            "zu-l-ka'de",
+            "zu-l-hidždže"
     };
 
     public final static double[] UMMALQURA_DAT = {
@@ -180,6 +180,6 @@ public final class HijriCalendar {
 
     public static String getSimpleDate(Calendar cal) {
         int[] dt = ummalQuraCalendar(cal);
-        return dt[1] + ". " + MONTHS[dt[2]] + " " + dt[3] + "H";
+        return dt[1] + ". " + MONTHS[dt[2]] + " " + dt[3];
     }
 }

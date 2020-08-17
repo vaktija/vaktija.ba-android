@@ -3,9 +3,11 @@ package ba.vaktija.android.prefs;
 public class Prefs {
     public static final boolean DEBUG = true;
     public static final boolean FILE_LOG = false;
-    public static final String ASK_NO_MORE_OVERLAY = "ASK_NO_MORE_OVERLAY";
-    public static final String ASK_NO_MORE_BATTERY_OPTIMIZATIONS = "ASK_NO_MORE_BATTERY_OPTIMIZATIONS";
-    public static final String ASK_NO_MORE_DO_NOT_DISTURB = "ASK_NO_MORE_DO_NOT_DISTURB";
+
+    public static final String ASK_NO_MORE_DOZE = "ASK_NO_MORE_DOZE";
+    public static final String SILENT_BLOCKED_BY_DND_REVOKE = "SILENT_BLOCKED_BY_DND_REVOKE";
+    public static String DEFAULT_THEME_COLOR = "#5ebb46";
+
     public static final String STATUSBAR_NOTIFICATION = "statusbarNotification";
     public static final String SILENT_SET_BY_APP = "SILENT_SET_BY_APP";
     public static final String SELECTED_LOCATION_ID = "selectedLocation";
@@ -30,14 +32,14 @@ public class Prefs {
     public static final String EXPORT = "export";
     public static final String IMPORT = "import";
     public static final String ALL_PRAYERS_IN_NOTIF = "ALL_PRAYERS_IN_NOTIF";
+
     public static final String ACTUAL_EVENT_MESSAGE_SHOWN = "actualEventMessageShown";
     public static final String ALARM_ACTIVE = "alarmActive";
     public static final String SILENT_DISABLED_BY_USER = "silentDisabledByUser";
     public static final String FEEDBACK = "feedback";
     public static final String ABOUT = "about";
     public static final String SILENT_VIBRATION_SETTINGS_ADJUSTED = "SILENT_VIBRATION_SETTINGS_ADJUSTED";
-    public static String DEFAULT_THEME_COLOR = "#5ebb46";
     public static String DHUHR_NORMALIZED = "1";
-    public static String DHUHD_REAL = "0";
     public static final String DND_GRANTED = "DND_GRANTED";
+    public static String DHUHD_REAL = "0";
 }

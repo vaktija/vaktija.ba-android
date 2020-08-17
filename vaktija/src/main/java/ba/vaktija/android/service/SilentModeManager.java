@@ -1,12 +1,14 @@
 package ba.vaktija.android.service;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
+import ba.vaktija.android.App;
 import ba.vaktija.android.models.Prayer;
 import ba.vaktija.android.models.PrayersSchedule;
 import ba.vaktija.android.prefs.Prefs;
@@ -21,11 +23,13 @@ public class SilentModeManager {
     private AlarmManager mAlarmManager;
     private SharedPreferences mPrefs;
     private Context mContext;
+    private NotificationManager notificationManager;
 
     private SilentModeManager(Context context) {
         mContext = context;
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
@@ -38,16 +42,11 @@ public class SilentModeManager {
     }
 
     public boolean isSilentOn() {
-        return mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_NORMAL;
-    }
-
-    public void disableSilent() {
-        mPrefs.edit()
-                .putBoolean(Prefs.SILENT_BY_APP, false)
-                .putBoolean(Prefs.GOING_SILENT, false)
-                .putBoolean(Prefs.COMMING_FROM_SILENT, true)
-                .commit();
-        mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return notificationManager.getCurrentInterruptionFilter() == NotificationManager.INTERRUPTION_FILTER_NONE;
+        } else {
+            return mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_NORMAL;
+        }
     }
 
     public boolean silentSetByApp() {
@@ -77,20 +76,25 @@ public class SilentModeManager {
                     .putBoolean(Prefs.COMMING_FROM_SILENT, false)
                     .commit();
 
-            // because... https://code.google.com/p/android/issues/detail?id=78652
-            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) {
-                mAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
-                FileLog.i(TAG, "set ringer mode to RINGER_MODE_VIBRATE");
-            } else {
-                mAudioManager.setRingerMode(
-                        isVibrationOff()
-                                ? AudioManager.RINGER_MODE_SILENT
-                                : AudioManager.RINGER_MODE_VIBRATE);
-                FileLog.i(TAG, "set ringer mode to " +
-                        (isVibrationOff()
-                                ? "RINGER_MODE_SILENT"
-                                : "RINGER_MODE_VIBRATE"));
-            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                if (App.app.notificationManager.isNotificationPolicyAccessGranted()) {
+                    notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
+                }
+            } else
+                // because... https://code.google.com/p/android/issues/detail?id=78652
+                if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) {
+                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                    FileLog.i(TAG, "set ringer mode to RINGER_MODE_VIBRATE");
+                } else {
+                    mAudioManager.setRingerMode(
+                            isVibrationOff()
+                                    ? AudioManager.RINGER_MODE_SILENT
+                                    : AudioManager.RINGER_MODE_VIBRATE);
+                    FileLog.i(TAG, "set ringer mode to " +
+                            (isVibrationOff()
+                                    ? "RINGER_MODE_SILENT"
+                                    : "RINGER_MODE_VIBRATE"));
+                }
 
             if (isSunriseSilentModeOn()) {
                 //				currentVakat.scheduleAlternativeSilentOffAlarm(context, mAlarmManager);
@@ -108,7 +112,17 @@ public class SilentModeManager {
                     .putBoolean(Prefs.COMMING_FROM_SILENT, ringerMode != AudioManager.RINGER_MODE_NORMAL)
                     .commit();
 
-            mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                if (App.app.notificationManager.isNotificationPolicyAccessGranted()) {
+                    notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
+                    FileLog.i(TAG, "set interruption filter to INTERRUPTION_FILTER_ALL");
+                } else {
+                    App.prefs.edit().putBoolean(Prefs.SILENT_BLOCKED_BY_DND_REVOKE, true).apply();
+                }
+            } else {
+                mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+            }
+
             FileLog.i(TAG, "set ringer mode to RINGER_MODE_NORMAL");
         }
     }

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -27,9 +28,15 @@ import ba.vaktija.android.util.FileLog;
 import ba.vaktija.android.util.Utils;
 import de.greenrobot.event.EventBus;
 
+import static ba.vaktija.android.service.NotifManager.APPROACHING_CHANNEL;
+import static ba.vaktija.android.service.NotifManager.DEFAULT_CHANNEL;
+
 public class VaktijaService extends Service {
 
     public static final String TAG = VaktijaService.class.getSimpleName();
+
+    public static final String ACTION_DISABLE_SILENT_MODES = "ACTION_DISABLE_SILENT_MODES";
+
     public static final String ACTION_SKIP_SILENT = "ACTION_SKIP_SILENT";
     public static final String ACTION_DISABLE_NOTIFS = "ACTION_DISABLE_NOTIFS";
     public static final String ACTION_ENABLE_NOTIFS = "ACTION_ENABLE_NOTIFS";
@@ -50,6 +57,7 @@ public class VaktijaService extends Service {
     public static final String ACTION_UPDATE = "ACTION_UPDATE";
     public static final String ACTION_VOLUME_CHANGED = "ACTION_VOLUME_CHANGED";
     private static final String STARTED_FROM = "STARTED_FROM";
+
     private static final int NEW_DAY_ALARM_ID = 101010;
 
     private SharedPreferences mPrefs;
@@ -65,22 +73,11 @@ public class VaktijaService extends Service {
 
     private BroadcastReceiver mScreenOnReceiver;
 
-    public static Intent getStartIntent(Context context, String startedFrom) {
-        Intent startIntent = new Intent(context, VaktijaService.class);
-        startIntent.putExtra(STARTED_FROM, startedFrom);
-        return startIntent;
-    }
-
     @Override
     public void onCreate() {
         FileLog.d(TAG, "[onCreate]");
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        FileLog.i(TAG, "wizard completed: " + mPrefs.getBoolean(Prefs.WIZARD_COMPLETED, false));
-
-        if (!mPrefs.getBoolean(Prefs.WIZARD_COMPLETED, false)) {
-            return;
-        }
 
         mApp = (App) getApplicationContext();
 
@@ -98,13 +95,19 @@ public class VaktijaService extends Service {
         mWakeLock.setReferenceCounted(false);
     }
 
+    public static Intent getStartIntent(Context context, String startedFrom) {
+        Intent startIntent = new Intent(context, VaktijaService.class);
+        startIntent.putExtra(STARTED_FROM, startedFrom);
+        return startIntent;
+    }
+
     private void resetStoredState() {
         FileLog.d(TAG, "[resetStoredState]");
 
         SharedPreferences.Editor editor = mPrefs.edit();
 
         for (Prayer p : PrayersSchedule.getInstance(this).getAllPrayers()) {
-            editor.putBoolean(Prefs.APPROACHING_NOTIF_DELETED + "_" + p.getId(), false);
+            editor.putBoolean(Prefs.APPROACHING_NOTIF_DELETED + "_" + (p.getId() + 1), false);
             editor.putBoolean(Prefs.SILENT_NOTIF_DELETED + "_" + p.getId(), false);
         }
 
@@ -117,23 +120,18 @@ public class VaktijaService extends Service {
     public int onStartCommand(final Intent intent, int flags, final int startId) {
         FileLog.d(TAG, "[onStartCommand] startId=" + startId);
 
-        if (!mPrefs.getBoolean(Prefs.WIZARD_COMPLETED, false)) {
-            return START_NOT_STICKY;
-        }
-
-        boolean userQuit = mPrefs.getBoolean(Prefs.USER_CLOSED, false);
-
-        if (userQuit) {
-            FileLog.w(TAG, "App is userQuit");
-            shutdown(startId);
-            return START_NOT_STICKY;
-        }
-
         if (mWakeLock == null) {
             acquireWakeLock();
         }
 
         mWakeLock.acquire(); // TODO can be null?
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForeground(
+                    NotifManager.ONGOING_NOTIF,
+                    NotifManagerFactory.getNotifManager(this).getOngoingNotif(true, DEFAULT_CHANNEL)
+            );
+        }
 
         processStartCommand(intent, startId);
 
@@ -189,26 +187,26 @@ public class VaktijaService extends Service {
             case ACTION_BOOT_COMPLETED:
             case ACTION_TIME_CHANGED:
                 resetDay();
-                resetStoredState();
+                //resetStoredState();
                 scheduleAllEvents();
                 SilentModeManager.getInstance(this).updateSilentMode(this);
-                NotificationsManager.getInstance(this).updateNotification();
+                NotifManagerFactory.getNotifManager(this).updateNotification();
                 break;
             case ACTION_LOCK_CHANGED:
-                NotificationsManager.getInstance(this).updateNotification();
+                NotifManagerFactory.getNotifManager(this).updateNotification();
                 break;
             case ACTION_SILENT_CHANGED:
                 SilentModeManager.getInstance(this).updateSilentMode(this);
-                NotificationsManager.getInstance(this).updateNotification();
+                NotifManagerFactory.getNotifManager(this).updateNotification();
                 mEventBus.post(new Events.PrayerChangedEvent());
                 scheduleSilentActivationEvents();
                 break;
             case ACTION_SILENT_ACTIVATED:
                 SilentModeManager.getInstance(this).updateSilentMode(this);
-                NotificationsManager.getInstance(this).updateNotification();
+                NotifManagerFactory.getNotifManager(this).updateNotification();
                 break;
             case ACTION_NOTIF_CHANGED:
-                NotificationsManager.getInstance(this).updateNotification();
+                NotifManagerFactory.getNotifManager(this).updateNotification();
                 scheduleAllNotifications();
                 break;
             case ACTION_ALARM_CHANGED:
@@ -222,24 +220,36 @@ public class VaktijaService extends Service {
             case ACTION_SKIP_SILENT:
                 skipSilent();
                 SilentModeManager.getInstance(this).updateSilentMode(this);
-                NotificationsManager.getInstance(this).updateNotification();
+                NotifManagerFactory.getNotifManager(this).updateNotification();
                 mEventBus.post(new Events.PrayerChangedEvent());
                 break;
             case ACTION_PRAYER_CHANGE:
                 resetPrevoiusPrayerSkips();
                 resetStoredState();
                 SilentModeManager.getInstance(this).updateSilentMode(this);
-                NotificationsManager.getInstance(this).updateNotification();
+                NotifManagerFactory.getNotifManager(this).updateNotification();
                 mEventBus.post(new Events.PrayerChangedEvent());
                 Utils.updateWidget(this);
+                NotifManagerFactory.getNotifManager(this).cancelApproachingNotif();
                 break;
             case ACTION_DEACTIVATE_SILENT:
                 SilentModeManager.getInstance(this).updateSilentMode(this);
-                NotificationsManager.getInstance(this).updateNotification();
+                NotifManagerFactory.getNotifManager(this).updateNotification();
                 mEventBus.post(new Events.PrayerChangedEvent());
                 break;
             case ACTION_SHOW_APPROACHING_NOTIFICATION:
-                NotificationsManager.getInstance(this).showApproachingNotification();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    stopForeground(true);
+
+                    startForeground(
+                            NotifManager.ONGOING_NOTIF,
+                            NotifManagerFactory.getNotifManager(this).getOngoingNotif(true, APPROACHING_CHANNEL)
+                    );
+                } else {
+                    NotifManagerFactory.getNotifManager(this).showApproachingNotification();
+                }
+
                 break;
             case ACTION_DISABLE_NOTIFS:
                 enableNotificaion(false);
@@ -253,21 +263,20 @@ public class VaktijaService extends Service {
             case ACTION_SILENT_NOTIFICATION_DELETED:
                 onSilentNotifDeleted();
                 break;
+            case ACTION_DISABLE_SILENT_MODES:
+                disableSilentModes();
+                break;
             case ACTION_QUIT:
                 shutdown(startId);
                 break;
             default:
                 scheduleAllEvents();
                 SilentModeManager.getInstance(this).updateSilentMode(this);
-                NotificationsManager.getInstance(this).updateNotification();
+                NotifManagerFactory.getNotifManager(this).updateNotification();
                 break;
         }
 
         //dumpEventsTimeline();
-    }
-
-    private void enableNotificaion(final boolean enabled) {
-        NotificationsManager.getInstance(this).setNotificationsEnabled(enabled);
     }
 
     private void dumpEventsTimeline() {
@@ -294,6 +303,10 @@ public class VaktijaService extends Service {
         FileLog.newLine(1);
     }
 
+    private void enableNotificaion(final boolean enabled) {
+        NotifManagerFactory.getNotifManager(this).setNotificationsEnabled(enabled);
+    }
+
     private void registerScreenOnReceiver() {
         FileLog.d(TAG, "[registerScreenOnReceiver]");
 
@@ -303,7 +316,7 @@ public class VaktijaService extends Service {
             public void onReceive(Context context, Intent intent) {
                 FileLog.d(TAG, "mScreenOnReceiver onReceive");
 
-                NotificationsManager.getInstance(VaktijaService.this).updateNotification();
+                NotifManagerFactory.getNotifManager(VaktijaService.this).updateNotification();
             }
         };
 
@@ -314,7 +327,7 @@ public class VaktijaService extends Service {
     private void onSilentNotifDeleted() {
         FileLog.d(TAG, "[onSilentNotifDeleted]");
 
-        NotificationsManager.getInstance(VaktijaService.this).onSilentNotifDeleted();
+        NotifManagerFactory.getNotifManager(VaktijaService.this).onSilentNotifDeleted();
         mApp.sendEvent("Silent notification deleted", "Deleted for " + mPrayer.getTitle());
 
     }
@@ -322,23 +335,9 @@ public class VaktijaService extends Service {
     private void onApproachingNotifDeleted() {
         FileLog.d(TAG, "[onApproachingNotifDeleted]");
 
-        NotificationsManager.getInstance(this).onApproachingNotifDeleted();
+        NotifManagerFactory.getNotifManager(this).onApproachingNotifDeleted();
 
         mApp.sendEvent("Approaching notification deleted", "Deleted for " + mPrayer.getTitle());
-    }
-
-    private void shutdown(int startId) {
-        FileLog.d(TAG, "[### shutdown]");
-
-        NotificationsManager.getInstance(this).cancelNotification();
-
-        for (Prayer p : PrayersSchedule.getInstance(this).getAllPrayers()) {
-            p.cancelAllAlarms(this, mAlarmManager);
-        }
-
-        resetStoredState();
-        mWakeLock.release();
-        stopSelf(startId);
     }
 
     private void resetDay() {
@@ -498,14 +497,18 @@ public class VaktijaService extends Service {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        FileLog.d(TAG, "[onDestroy]");
+    private void shutdown(int startId) {
+        FileLog.d(TAG, "[### shutdown]");
 
-        NotificationsManager.getInstance(this).cancelNotification();
-        unregisterReceiver(mScreenOnReceiver);
+        NotifManagerFactory.getNotifManager(this).cancelNotification();
 
-        super.onDestroy();
+        for (Prayer p : PrayersSchedule.getInstance(this).getAllPrayers()) {
+            p.cancelAllAlarms(this, mAlarmManager);
+        }
+
+        resetStoredState();
+        mWakeLock.release();
+        stopSelf(startId);
     }
 
     private void scheduleNewDayAlarm() {
@@ -537,5 +540,38 @@ public class VaktijaService extends Service {
                 NEW_DAY_ALARM_ID,
                 intent,
                 PendingIntent.FLAG_CANCEL_CURRENT);
+    }
+
+    @Override
+    public void onDestroy() {
+        FileLog.d(TAG, "[onDestroy]");
+
+        NotifManagerFactory.getNotifManager(this).cancelNotification();
+        try {
+            unregisterReceiver(mScreenOnReceiver);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        super.onDestroy();
+    }
+
+    private void disableSilentModes() {
+        FileLog.d(TAG, "[disableSilentModes]");
+        List<Prayer> prayers = new ArrayList<>();
+
+        prayers.addAll(PrayersSchedule.getInstance(this).getAllPrayers());
+
+        if (PrayersSchedule.getInstance(this).isJumaDay()) {
+            prayers.remove(Prayer.DHUHR);
+            Prayer juma = PrayersSchedule.getInstance(this).getPrayer(Prayer.JUMA);
+            juma.setSilentOn(false);
+            EventBus.getDefault().post(new Events.SkipSilentEvent(Prayer.JUMA));
+        }
+
+        for (Prayer v : prayers) {
+            v.setSilentOn(false);
+            EventBus.getDefault().post(new Events.SkipSilentEvent(v.getId()));
+        }
     }
 }

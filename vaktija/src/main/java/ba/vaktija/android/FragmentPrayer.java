@@ -26,6 +26,7 @@ import ba.vaktija.android.models.Prayer;
 import ba.vaktija.android.models.PrayersSchedule;
 import ba.vaktija.android.prefs.Prefs;
 import ba.vaktija.android.service.VaktijaService;
+import ba.vaktija.android.service.VaktijaServiceHelper;
 import ba.vaktija.android.util.FileLog;
 import ba.vaktija.android.util.FormattingUtils;
 import de.greenrobot.event.EventBus;
@@ -36,8 +37,22 @@ public class FragmentPrayer extends Fragment {
     public static final String TAG = FragmentPrayer.class.getSimpleName();
 
     public static final String EXTRA_ID = "EXTRA_ID";
+
+    private Prayer mPrayer;
+
+    private SharedPreferences mPrefs;
+    private AppCompatActivity mActivity;
+
+    private App mApp;
+
+    private CountDownTimer mCountDownTimer;
+
     int mVakatId = -1;
+
     boolean mLandscapeMode = false;
+
+    private EventBus mEventBus = EventBus.getDefault();
+
     View root;
     TextView mPrayerTitle;
     TextView mPrayerTimer;
@@ -52,12 +67,7 @@ public class FragmentPrayer extends Fragment {
     ImageView mAlarmIcon;
     ImageView mNotifIcon;
     ImageView mMoreIcon;
-    private Prayer mPrayer;
-    private SharedPreferences mPrefs;
-    private AppCompatActivity mActivity;
-    private App mApp;
-    private CountDownTimer mCountDownTimer;
-    private EventBus mEventBus = EventBus.getDefault();
+
     private boolean mRespectJuma;
 
     @Override
@@ -183,7 +193,7 @@ public class FragmentPrayer extends Fragment {
                         PrayersSchedule.getInstance(mApp).reset();
                         Intent service = VaktijaService.getStartIntent(mActivity, TAG + " onClick()");
                         service.setAction(action);
-                        mActivity.startService(service);
+                        VaktijaServiceHelper.startService(mActivity, service);
                         return true;
                     }
                 });

@@ -12,6 +12,8 @@ import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.cardview.widget.CardView;
@@ -24,6 +26,7 @@ import ba.vaktija.android.models.PrayersSchedule;
 import ba.vaktija.android.prefs.Defaults;
 import ba.vaktija.android.prefs.Prefs;
 import ba.vaktija.android.service.VaktijaService;
+import ba.vaktija.android.service.VaktijaServiceHelper;
 import ba.vaktija.android.util.FileLog;
 import ba.vaktija.android.util.FormattingUtils;
 import ba.vaktija.android.util.Utils;
@@ -39,6 +42,8 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
     private static final String EXTRA_RESPECT_JUMA = "EXTRA_RESPECT_JUMA";
     //	private static final int ALARM_AUDIO_CHOOSER = 1;
     //	private static final int NOTIF_AUDIO_CHOOSER = 2;
+
+    private static final int REQUEST_SYSTEM_SETTINGS = 100;
 
     // User post JELLY_BEAN androids
     SwitchCompat alarmButton;
@@ -72,12 +77,17 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
     boolean invertValues = false;
     Prayer mPrayer;
     App app;
+
+    private boolean respectJuma;
+
+    private boolean mUseCheckBoxes;
+
     float cardElevEnabled;
     float cardElev;
+
     int colorEnabled;
     int colorDisabled;
-    private boolean respectJuma;
-    private boolean mUseCheckBoxes;
+    private Runnable doAfterGrantingDnd;
 
     public static PrayerActivityFragment newInstance(int prayerId, boolean respectJuma) {
         PrayerActivityFragment fragment = new PrayerActivityFragment();
@@ -349,57 +359,57 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
 
         app.prefs.edit()
                 .putBoolean(Prefs.SILENT_NOTIF_DELETED + "_" + mPrayer.getId(), false)
-                .putBoolean(Prefs.APPROACHING_NOTIF_DELETED + "_" + (mPrayer.getId() - 1), false)
+                .putBoolean(Prefs.APPROACHING_NOTIF_DELETED + "_" + mPrayer.getId(), false)
                 .commit();
 
         Intent service = VaktijaService.getStartIntent(app, TAG + ":" + startedFrom);
         service.setAction(action);
-        getActivity().startService(service);
+        VaktijaServiceHelper.startService(requireContext(), service);
 
         Utils.updateWidget(getActivity());
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
         FileLog.d(TAG, "onCheckedChanged");
 
         long start = System.nanoTime();
 
-        String startedFrom = "";
-        String action = "";
+        final StringBuilder startedFrom = new StringBuilder();
+        final StringBuilder action = new StringBuilder();
+        final StringBuilder gaEventAction = new StringBuilder();
         final String gaEventCategory = mPrayer.getTitle() + " settings";
-        String gaEventAction = "";
 
         switch (buttonView.getId()) {
             case R.id.fragment_activity_prayer_notifUseSound:
                 mPrayer.setNotifSoundOn(isChecked);
 
-                startedFrom = "onCheckedChanged-activity_vakat_notifUseSound";
-                action = VaktijaService.ACTION_NOTIF_CHANGED;
-                gaEventAction = isChecked
+                startedFrom.append("onCheckedChanged-activity_vakat_notifUseSound");
+                action.append(VaktijaService.ACTION_NOTIF_CHANGED);
+                gaEventAction.append(isChecked
                         ? "Enabled sound for notifications"
-                        : "Disabled sound for notifications";
+                        : "Disabled sound for notifications");
                 break;
 
             case R.id.fragment_activity_prayer_notifUseVibro:
                 mPrayer.setNotifVibroOn(isChecked);
 
-                startedFrom = "onCheckedChanged-activity_vakat_notifUseVibro";
-                action = VaktijaService.ACTION_NOTIF_CHANGED;
+                startedFrom.append("onCheckedChanged-activity_vakat_notifUseVibro");
+                action.append(VaktijaService.ACTION_NOTIF_CHANGED);
 
-                gaEventAction = isChecked ? "Enabled vibration for notifications"
-                        : "Disabled vibration for notifications";
+                gaEventAction.append(isChecked ? "Enabled vibration for notifications"
+                        : "Disabled vibration for notifications");
 
                 break;
 
             case R.id.fragment_activity_prayer_silentVibroOff:
                 mPrayer.setSilentVibrationOff(isChecked);
 
-                startedFrom = "onCheckedChanged-activity_vakat_vibroOff";
-                action = VaktijaService.ACTION_SILENT_CHANGED;
+                startedFrom.append("onCheckedChanged-activity_vakat_vibroOff");
+                action.append(VaktijaService.ACTION_SILENT_CHANGED);
 
-                gaEventAction = isChecked ? "Disabled vibration in silent mode"
-                        : "Enabled vibration in silent mode";
+                gaEventAction.append(isChecked ? "Disabled vibration in silent mode"
+                        : "Enabled vibration in silent mode");
                 break;
 
             case R.id.activity_vakat_alarmSwitch:
@@ -410,10 +420,10 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
                 mPrayer.setAlarmOn(isChecked);
                 alarmOptionsWrapper.setEnabled(isChecked);
 
-                startedFrom = "onCheckedChanged-activity_vakat_alarmSwitch";
-                action = VaktijaService.ACTION_ALARM_CHANGED;
+                startedFrom.append("onCheckedChanged-activity_vakat_alarmSwitch");
+                action.append(VaktijaService.ACTION_ALARM_CHANGED);
 
-                gaEventAction = isChecked ? "Enabled alarm" : "Disabled alarm";
+                gaEventAction.append(isChecked ? "Enabled alarm" : "Disabled alarm");
 
                 break;
 
@@ -429,53 +439,84 @@ public class PrayerActivityFragment extends Fragment implements SeekBar.OnSeekBa
                 mPrayer.setNotifOn(isChecked);
                 notifOptionsWrapper.setEnabled(isChecked);
 
-                startedFrom = "onCheckedChanged-activity_vakat_notifSwitch";
-                action = VaktijaService.ACTION_NOTIF_CHANGED;
+                startedFrom.append("onCheckedChanged-activity_vakat_notifSwitch");
+                action.append(VaktijaService.ACTION_NOTIF_CHANGED);
 
-                gaEventAction = isChecked ? "Enabled notification" : "Disabled notification";
+                gaEventAction.append(isChecked ? "Enabled notification" : "Disabled notification");
 
                 break;
 
             case R.id.activity_vakat_silentSwitch:
             case R.id.activity_vakat_silentCheckBox:
 
-                vibroOff.setTextColor(isChecked ? colorEnabled : colorDisabled);
-                silent.setCardElevation(isChecked ? cardElevEnabled : cardElev);
+                doAfterGrantingDnd = new Runnable() {
+                    @Override
+                    public void run() {
+                        vibroOff.setTextColor(isChecked ? colorEnabled : colorDisabled);
+                        silent.setCardElevation(isChecked ? cardElevEnabled : cardElev);
 
-                soundOptionsWrapper.setEnabled(isChecked);
+                        soundOptionsWrapper.setEnabled(isChecked);
 
-                mPrayer.setSkipNextSilent(false);
-                mPrayer.setSilentOn(isChecked);
+                        mPrayer.setSkipNextSilent(false);
+                        mPrayer.setSilentOn(isChecked);
 
-                startedFrom = "onCheckedChanged-activity_vakat_silentSwitch";
-                action = VaktijaService.ACTION_SILENT_CHANGED;
+                        startedFrom.append("onCheckedChanged-activity_vakat_silentSwitch");
+                        action.append(VaktijaService.ACTION_SILENT_CHANGED);
 
-                gaEventAction = isChecked ? "Enabled silent mode" : "Disabled silent mode";
+                        gaEventAction.append(isChecked ? "Enabled silent mode" : "Disabled silent mode");
+                    }
+                };
+
+                if (isChecked && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+                        && !App.app.notificationManager.isNotificationPolicyAccessGranted()) {
+
+                    startActivityForResult(
+                            new Intent(requireActivity(), SystemSettingsHelperActivity.class),
+                            REQUEST_SYSTEM_SETTINGS);
+                } else {
+                    doAfterGrantingDnd.run();
+                }
 
                 break;
         }
-
-        final String serviceAction = action;
-        final String serviceStartedFrom = startedFrom;
-        final String eventAction = gaEventAction;
 
         mPrayer.save();
 
         getView().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent service = VaktijaService.getStartIntent(getActivity(), TAG + ":" + serviceStartedFrom);
-                service.setAction(serviceAction);
-                getActivity().startService(service);
+                Intent service = VaktijaService.getStartIntent(getActivity(), TAG + ":" + startedFrom.toString());
+                service.setAction(action.toString());
+                VaktijaServiceHelper.startService(requireContext(), service);
 
                 Utils.updateWidget(getActivity());
 
-                app.sendEvent(gaEventCategory, eventAction);
+                app.sendEvent(gaEventCategory, action.toString());
             }
         }, 500);
 
         long endTime = System.nanoTime();
 
         Log.i(TAG, "onChecked changed done in " + (endTime - start) / 1000.0 + " us");
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_SYSTEM_SETTINGS) {
+
+            if (App.app.notificationManager.isNotificationPolicyAccessGranted()) {
+
+                if (doAfterGrantingDnd != null) {
+                    doAfterGrantingDnd.run();
+                    doAfterGrantingDnd = null;
+                }
+
+            } else {
+                silentButton.setChecked(false);
+            }
+        }
     }
 }

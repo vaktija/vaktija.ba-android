@@ -9,21 +9,21 @@
         android:layout_gravity="center">
 
         <TextView
-            android:id="@+id/widget_layout_keyguard_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/widget_layout_keyguard_info"
+            android:layout_margin="5dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_margin="5dp"
             android:text="Učitavam..." />
 
         <TextView
-            android:id="@+id/widget_layout_keyguard_prevNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/widget_layout_keyguard_info"
-            android:layout_centerHorizontal="true"
+            android:id="@+id/widget_layout_keyguard_prevNext"
             android:layout_margin="5dp"
+            android:layout_centerHorizontal="true"
             android:text="" />
 
     </RelativeLayout>

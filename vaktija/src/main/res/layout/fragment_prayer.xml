@@ -13,23 +13,23 @@
 
         <TextView
             android:id="@+id/vakat_time"
-            fontPath="fonts/RobotoCondensed-Light.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_marginLeft="@dimen/prayer_time_margin_left"
             android:layout_marginRight="@dimen/prayer_time_margin_right"
-            android:includeFontPadding="false"
             android:text="00:00"
+            fontPath="fonts/RobotoCondensed-Light.ttf"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/darker_gray"
+            android:includeFontPadding="false"
             android:textSize="@dimen/vakat_time_size" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:orientation="vertical"
+            android:layout_gravity="center_vertical"
             android:visibility="visible">
 
             <LinearLayout
@@ -41,25 +41,25 @@
                     android:id="@+id/fragment_prayer_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
                     android:ellipsize="end"
-                    android:includeFontPadding="false"
                     android:singleLine="true"
                     android:text="TextView"
+                    android:layout_marginLeft="5dp"
+                    android:includeFontPadding="false"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/vakat_title_size"
                     android:visibility="visible" />
 
                 <TextView
                     android:id="@+id/fragment_prayer_timer"
-                    fontPath="fonts/RobotoCondensed-Light.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    fontPath="fonts/RobotoCondensed-Light.ttf"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="20dp"
                     android:includeFontPadding="false"
-                    android:text="TextView"
                     android:textColor="@android:color/darker_gray"
+                    android:text="TextView"
                     android:textSize="@dimen/vakat_title_size" />
 
             </LinearLayout>
@@ -67,8 +67,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/events_wrapper_height"
-                android:layout_marginLeft="5dp"
                 android:orientation="horizontal"
+                android:layout_marginLeft="5dp"
                 android:visibility="visible">
 
                 <LinearLayout
@@ -92,10 +92,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:text="-10&apos;"
                         android:background="@drawable/tip_bg"
                         android:paddingLeft="6dp"
                         android:paddingRight="4dp"
-                        android:text="-10&apos;"
                         android:textColor="@android:color/darker_gray"
                         android:textSize="@dimen/vakat_mins_size" />
                 </LinearLayout>
@@ -112,8 +112,8 @@
                         android:id="@+id/vakat_notif_icon"
                         android:layout_width="@dimen/vakat_mins_icons_size"
                         android:layout_height="@dimen/vakat_mins_icons_size"
-                        android:layout_gravity="center_vertical"
                         android:duplicateParentState="true"
+                        android:layout_gravity="center_vertical"
                         android:src="@drawable/ic_info" />
 
                     <TextView
@@ -121,10 +121,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:text="-10&apos;"
                         android:background="@drawable/tip_bg"
                         android:paddingLeft="6dp"
                         android:paddingRight="4dp"
-                        android:text="-10&apos;"
                         android:textColor="@android:color/darker_gray"
                         android:textSize="@dimen/vakat_mins_size" />
                 </LinearLayout>
@@ -141,8 +141,8 @@
                         android:id="@+id/vakat_sound_off_icon"
                         android:layout_width="@dimen/vakat_mins_icons_size"
                         android:layout_height="@dimen/vakat_mins_icons_size"
-                        android:layout_gravity="center_vertical"
                         android:duplicateParentState="true"
+                        android:layout_gravity="center_vertical"
                         android:src="@drawable/ic_sound_off" />
 
                     <TextView
@@ -162,8 +162,8 @@
             <TextView
                 android:id="@+id/vakat_line_2"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
+                android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:gravity="left"
                 android:singleLine="true"
@@ -181,11 +181,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|top"
-        android:background="?attr/selectableItemBackground"
         android:paddingLeft="2dp"
-        android:paddingTop="3dp"
         android:paddingRight="2dp"
         android:paddingBottom="3dp"
+        android:background="?attr/selectableItemBackground"
+        android:paddingTop="3dp"
         android:src="@drawable/ic_action_overflow" />
 
 </FrameLayout>

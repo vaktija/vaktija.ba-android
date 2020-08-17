@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <style name="SeekBargray" parent="android:Widget.Holo.Light.SeekBar">
         <item name="android:progressDrawable">
             @drawable/gray_scrubber_progress_horizontal_holo_light

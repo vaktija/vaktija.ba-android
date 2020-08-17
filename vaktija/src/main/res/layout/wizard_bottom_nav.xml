@@ -17,10 +17,10 @@
 
         <Button
             android:id="@+id/wizard_prev"
-            style="?attr/buttonBarButtonStyle"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            style="?attr/buttonBarButtonStyle"
             android:background="#fff"
             android:gravity="center"
             android:text="NAZAD" />
@@ -32,11 +32,11 @@
 
         <Button
             android:id="@+id/wizard_next"
-            style="?attr/buttonBarButtonStyle"
             android:layout_width="0dip"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            style="?attr/buttonBarButtonStyle"
             android:background="#fff"
+            android:layout_weight="1"
             android:gravity="center"
             android:text="DALJE" />
     </LinearLayout>

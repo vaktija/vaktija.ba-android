@@ -25,20 +25,20 @@
 
                 <TextView
                     android:id="@+id/textView3"
-                    fontPath="fonts/RobotoCondensed-Regular.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:text="VRIJEME ZA PODNE NAMAZ"
                     android:textColor="@android:color/darker_gray"
+                    fontPath="fonts/RobotoCondensed-Regular.ttf"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <RadioGroup
                     android:id="@+id/fragment_vakat_tweaks_radioGroup"
-                    fontPath="fonts/RobotoCondensed-Regular.ttf"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    fontPath="fonts/RobotoCondensed-Regular.ttf"
                     android:layout_marginLeft="10dp">
 
                     <RadioButton
@@ -51,26 +51,26 @@
 
                     <TextView
                         android:id="@+id/textView1"
-                        fontPath="fonts/RobotoCondensed-Regular.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        fontPath="fonts/RobotoCondensed-Regular.ttf"
                         android:layout_marginLeft="30dp"
                         android:text="Podne je u 12:00h za zimsko računanje ili u 13:00h za ljetno računanje vremena" />
 
                     <RadioButton
                         android:id="@+id/radioReal"
-                        fontPath="fonts/RobotoCondensed-Regular.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
+                        fontPath="fonts/RobotoCondensed-Regular.ttf"
                         android:text="@string/real_time"
                         android:textSize="18sp" />
 
                     <TextView
                         android:id="@+id/textView2"
-                        fontPath="fonts/RobotoCondensed-Regular.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        fontPath="fonts/RobotoCondensed-Regular.ttf"
                         android:layout_marginLeft="30dp"
                         android:layout_marginBottom="20dp"
                         android:text="Podne je tačno onda kada nastupi" />
@@ -78,31 +78,31 @@
 
                 <TextView
                     android:id="@+id/textView3"
-                    fontPath="fonts/RobotoCondensed-Regular.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:text="PODNE I DŽUMA"
+                    fontPath="fonts/RobotoCondensed-Regular.ttf"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <CheckBox
-                    android:id="@+id/fragment_vakat_tweaks_jumaChbox"
-                    fontPath="fonts/RobotoCondensed-Regular.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:checked="true"
+                    android:id="@+id/fragment_vakat_tweaks_jumaChbox"
                     android:text="Koristi posebne postavke za džumu"
+                    fontPath="fonts/RobotoCondensed-Regular.ttf"
+                    android:checked="true"
                     android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/fragment_vakat_tweaks_juma_explTxtView"
-                    fontPath="fonts/RobotoCondensed-Regular.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="30dp"
+                    fontPath="fonts/RobotoCondensed-Regular.ttf"
                     android:layout_marginBottom="20dp"
                     android:text="@string/prefs_separateJumaSettings_enabled" />
 

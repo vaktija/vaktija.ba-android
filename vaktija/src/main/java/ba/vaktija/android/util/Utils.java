@@ -77,9 +77,9 @@ public class Utils {
         return value;
     }
 
-    public static CharSequence getTimeTillNext(Prayer currentPrayer, int seconds, boolean ceil) {
+    public static CharSequence getTimeTillNext(Prayer currentPrayer, int seconds) {
 
-        String time = Prayer.getNextVakatTitle(currentPrayer.getId()) + " je za " + FormattingUtils.getTimeString(seconds, ceil);
+        String time = Prayer.getNextVakatTitle(currentPrayer.getId()) + " je za " + FormattingUtils.getTimeString(seconds);
 
         return boldNumbers(time);
 //        return time;
@@ -102,6 +102,4 @@ public class Utils {
 
         return sbOut;
     }
-
-
 }

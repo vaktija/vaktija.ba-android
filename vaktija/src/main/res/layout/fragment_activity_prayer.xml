@@ -16,11 +16,11 @@
             android:id="@+id/activity_vakat_alarm"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            card_view:cardCornerRadius="3dp"
+            card_view:cardElevation="1dp"
             android:layout_marginTop="5dp"
             android:clickable="false"
             android:foreground="?attr/selectableItemBackground"
-            card_view:cardCornerRadius="3dp"
-            card_view:cardElevation="1dp"
             card_view:cardUseCompatPadding="true">
 
             <LinearLayout
@@ -39,12 +39,12 @@
                         android:id="@+id/fragment_activity_prayer_alarmTitle"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
                         android:layout_marginLeft="@dimen/left_rigt_margin"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="1"
                         android:gravity="center_vertical"
-                        android:text="ALARM"
                         android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="ALARM"
                         android:textStyle="bold" />
 
                     <FrameLayout
@@ -79,8 +79,8 @@
                         android:id="@+id/fragment_activity_prayer_alarmTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/left_rigt_margin"
                         android:layout_marginTop="5dp"
+                        android:layout_marginLeft="@dimen/left_rigt_margin"
                         android:duplicateParentState="true"
                         android:gravity="center_vertical"
                         android:text="25 minuta prije"
@@ -90,8 +90,8 @@
                         android:id="@+id/activity_vakat_alarmSeekBar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
                         android:duplicateParentState="true"
+                        android:layout_marginTop="10dp"
                         android:indeterminate="false"
                         android:max="80" />
                 </ba.vaktija.android.widgets.ClickConsumingLinearLayout>
@@ -103,11 +103,11 @@
             android:id="@+id/activity_vakat_notif"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            card_view:cardCornerRadius="3dp"
+            card_view:cardElevation="1dp"
             android:layout_marginTop="5dp"
             android:clickable="false"
             android:foreground="?attr/selectableItemBackground"
-            card_view:cardCornerRadius="3dp"
-            card_view:cardElevation="1dp"
             card_view:cardUseCompatPadding="true">
 
             <LinearLayout
@@ -127,10 +127,10 @@
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="@dimen/left_rigt_margin"
                         android:layout_weight="1"
                         android:gravity="center_vertical"
                         android:text="NOTIFIKACIJE"
+                        android:layout_marginLeft="@dimen/left_rigt_margin"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textStyle="bold" />
 
@@ -169,12 +169,12 @@
                             android:id="@+id/fragment_activity_prayer_notifUseSound"
                             android:layout_width="0dip"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/left_rigt_margin"
                             android:layout_marginTop="5dp"
                             android:layout_weight="1"
                             android:duplicateParentState="true"
-                            android:text="Zvuk"
+                            android:layout_marginLeft="@dimen/left_rigt_margin"
                             android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Zvuk"
                             android:textColor="@color/theme_gray" />
 
                         <CheckBox
@@ -190,14 +190,15 @@
                     </LinearLayout>
 
 
+
                     <TextView
                         android:id="@+id/fragment_activity_prayer_notifTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/left_rigt_margin"
                         android:layout_marginTop="5dp"
                         android:duplicateParentState="true"
                         android:gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/left_rigt_margin"
                         android:text="5 minuta prije nastupa"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -205,8 +206,8 @@
                         android:id="@+id/activity_vakat_notifTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
                         android:duplicateParentState="true"
+                        android:layout_marginTop="10dp"
 
                         android:max="80" />
                 </ba.vaktija.android.widgets.ClickConsumingLinearLayout>
@@ -218,12 +219,12 @@
             android:id="@+id/activity_vakat_silent"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
             android:clickable="false"
             android:foreground="?attr/selectableItemBackground"
             card_view:cardCornerRadius="3dp"
             card_view:cardElevation="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             card_view:cardUseCompatPadding="true">
 
             <LinearLayout
@@ -247,8 +248,8 @@
                         android:layout_marginLeft="@dimen/left_rigt_margin"
                         android:layout_weight="1"
                         android:gravity="center_vertical"
-                        android:text="UGASI ZVUK"
                         android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="UGASI ZVUK"
                         android:textStyle="bold" />
 
                     <FrameLayout
@@ -282,8 +283,8 @@
                         android:id="@+id/fragment_activity_prayer_silentDescription"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/left_rigt_margin"
                         android:layout_marginRight="@dimen/left_rigt_margin"
+                        android:layout_marginLeft="@dimen/left_rigt_margin"
                         android:duplicateParentState="true"
                         android:text="@string/silent_description" />
 
@@ -291,19 +292,19 @@
                         android:id="@+id/fragment_activity_prayer_silentVibroOff"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/left_rigt_margin"
                         android:layout_marginTop="10dp"
                         android:duplicateParentState="true"
-                        android:text="Isključi vibraciju"
+                        android:layout_marginLeft="@dimen/left_rigt_margin"
                         android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Isključi vibraciju"
                         android:textColor="@color/theme_gray" />
 
                     <TextView
                         android:id="@+id/fragment_activity_prayer_silentOffLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/left_rigt_margin"
                         android:layout_marginTop="20dp"
+                        android:layout_marginLeft="@dimen/left_rigt_margin"
                         android:duplicateParentState="true"
                         android:text="UKLJUČIVANJE ZVUKOVA"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -315,18 +316,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/left_rigt_margin"
-                        android:layout_marginTop="5dp"
                         android:duplicateParentState="true"
                         android:gravity="center_vertical"
                         android:text="25 minuta nakon nastupa"
+                        android:layout_marginTop="5dp"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
                     <SeekBar
                         android:id="@+id/activity_vakat_silentOffSeekBar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
                         android:duplicateParentState="true"
+                        android:layout_marginTop="10dp"
                         android:indeterminate="false"
 
                         android:max="80" />

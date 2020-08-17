@@ -8,8 +8,8 @@
         android:id="@+id/location_dialog_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:choiceMode="singleChoice"
         android:fastScrollAlwaysVisible="true"
+        android:choiceMode="singleChoice"
         android:fastScrollEnabled="true"></ListView>
 
 </LinearLayout>

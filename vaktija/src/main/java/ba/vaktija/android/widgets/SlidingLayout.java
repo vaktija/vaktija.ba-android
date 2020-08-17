@@ -13,8 +13,14 @@ import androidx.customview.widget.ViewDragHelper;
 public class SlidingLayout extends RelativeLayout {
 
     public static final String TAG = SlidingLayout.class.getSimpleName();
+
+    public static interface SlidingLayoutListener {
+        void onSlidingCompleted();
+    }
+
     ViewDragHelper mDragHelper;
     SlidingLayoutListener mSlidingListener;
+
     ViewGroup parent;
 
     public SlidingLayout(Context context) {
@@ -63,9 +69,6 @@ public class SlidingLayout extends RelativeLayout {
         mSlidingListener = slidingListener;
     }
 
-    public static interface SlidingLayoutListener {
-        void onSlidingCompleted();
-    }
 
     class ViewDragHelperCallbacks extends ViewDragHelper.Callback {
 

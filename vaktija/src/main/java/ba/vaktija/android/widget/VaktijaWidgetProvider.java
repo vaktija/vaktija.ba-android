@@ -92,8 +92,7 @@ public class VaktijaWidgetProvider extends AppWidgetProvider {
 
                     views.setTextViewText(R.id.widget_layout_keyguard_info, Utils.getTimeTillNext(
                             PrayersSchedule.getInstance(context).getCurrentPrayer(),
-                            PrayersSchedule.getInstance(context).getTimeTillNextPrayer(),
-                            true));
+                            PrayersSchedule.getInstance(context).getTimeTillNextPrayer()));
 
                     views.setTextViewText(R.id.widget_layout_keyguard_prevNext,
                             PrayersSchedule.getInstance(context).getCurrentAndNextTime());

@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,15 +30,14 @@ public class SystemSettingsHelperActivity extends BaseActivity implements View.O
 
     private ImageView dozeModeCheckIcon;
     private ImageView dndModeCheckIcon;
-    private ImageView overlayCheckIcon;
 
     private TextView dozeModeDescriptionLabel;
     private TextView dndModeDescriptionLabel;
-    private TextView overlayDescriptionLabel;
 
     private Button dozeModeSettingsButton;
     private Button dndModeSettingsButton;
-    private Button overlaySettingsButton;
+
+    private CheckBox dontShowAgainCheckbox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,21 +65,18 @@ public class SystemSettingsHelperActivity extends BaseActivity implements View.O
 
         dozeModeCheckIcon = findViewById(R.id.doze_mode_check_icon);
         dndModeCheckIcon = findViewById(R.id.dnd_mode_check_icon);
-        overlayCheckIcon = findViewById(R.id.overlay_check_icon);
 
         dozeModeDescriptionLabel = findViewById(R.id.doze_mode_description_label);
         dndModeDescriptionLabel = findViewById(R.id.dnd_mode_description_label);
-        overlayDescriptionLabel = findViewById(R.id.overlay_description_label);
 
         dozeModeSettingsButton = findViewById(R.id.doze_settings_button);
         dndModeSettingsButton = findViewById(R.id.dnd_settings_button);
-        overlaySettingsButton = findViewById(R.id.overlay_settings_button);
+
+        dontShowAgainCheckbox = findViewById(R.id.dont_show_again_check);
 
         findViewById(R.id.close_button).setOnClickListener(this);
-
         dozeModeSettingsButton.setOnClickListener(this);
         dndModeSettingsButton.setOnClickListener(this);
-        overlaySettingsButton.setOnClickListener(this);
 
         setResult(RESULT_CANCELED);
     }
@@ -90,7 +87,6 @@ public class SystemSettingsHelperActivity extends BaseActivity implements View.O
         super.onResume();
         checkDozeModeState();
         checkDndModeStatus();
-        checkOverlayPermission();
     }
 
     @Override
@@ -107,7 +103,13 @@ public class SystemSettingsHelperActivity extends BaseActivity implements View.O
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.close_button:
+
                 setResult(RESULT_OK);
+
+                if (dontShowAgainCheckbox.isChecked()) {
+                    App.prefs.edit().putBoolean(Prefs.ASK_NO_MORE_DOZE, true).apply();
+                }
+
                 finish();
                 break;
 
@@ -126,17 +128,6 @@ public class SystemSettingsHelperActivity extends BaseActivity implements View.O
 
                 try {
                     Intent intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
-                    startActivity(intent);
-                } catch (ActivityNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                break;
-
-            case R.id.overlay_settings_button:
-
-                try {
-                    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
                     startActivity(intent);
                 } catch (ActivityNotFoundException e) {
                     e.printStackTrace();
@@ -178,22 +169,6 @@ public class SystemSettingsHelperActivity extends BaseActivity implements View.O
         } else {
             dndModeCheckIcon.setImageResource(R.drawable.ic_check_circle);
             dndModeSettingsButton.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void checkOverlayPermission(){
-        Log.d(TAG, "checkOverlayPermission");
-
-        boolean canDrawOverlays = Settings.canDrawOverlays(this);
-
-        if(!canDrawOverlays) {
-            overlayCheckIcon.setImageResource(R.drawable.ic_check_circle);
-            overlaySettingsButton.setVisibility(View.VISIBLE);
-        } else {
-            overlayCheckIcon.setImageResource(R.drawable.ic_check_circle_green);
-            overlaySettingsButton.setVisibility(View.GONE);
-            overlayDescriptionLabel.setText(R.string.label_overlay_set);
         }
     }
 }

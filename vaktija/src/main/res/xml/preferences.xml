@@ -5,6 +5,10 @@
         android:key="locationName"
         android:title="@string/location" />
 
+    <Preference
+        android:key="systemSettings"
+        android:title="@string/system_settings" />
+
     <PreferenceCategory
         android:key="notifications"
         android:title="@string/notifications">
@@ -18,7 +22,6 @@
 
         <CheckBoxPreference
             android:defaultValue="false"
-            android:dependency="statusbarNotification"
             android:key="ALL_PRAYERS_IN_NOTIF"
             android:summaryOff="@string/all_prayers_not_shown_in_notif"
             android:summaryOn="@string/all_prayers_shown_in_notif"
@@ -84,30 +87,11 @@
         <Preference
             android:key="feedback"
             android:summary="@string/prefs_feedback_summary"
-            android:title="@string/prefs_feedback_title">
-
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="@string/prefs_feedback_email_ready">
-
-                <extra
-                    android:name="android.intent.extra.SUBJECT"
-                    android:value="@string/prefs_feedback_subject" />
-            </intent>
-
-        </Preference>
+            android:title="@string/prefs_feedback_title" />
 
         <Preference
             android:key="about"
-            android:summary="@string/version_name"
-            android:title="@string/about_app">
-
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:targetClass="ba.vaktija.android.prefs.AboutActivity"
-                android:targetPackage="ba.vaktija.android" />
-
-        </Preference>
+            android:title="@string/about_app" />
 
         <!--
         <Preference

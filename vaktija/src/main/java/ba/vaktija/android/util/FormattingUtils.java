@@ -11,12 +11,6 @@ import ba.vaktija.android.models.Prayer;
 
 public class FormattingUtils {
 
-    public static CharSequence colorText(String string, int color) {
-        SpannableStringBuilder ssb = new SpannableStringBuilder(string);
-        ssb.setSpan(new ForegroundColorSpan(color), 0, string.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        return ssb;
-    }
-
     @SuppressLint("DefaultLocale")
     public static String getFormattedTime(long milliseconds, boolean withSeconds) {
 
@@ -40,19 +34,23 @@ public class FormattingUtils {
 
     }
 
-    public static String getTimeString(int totalSecs, boolean ceil) {
+    public static CharSequence colorText(String string, int color) {
+        SpannableStringBuilder ssb = new SpannableStringBuilder(string);
+        ssb.setSpan(new ForegroundColorSpan(color), 0, string.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        return ssb;
+    }
+
+    public static String getTimeString(int totalSecs) {
         // MyLog.d("FormattingUtils", "getTimeString totalSecs="+totalSecs+" ceil="+ceil);
         //		int seconds = (int) (milliseconds / 1000) % 60 ;
-
-        if (ceil)
-            totalSecs += 60;
 
         int seconds = totalSecs % 60;
         int minutes = (totalSecs / 60) % 60;
         int hours = (totalSecs / 3600) % 24;
 
-//		if(ceil)
-//			minutes += 1;
+        if (seconds > 0 && minutes > 0) {
+            minutes += 1;
+        }
 
         String result = String.format(Locale.getDefault(), "%dh %dm", hours, minutes);
 
@@ -64,11 +62,15 @@ public class FormattingUtils {
             result = String.format(Locale.getDefault(), "%dm", minutes);
         }
 
-        if (hours == 0 && minutes == 0 && seconds <= 60) {
+        if (hours == 0 && minutes == 0) {
             result = String.format(Locale.getDefault(), "0m %ds", seconds);
         }
 
         return result;
+    }
+
+    public static class Case {
+        public static final int AKUZATIV = 4;
     }
 
     public static String getTimeStringDots(int totalSecs) {
@@ -176,9 +178,5 @@ public class FormattingUtils {
         }
 
         return "";
-    }
-
-    public static class Case {
-        public static final int AKUZATIV = 4;
     }
 }

@@ -46,9 +46,11 @@ public class LocationFragment extends Fragment implements OnClickListener {
     App app;
 
     SharedPreferences prefs;
-    boolean noWizard;
+
     private int locationId = Defaults.LOCATION_ID;
     private String locationName = Defaults.LOCATION_NAME;
+
+    boolean noWizard;
 
     public static Fragment newInstance(boolean noWizard) {
         Bundle args = new Bundle();

@@ -7,9 +7,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
@@ -25,53 +24,56 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import ba.vaktija.android.models.Prayer;
 import ba.vaktija.android.models.PrayersSchedule;
-import ba.vaktija.android.prefs.Defaults;
 import ba.vaktija.android.prefs.Prefs;
+import ba.vaktija.android.service.AlarmSoundPlayer;
+import ba.vaktija.android.service.OngoingAlarmService;
+import ba.vaktija.android.service.VaktijaServiceHelper;
 import ba.vaktija.android.util.FileLog;
 import ba.vaktija.android.util.FormattingUtils;
 import ba.vaktija.android.util.Utils;
 import ba.vaktija.android.widgets.SlidingLayout;
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
+import static ba.vaktija.android.service.NotifManager.ALARMS_CHANNEL;
+
 /*
  This activity plays alarm sound
  */
 
 public class AlarmActivity extends AppCompatActivity
-        implements SlidingLayout.SlidingLayoutListener, MediaPlayer.OnPreparedListener {
+        implements SlidingLayout.SlidingLayoutListener {
 
     public static final String TAG = AlarmActivity.class.getSimpleName();
     public static final String EXTRA_PRAYER_ID = "EXTRA_PRAYER_ID";
     public static final String ACTION_CANCEL_ALARM = "ACTION_CANCEL_ALARM";
-    public static final String LAUNCH_ALARM = "LAUNCH_ALARM";
+    public static final String EXTRA_PLAY_ALARM_SOUND = "EXTRA_PLAY_ALARM_SOUND";
+
     private static final int ALARM_NOTIF = 1337;
     private static final int ALARM_NOTIF_MISSED = 2337;
+
     private static final int ALARM_TIMEOUT = 2 /*mins*/ * 60 /*sec*/ * 1000 /*millisec*/;
     private static final int ALARM_SLEEP = 5 /*mins*/ * 60 /*sec*/ * 1000 /*millisec*/;
+    public static final String LAUNCH_ALARM = "LAUNCH_ALARM";
+
     private TextView mAlarmTimeHrs;
     private TextView mAlarmTimeMins;
     private TextView mAlarmTitle;
     private SlidingLayout mSlidingLayout;
     private ImageView mClockIcon;
     private Prayer mPrayer;
-    private MediaPlayer mMediaPlayer;
-    private AudioManager mAudioManager;
-    private int mInitialStreamVolume;
-    private int mMaxStreamVolume;
     private CountDownTimer mAlarmTimer;
     private SharedPreferences mPrefs;
     private PowerManager mPowerManager;
     private PowerManager.WakeLock mWakeLock;
-    private CountDownTimer mVolumeTimer;
     private NotificationManager mNotificationManager;
     private App mApp;
+    private AlarmSoundPlayer alarmSoundPlayer;
 
     public static void cancelAlarm(Activity activity) {
         Intent i = new Intent(activity, AlarmActivity.class);
@@ -86,6 +88,8 @@ public class AlarmActivity extends AppCompatActivity
         mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, TAG);
         mWakeLock.setReferenceCounted(false);
 
+        alarmSoundPlayer = new AlarmSoundPlayer(this);
+
         mWakeLock.acquire();
 
         getWindow().addFlags(
@@ -99,10 +103,7 @@ public class AlarmActivity extends AppCompatActivity
 
         FileLog.d(TAG, "[*** onCreate ***]");
 
-
         mApp = (App) getApplicationContext();
-
-        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         setContentView(R.layout.activity_alarm);
 
@@ -123,6 +124,8 @@ public class AlarmActivity extends AppCompatActivity
         mClockIcon.startAnimation(AnimationUtils.loadAnimation(this, R.anim.wiggle));
 
         int prayerId = getIntent().getIntExtra(EXTRA_PRAYER_ID, -1);
+
+        boolean playAlarmSound = getIntent().getBooleanExtra(EXTRA_PLAY_ALARM_SOUND, true);
 
         mPrayer = PrayersSchedule.getInstance(this).getPrayer(prayerId);
 
@@ -145,11 +148,12 @@ public class AlarmActivity extends AppCompatActivity
         mAlarmTitle.setText(mPrayer.getTitle().toUpperCase(Locale.getDefault()) + " JE ZA");
 
         try {
-            playAlarmSound();
-            increaseVolume();
+            if (playAlarmSound) {
+                final Uri soundUri = App.app.getAlarmSoundUri();
+                alarmSoundPlayer.play(soundUri, true);
+                showNotification();
+            }
             startCountDownTimer();
-            showNotification();
-
         } catch (Exception e) {
             e.printStackTrace();
             FileLog.e(TAG, "Cannot play alarm sound: " + e.getMessage());
@@ -158,8 +162,6 @@ public class AlarmActivity extends AppCompatActivity
             Toast.makeText(AlarmActivity.this, "Can't play alarm sound", Toast.LENGTH_LONG).show();
             AlarmActivity.this.finish();
         }
-
-        FileLog.i(TAG, "initial stream volume: " + mInitialStreamVolume);
 
         mApp.sendScreenView("Alarm");
     }
@@ -172,6 +174,7 @@ public class AlarmActivity extends AppCompatActivity
     @Override
     public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+
         FileLog.d(TAG, "[onNewIntent]");
         String action = intent.getAction();
         FileLog.d(TAG, "action: " + action);
@@ -179,69 +182,6 @@ public class AlarmActivity extends AppCompatActivity
         if (action != null && action.equals(ACTION_CANCEL_ALARM)) {
             cancelAlarmAndFinish();
         }
-    }
-
-    void playAlarmSound()
-            throws
-            IllegalArgumentException,
-            SecurityException,
-            IllegalStateException,
-            IOException {
-        FileLog.d(TAG, "[playAlarmSound]");
-
-        String selectedAlarmTonePath = mPrefs.getString(
-                Prefs.ALARM_TONE_URI,
-                Defaults.getDefaultTone(this, true));
-
-        if (mPrefs.getBoolean(Prefs.USE_VAKTIJA_ALARM_TONE, true)) {
-            selectedAlarmTonePath = Defaults.getDefaultTone(this, true);
-        }
-
-        FileLog.d(TAG, "selected alarm tone path: " + selectedAlarmTonePath);
-
-        final Uri soundUri = Uri.parse(selectedAlarmTonePath);
-
-        FileLog.d(TAG, "sound uri: " + soundUri.toString());
-
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setOnPreparedListener(this);
-        mMediaPlayer.setDataSource(this, soundUri);
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-        mMediaPlayer.setLooping(true);
-        mMediaPlayer.prepareAsync();
-    }
-
-    void increaseVolume() {
-        FileLog.d(TAG, "[increaseVolume]");
-
-        mInitialStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_ALARM);
-        mMaxStreamVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
-
-        FileLog.i(TAG, "mInitialStreamVolume: " + mInitialStreamVolume);
-        FileLog.i(TAG, "mMaxStreamVolume: " + mMaxStreamVolume);
-
-        mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, 0, 0);
-
-        mVolumeTimer = new CountDownTimer(mInitialStreamVolume * 1000, 1000) {
-
-            @Override
-            public void onTick(long millisUntilFinished) {
-                int sec = (int) (millisUntilFinished / 1000);
-
-                int volume = mInitialStreamVolume - sec;
-
-                FileLog.i(TAG, "volume: " + volume);
-
-                mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, volume, 0);
-            }
-
-            @Override
-            public void onFinish() {
-                mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, mInitialStreamVolume, 0);
-            }
-        };
-
-        mVolumeTimer.start();
     }
 
     void startCountDownTimer() {
@@ -308,23 +248,17 @@ public class AlarmActivity extends AppCompatActivity
     private void cancelAlarmAndFinish() {
         FileLog.d(TAG, "[cancelAlarmAndFinish]");
 
-        if (mAudioManager != null) {
-            mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, mInitialStreamVolume, 0);
-
-            FileLog.i(TAG, "restored STREAM_ALARM volume to " + mInitialStreamVolume);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            VaktijaServiceHelper.startService(this, OngoingAlarmService.getStopAlarmIntent(this));
         }
 
-        if (mMediaPlayer != null)
-            mMediaPlayer.release();
+        alarmSoundPlayer.cancel();
 
-        if (mAlarmTimer != null)
+        if (mAlarmTimer != null) {
             mAlarmTimer.cancel();
-
-        if (mVolumeTimer != null)
-            mVolumeTimer.cancel();
+        }
 
         mNotificationManager.cancel(ALARM_NOTIF);
-        mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, mInitialStreamVolume, 0);
 
         mPrefs.edit().putBoolean(Prefs.ALARM_ACTIVE, false).commit();
 
@@ -342,16 +276,16 @@ public class AlarmActivity extends AppCompatActivity
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(this, ALARMS_CHANNEL);
         notifBuilder
                 .setSmallIcon(R.drawable.ic_notif_alarm)
                 .setOnlyAlertOnce(true)
                 .setOngoing(true)
                 .setContentIntent(pIntent)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setTicker(mPrayer.getTitle() + " je za " + FormattingUtils.getTimeString(mPrayer.getPrayerTime() - Utils.getCurrentTimeSec(), false))
+                .setTicker(mPrayer.getTitle() + " je za " + FormattingUtils.getTimeString(mPrayer.getPrayerTime() - Utils.getCurrentTimeSec()))
                 .setContentTitle(getString(R.string.alarm))
-                .setContentText(mPrayer.getTitle() + " je za " + FormattingUtils.getTimeString(mPrayer.getPrayerTime() - Utils.getCurrentTimeSec(), false));
+                .setContentText(mPrayer.getTitle() + " je za " + FormattingUtils.getTimeString(mPrayer.getPrayerTime() - Utils.getCurrentTimeSec()));
 
         mNotificationManager.notify(ALARM_NOTIF, notifBuilder.build());
     }
@@ -365,7 +299,7 @@ public class AlarmActivity extends AppCompatActivity
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(this, ALARMS_CHANNEL);
         notifBuilder
                 .setSmallIcon(R.drawable.ic_notif_warning)
                 .setOnlyAlertOnce(true)
@@ -393,12 +327,6 @@ public class AlarmActivity extends AppCompatActivity
     public void onBackPressed() {
         mPrefs.edit().putBoolean(Prefs.ALARM_ACTIVE, false).commit();
         super.onBackPressed();
-    }
-
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-        Log.d(TAG, "onPrepared");
-        mp.start();
     }
 
     @Override

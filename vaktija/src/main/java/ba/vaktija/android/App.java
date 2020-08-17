@@ -2,7 +2,9 @@ package ba.vaktija.android;
 
 import android.app.Application;
 import android.app.NotificationManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -13,23 +15,20 @@ import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
+import androidx.annotation.RequiresApi;
+
 import ba.vaktija.android.db.Database;
 import ba.vaktija.android.models.Prayer;
 import ba.vaktija.android.models.PrayersSchedule;
 import ba.vaktija.android.prefs.Defaults;
 import ba.vaktija.android.prefs.Prefs;
+import ba.vaktija.android.receiver.DndChangeReceiver;
+import ba.vaktija.android.receiver.RingerChangeReceiver;
 import ba.vaktija.android.util.FileLog;
 import io.github.inflationx.calligraphy3.CalligraphyConfig;
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor;
 import io.github.inflationx.viewpump.ViewPump;
 
-/*
-@ReportsCrashes(
-		formKey = "", 
-		mailTo = "android@vaktija.ba",
-		mode = ReportingInteractionMode.TOAST,
-		resToastText = R.string.crash_toast_text)
-		*/
 public class App extends Application {
     public static final String TAG = App.class.getSimpleName();
 
@@ -68,9 +67,9 @@ public class App extends Application {
 
         db = new Database(this);
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         int locationId = prefs.getInt(Prefs.SELECTED_LOCATION_ID, Defaults.LOCATION_ID);
         prefs.edit().putString(Prefs.LOCATION_NAME, db.getLocationName(locationId)).commit();
@@ -93,6 +92,21 @@ public class App extends Application {
         checkNotifTone();
         checkAlarmTone();
         applySettingsChanges();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            registerDndChangeReceiver();
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            ComponentName componentName = new ComponentName(this, RingerChangeReceiver.class);
+            getPackageManager().setComponentEnabledSetting(
+                    componentName,
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP);
+
+            registerRingerChangeReceiver();
+        }
 
         FileLog.d(TAG, "Build.VERSION.SDK_INT=" + Build.VERSION.SDK_INT);
         FileLog.d(TAG, "Build.DEVICE=" + Build.DEVICE);
@@ -179,5 +193,31 @@ public class App extends Application {
                 }
             }
         }
+    }
+
+    public Uri getAlarmSoundUri() {
+
+        String selectedAlarmTonePath = prefs.getString(
+                Prefs.ALARM_TONE_URI,
+                Defaults.getDefaultTone(this, true));
+
+        if (prefs.getBoolean(Prefs.USE_VAKTIJA_ALARM_TONE, true)) {
+            selectedAlarmTonePath = Defaults.getDefaultTone(this, true);
+        }
+
+        FileLog.d(TAG, "selected alarm tone path: " + selectedAlarmTonePath);
+
+        return Uri.parse(selectedAlarmTonePath);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void registerDndChangeReceiver() {
+        IntentFilter intentFilter = new IntentFilter(NotificationManager.ACTION_INTERRUPTION_FILTER_CHANGED);
+        registerReceiver(new DndChangeReceiver(), intentFilter);
+    }
+
+    private void registerRingerChangeReceiver() {
+        IntentFilter intentFilter = new IntentFilter("android.media.RINGER_MODE_CHANGED");
+        registerReceiver(new RingerChangeReceiver(), intentFilter);
     }
 }

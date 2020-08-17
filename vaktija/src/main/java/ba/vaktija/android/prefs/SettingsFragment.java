@@ -1,5 +1,6 @@
 package ba.vaktija.android.prefs;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -14,12 +15,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceManager;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
@@ -30,51 +26,58 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.core.preference.PreferenceFragment;
+import androidx.annotation.RequiresApi;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import ba.vaktija.android.App;
+import ba.vaktija.android.BuildConfig;
 import ba.vaktija.android.LocationActivity;
 import ba.vaktija.android.R;
+import ba.vaktija.android.SystemSettingsHelperActivity;
 import ba.vaktija.android.models.PrayersSchedule;
-import ba.vaktija.android.service.NotificationsManager;
+import ba.vaktija.android.service.NotifManagerFactory;
 import ba.vaktija.android.service.VaktijaService;
+import ba.vaktija.android.service.VaktijaServiceHelper;
 import ba.vaktija.android.util.FileLog;
 import ba.vaktija.android.util.FormattingUtils;
 import ba.vaktija.android.util.SettingsManager;
 
-public class SettingsFragment extends PreferenceFragment implements OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
-    public static final String TAG = SettingsFragment.class.getSimpleName();
-    public static final String EXTRA_FIRST_VISIBLE_ITEM = "EXTRA_FIRST_VISIBLE_ITEM";
-    public static final String EXTRA_ITEM_TOP = "EXTRA_ITEM_TOP";
+public class SettingsFragment extends PreferenceFragmentCompat
+        implements
+        Preference.OnPreferenceClickListener,
+        Preference.OnPreferenceChangeListener {
+
+    public static final String TAG = "SettingsFragment";
+
+    private static final String EXTRA_FIRST_VISIBLE_ITEM = "EXTRA_FIRST_VISIBLE_ITEM";
+    private static final String EXTRA_ITEM_TOP = "EXTRA_ITEM_TOP";
 
     private static final int REQUEST_NOTIF_TONE = 1;
     private static final int REQUEST_ALARM_TONE = 2;
+    private static final int REQUEST_SYSTEM_SETTINGS = 3;
 
-    SharedPreferences prefs;
-
-    StringBuilder aboutText;
-
-    ListPreference dhuhrCounting;
-    Preference mNotificationTonePreference;
-    Preference mAlarmTonePreference;
-
-    String selectedTheme;
-
-    App mApp;
-
+    private SharedPreferences prefs;
+    private ListPreference dhuhrCounting;
     private AlertDialog alertDialog;
-    private String mSelectedColor = "";
 
-    private boolean scrolled;
+    private Preference notificationTonePreference;
+    private Preference alarmTonePreference;
     private Preference location;
+    private Preference systemSettingsPreference;
 
-    public static SettingsFragment newInstance(int scrollPosition, int itemTop) {
+    static SettingsFragment newInstance(int scrollPosition, int itemTop) {
         Bundle args = new Bundle();
         args.putInt(EXTRA_FIRST_VISIBLE_ITEM, scrollPosition);
         args.putInt(EXTRA_ITEM_TOP, itemTop);
@@ -86,80 +89,74 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        Log.d(TAG, "onAttach");
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
-        mApp = (App) activity.getApplicationContext();
-    }
+        setPreferencesFromResource(R.xml.preferences, rootKey);
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
 
-        addPreferencesFromResource(R.xml.preferences);
-
-        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-
-        location = findPreference(Prefs.LOCATION_NAME);
+        location = getPreference(Prefs.LOCATION_NAME);
         location.setOnPreferenceClickListener(this);
         location.setSummary(prefs.getString(Prefs.LOCATION_NAME, Defaults.LOCATION_NAME));
 
-        Preference statusBarNotif = findPreference(Prefs.STATUSBAR_NOTIFICATION);
-        statusBarNotif.setOnPreferenceChangeListener(this);
+        Preference statusBarNotif = getPreference(Prefs.STATUSBAR_NOTIFICATION);
 
-        Preference allPrayersNotif = findPreference(Prefs.ALL_PRAYERS_IN_NOTIF);
-        allPrayersNotif.setOnPreferenceChangeListener(this);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            PreferenceCategory category = (PreferenceCategory) findPreference("notifications");
-            category.removePreference(allPrayersNotif);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // We use foreground service on Android >= 26 which requires icon in status bar,
+            // so it makes no sense to disable status bar notification
+            statusBarNotif.setEnabled(false);
         }
 
-        mNotificationTonePreference = findPreference(Prefs.NOTIF_TONE_URI);
-        mNotificationTonePreference.setOnPreferenceClickListener(this);
+        statusBarNotif.setOnPreferenceChangeListener(this);
+
+        Preference allPrayersNotif = getPreference(Prefs.ALL_PRAYERS_IN_NOTIF);
+        allPrayersNotif.setOnPreferenceChangeListener(this);
+
+        notificationTonePreference = getPreference(Prefs.NOTIF_TONE_URI);
+        notificationTonePreference.setOnPreferenceClickListener(this);
 
         String title = Defaults.NOTIF_TONE_TITLE;
 
         if (!prefs.getBoolean(Prefs.USE_VAKTIJA_NOTIF_TONE, true)) {
             String selectedNotifTone = prefs.getString(Prefs.NOTIF_TONE_URI,
-                    Defaults.getDefaultTone(getActivity(), false));
+                    Defaults.getDefaultTone(requireContext(), false));
 
             Ringtone ringtone = RingtoneManager
-                    .getRingtone(mApp, Uri.parse(selectedNotifTone));
+                    .getRingtone(requireContext(), Uri.parse(selectedNotifTone));
 
             FileLog.d(TAG, "selectedNotifTone: " + selectedNotifTone);
-            title = ringtone.getTitle(mApp);
+            title = ringtone.getTitle(requireContext());
         }
 
-        mNotificationTonePreference.setSummary(title);
+        notificationTonePreference.setSummary(title);
 
-        mAlarmTonePreference = findPreference(Prefs.ALARM_TONE_URI);
-        mAlarmTonePreference.setOnPreferenceClickListener(this);
+        alarmTonePreference = getPreference(Prefs.ALARM_TONE_URI);
+        alarmTonePreference.setOnPreferenceClickListener(this);
 
         String selectedAlarmToneTitle = Defaults.ALARM_TONE_TITLE;
 
         if (!prefs.getBoolean(Prefs.USE_VAKTIJA_ALARM_TONE, true)) {
             String selectedAlarmTone = prefs.getString(
                     Prefs.ALARM_TONE_URI,
-                    Defaults.getDefaultTone(getActivity(), true));
+                    Defaults.getDefaultTone(requireContext(), true));
 
             Ringtone alarmRingtone = RingtoneManager
-                    .getRingtone(mApp, Uri.parse(selectedAlarmTone));
+                    .getRingtone(requireContext(), Uri.parse(selectedAlarmTone));
 
             FileLog.d(TAG, "selectedAlarmTone: " + selectedAlarmTone);
-            selectedAlarmToneTitle = alarmRingtone.getTitle(mApp);
+            selectedAlarmToneTitle = alarmRingtone.getTitle(requireContext());
         }
 
-        mAlarmTonePreference.setSummary(selectedAlarmToneTitle);
+        alarmTonePreference.setSummary(selectedAlarmToneTitle);
 
-        dhuhrCounting = (ListPreference) findPreference(Prefs.DHUHR_TIME_COUNTING);
+        dhuhrCounting = getPreference(Prefs.DHUHR_TIME_COUNTING);
         dhuhrCounting.setOnPreferenceChangeListener(this);
 
-        CheckBoxPreference separateJumaSettings = (CheckBoxPreference) findPreference(Prefs.SEPARATE_JUMA_SETTINGS);
+        CheckBoxPreference separateJumaSettings = getPreference(Prefs.SEPARATE_JUMA_SETTINGS);
         separateJumaSettings.setOnPreferenceChangeListener(this);
 
         String dhuhrTime = prefs.getString(Prefs.DHUHR_TIME_COUNTING, "1");
+
         dhuhrCounting.setSummary(
                 dhuhrTime.equals("1")
                         ? getString(R.string.standard_time_12_13)
@@ -167,7 +164,67 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
 
         dhuhrCounting.setValueIndex(dhuhrTime.equals("1") ? 0 : 1);
 
+        Preference about = getPreference("about");
+        about.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivity(new Intent(requireActivity(), AboutActivity.class));
+                return true;
+            }
+        });
+
+        getPreference("feedback").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+
+                Intent email = new Intent(Intent.ACTION_VIEW);
+                email.setData(Uri.parse(getString(R.string.prefs_feedback_email_ready)));
+                email.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.prefs_feedback_subject, BuildConfig.VERSION_NAME));
+
+                try {
+                    startActivity(email);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(requireContext(), R.string.no_email_app_found, Toast.LENGTH_SHORT).show();
+                }
+
+                return true;
+            }
+        });
+
+        systemSettingsPreference = getPreference("systemSettings");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            systemSettingsPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startActivityForResult(new Intent(
+                            requireContext(),
+                            SystemSettingsHelperActivity.class
+                    ), REQUEST_SYSTEM_SETTINGS);
+                    return true;
+                }
+            });
+
+            updateSystemSettingsPreferenceSummary();
+        } else {
+            getPreferenceScreen().removePreference(systemSettingsPreference);
+        }
+
         colorPreferenceTitles();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void updateSystemSettingsPreferenceSummary() {
+        PowerManager pm = (PowerManager) requireContext().getSystemService(Context.POWER_SERVICE);
+        boolean dozeOk = pm.isIgnoringBatteryOptimizations(requireContext().getPackageName());
+        boolean dndOk = App.app.notificationManager.isNotificationPolicyAccessGranted();
+
+        List<String> summaryList = new ArrayList<>();
+        summaryList.add(getString(dozeOk ? R.string.doze_mode_configured : R.string.doze_mode_not_configured));
+        summaryList.add(getString(dndOk ? R.string.dnd_mode_configured : R.string.dnd_mode_not_configured));
+
+        systemSettingsPreference.setSummary(TextUtils.join(", ", summaryList));
     }
 
     private void colorPreferenceTitles() {
@@ -178,7 +235,7 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
                 getString(R.string.location),
                 almostBlack));
 
-        Preference statusBarNotif = findPreference(Prefs.STATUSBAR_NOTIFICATION);
+        Preference statusBarNotif = getPreference(Prefs.STATUSBAR_NOTIFICATION);
         statusBarNotif.setTitle(FormattingUtils.colorText(
                 getString(R.string.statusbar_notification),
                 almostBlack));
@@ -192,11 +249,11 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
                     almostBlack));
         }
 
-        mNotificationTonePreference.setTitle(FormattingUtils.colorText(
+        notificationTonePreference.setTitle(FormattingUtils.colorText(
                 getString(R.string.notification_sound),
                 almostBlack));
 
-        mAlarmTonePreference.setTitle(FormattingUtils.colorText(
+        alarmTonePreference.setTitle(FormattingUtils.colorText(
                 getString(R.string.alarm_sound),
                 almostBlack));
 
@@ -204,29 +261,22 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
                 getString(R.string.dhuhr_counting),
                 almostBlack));
 
-        Preference separateJumaSettings = findPreference(Prefs.SEPARATE_JUMA_SETTINGS);
+        Preference separateJumaSettings = getPreference(Prefs.SEPARATE_JUMA_SETTINGS);
         separateJumaSettings.setTitle(FormattingUtils.colorText(
                 getString(R.string.separate_juma_settings),
                 almostBlack));
 
-        Preference showDate = findPreference(Prefs.SHOW_DATE);
+        Preference showDate = getPreference(Prefs.SHOW_DATE);
         showDate.setTitle(FormattingUtils.colorText(
                 getString(R.string.date_in_subtitle),
                 almostBlack));
 
-        /*
-        Preference ga = findPreference(Prefs.GA_ENABLED);
-        ga.setTitle(FormattingUtils.colorText(
-                getString(R.string.google_analytics),
-                almostBlack));
-                */
-
-        Preference feedback = findPreference(Prefs.FEEDBACK);
+        Preference feedback = getPreference(Prefs.FEEDBACK);
         feedback.setTitle(FormattingUtils.colorText(
                 getString(R.string.feedback),
                 almostBlack));
 
-        Preference about = findPreference(Prefs.ABOUT);
+        Preference about = getPreference(Prefs.ABOUT);
         about.setTitle(FormattingUtils.colorText(
                 getString(R.string.about_app),
                 almostBlack));
@@ -235,24 +285,7 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
     @Override
     public void onResume() {
         super.onResume();
-
-        if (!scrolled && getArguments() != null && getArguments().containsKey(EXTRA_FIRST_VISIBLE_ITEM)) {
-            scrolled = true;
-            getListView().post(new Runnable() {
-                @Override
-                public void run() {
-                    int scrollPosition = getArguments().getInt(EXTRA_FIRST_VISIBLE_ITEM);
-                    int itemTop = getArguments().getInt(EXTRA_ITEM_TOP);
-                    getListView().setSelection(scrollPosition);
-                    getListView().smoothScrollBy(-itemTop, 0);
-                }
-            });
-        }
-
         location.setSummary(prefs.getString(Prefs.LOCATION_NAME, Defaults.LOCATION_NAME));
-
-        getListView().setDivider(null);
-        getListView().setDividerHeight(0);
     }
 
     @Override
@@ -264,7 +297,7 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
             getListView().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    NotificationsManager.getInstance(mApp).updateNotification();
+                    NotifManagerFactory.getNotifManager(requireContext()).updateNotification();
                 }
             }, 500);
         }
@@ -273,52 +306,36 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
 
             boolean enabled = Boolean.parseBoolean(newValue.toString());
 
-            mApp.sendEvent("Settings", enabled ? "Enabled status bar notificatoin" : "Disabled status bar notification");
+            App.app.sendEvent("Settings", enabled ? "Enabled status bar notificatoin" : "Disabled status bar notification");
 
             Intent service = VaktijaService.getStartIntent(getActivity(), TAG + ":onPreferenceChange");
             service.setAction(enabled ? VaktijaService.ACTION_ENABLE_NOTIFS : VaktijaService.ACTION_DISABLE_NOTIFS);
-            getActivity().startService(service);
+            VaktijaServiceHelper.startService(requireContext(), service);
         }
 
         if (preference.getKey().equals(Prefs.DHUHR_TIME_COUNTING)) {
 
             Intent service = VaktijaService.getStartIntent(getActivity(), TAG + ":onPreferenceChange");
             service.setAction(VaktijaService.ACTION_UPDATE);
-            getActivity().startService(service);
+            VaktijaServiceHelper.startService(requireContext(), service);
 
             dhuhrCounting.setSummary(newValue.toString().equals(Prefs.DHUHR_NORMALIZED)
                     ? getString(R.string.standard_time_12_13)
                     : getString(R.string.real_time));
 
-            mApp.sendEvent("Settings", newValue.toString().equals(Prefs.DHUHR_NORMALIZED) ? "Normalized time enabled" : "Actual time enabled");
+            App.app.sendEvent("Settings", newValue.toString().equals(Prefs.DHUHR_NORMALIZED) ? "Normalized time enabled" : "Actual time enabled");
         }
 
         if (preference.getKey().equals(Prefs.SEPARATE_JUMA_SETTINGS)) {
 
             Intent service = VaktijaService.getStartIntent(getActivity(), TAG + ":onPreferenceChange");
             service.setAction(VaktijaService.ACTION_UPDATE);
-            getActivity().startService(service);
+            VaktijaServiceHelper.startService(requireContext(), service);
 
-            mApp.sendEvent("Settings", ((boolean) newValue) ? "Separate settings for juma enabled" : "Separate settings for juma disabled");
+            App.app.sendEvent("Settings", ((boolean) newValue) ? "Separate settings for juma enabled" : "Separate settings for juma disabled");
         }
 
         return true;
-    }
-
-    private void restart() {
-        scrolled = false;
-        final int firstVisibleItem = getListView().getFirstVisiblePosition();
-        final int firstVisibleItemTop = getListView().getChildAt(0).getTop();
-
-        Log.i(TAG, "firstVisibleItem=" + firstVisibleItem);
-        Log.i(TAG, "firstVisibleItemTop=" + firstVisibleItemTop);
-
-        getActivity().finish();
-        Intent i = getActivity().getIntent();
-        i.putExtra(SettingsActivity.EXTRA_FIRST_VISIBLE_ITEM, firstVisibleItem);
-        i.putExtra(SettingsActivity.EXTRA_ITEM_TOP, firstVisibleItemTop);
-        getActivity().startActivity(i);
-        getActivity().overridePendingTransition(0, 0);
     }
 
     @Override
@@ -338,16 +355,16 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
                 uri = Settings.System.DEFAULT_NOTIFICATION_URI;
             }
 
-            Ringtone ringtone = RingtoneManager.getRingtone(mApp, uri);
+            Ringtone ringtone = RingtoneManager.getRingtone(requireContext(), uri);
 
             if (ringtone != null) {
 
                 prefs.edit()
                         .putString(Prefs.NOTIF_TONE_URI, uri.toString())
                         .putBoolean(Prefs.USE_VAKTIJA_NOTIF_TONE, false)
-                        .commit();
+                        .apply();
 
-                mNotificationTonePreference.setSummary(ringtone.getTitle(mApp));
+                notificationTonePreference.setSummary(ringtone.getTitle(requireContext()));
             } else {
                 Toast.makeText(getActivity(), R.string.cant_use_selected_tone, Toast.LENGTH_LONG).show();
             }
@@ -361,17 +378,23 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
 
             FileLog.d(TAG, "REQUEST_ALARM_TONE: " + uri);
 
-            Ringtone ringtone = RingtoneManager.getRingtone(mApp, uri);
+            Ringtone ringtone = RingtoneManager.getRingtone(requireContext(), uri);
 
             if (ringtone != null) {
                 prefs.edit()
                         .putString(Prefs.ALARM_TONE_URI, uri.toString())
                         .putBoolean(Prefs.USE_VAKTIJA_ALARM_TONE, false)
-                        .commit();
+                        .apply();
 
-                mAlarmTonePreference.setSummary(ringtone.getTitle(mApp));
+                alarmTonePreference.setSummary(ringtone.getTitle(requireContext()));
             } else {
                 Toast.makeText(getActivity(), R.string.cant_use_selected_tone, Toast.LENGTH_LONG).show();
+            }
+        }
+
+        if (requestCode == REQUEST_SYSTEM_SETTINGS) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                updateSystemSettingsPreferenceSummary();
             }
         }
     }
@@ -379,9 +402,10 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
     private void showToneSelectionDialog(final boolean alarmTone) {
 
         final AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-        ListView listView = (ListView) LayoutInflater.from(mApp).inflate(R.layout.dialog_list_view, null);
+        @SuppressLint("InflateParams")
+        ListView listView = (ListView) LayoutInflater.from(requireContext()).inflate(R.layout.dialog_list_view, null);
         ArrayAdapter<String> optionsAdapter = new ArrayAdapter<>(
-                getActivity(),
+                requireActivity(),
                 android.R.layout.simple_list_item_1,
                 new String[]{alarmTone
                         ? Defaults.ALARM_TONE_TITLE : Defaults.NOTIF_TONE_TITLE, "Odaberi drugi..."});
@@ -411,14 +435,13 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
         Log.d(TAG, "setDefaultTone alarmTone=" + alarmTone);
 
         prefs.edit()
-                //.putString(alarmTone ? Prefs.ALARM_TONE_URI : Prefs.NOTIF_TONE_URI, Defaults.getDefaultTone(getActivity(), false))
                 .putBoolean(alarmTone ? Prefs.USE_VAKTIJA_ALARM_TONE : Prefs.USE_VAKTIJA_NOTIF_TONE, true)
-                .commit();
+                .apply();
 
         if (alarmTone)
-            mAlarmTonePreference.setSummary(Defaults.ALARM_TONE_TITLE);
+            alarmTonePreference.setSummary(Defaults.ALARM_TONE_TITLE);
         else
-            mNotificationTonePreference.setSummary(Defaults.NOTIF_TONE_TITLE);
+            notificationTonePreference.setSummary(Defaults.NOTIF_TONE_TITLE);
     }
 
     private void launchToneChooser(boolean alarmTone) {
@@ -464,9 +487,9 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
         return true;
     }
 
-    void showLocationDialog() {
+    private void showLocationDialog() {
 
-        mApp.sendEvent(TAG, "Location");
+        App.app.sendEvent(TAG, "Location");
 
         Intent i = new Intent(getActivity(), LocationActivity.class);
         startActivity(i);
@@ -510,6 +533,13 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
                 .show();
     }
 
+    private <T extends Preference> T getPreference(String key) {
+        T pref = findPreference(key);
+        assert pref != null;
+        return pref;
+    }
+
+    @SuppressLint("StaticFieldLeak")
     private class SettingsExporter extends AsyncTask<Void, Void, Integer> {
         private static final int RESULT_OK = 0;
         private static final int RESULT_FILE_EXISTS = 1;
@@ -520,7 +550,7 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
         private boolean mOverwriteExisting;
         private String mErrorMessage;
 
-        public SettingsExporter(Context context, boolean overwriteExisting) {
+        SettingsExporter(Context context, boolean overwriteExisting) {
             mContext = context;
             mOverwriteExisting = overwriteExisting;
         }
@@ -580,6 +610,7 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class SettingsImporter extends AsyncTask<Void, Void, Integer> {
         private static final int RESULT_OK = 0;
         private static final int RESULT_MISSING_FILE = 1;
@@ -589,7 +620,7 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
         private ProgressDialog progressDialog;
         private String mErrorMessage;
 
-        public SettingsImporter(Context context) {
+        SettingsImporter(Context context) {
             mContext = context;
         }
 
@@ -659,16 +690,15 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
 
             switch (result) {
                 case RESULT_OK:
-                    Toast.makeText(mApp, "Postavke importovane", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Postavke importovane", Toast.LENGTH_SHORT).show();
 
                     PrayersSchedule.getInstance(getActivity()).reset();
 
                     Intent service = VaktijaService.getStartIntent(getActivity(), TAG + ":setingsImported");
                     service.setAction(VaktijaService.ACTION_UPDATE);
-                    getActivity().startService(service);
+                    VaktijaServiceHelper.startService(requireContext(), service);
 
-                    getActivity().finish();
-                    getActivity().startActivity(getActivity().getIntent());
+                    requireActivity().recreate();
 
                     break;
                 case RESULT_MISSING_FILE:

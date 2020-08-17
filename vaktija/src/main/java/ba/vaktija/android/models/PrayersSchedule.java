@@ -42,6 +42,13 @@ public class PrayersSchedule {
     private int currentDay;
     private int currentYear;
 
+    public static PrayersSchedule getInstance(Context context) {
+        if (instance == null)
+            instance = new PrayersSchedule(context);
+
+        return instance;
+    }
+
     private PrayersSchedule(Context context) {
         mContext = context;
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -63,44 +70,6 @@ public class PrayersSchedule {
 
         mYesterdaysIsha = getYesterdaysIsha();
         mTomorrowsFajr = getTomorrowsFajr();
-    }
-
-    public static PrayersSchedule getInstance(Context context) {
-        if (instance == null)
-            instance = new PrayersSchedule(context);
-
-        return instance;
-    }
-
-    public static int getDstRespectingPrayerTime(int defaultPrayerTime, int year, int month, int day) {
-        FileLog.d(TAG, "[getDstRespectingPrayerTime defaultPrayerTime=" + defaultPrayerTime + " year=" + year + " month=" + month + " day=" + day + "]");
-
-        // beacuse months have index 0 in java Calendar
-        --month;
-
-        boolean summerTimeOn = isSummerTimeOn(year, month, day);
-
-        FileLog.i(TAG, "summer time on: " + summerTimeOn);
-
-        if (summerTimeOn && (month == Calendar.MARCH || month == Calendar.OCTOBER)) {
-            if (day >= 25 && day <= 30) {
-                FileLog.i(TAG, "adding one hour to default prayer time");
-
-                return defaultPrayerTime + 3600;
-                //return defaultPrayerTime + 60;
-            }
-        }
-
-        return defaultPrayerTime;
-    }
-
-    public static boolean isSummerTimeOn(int year, int month, int day) {
-        Calendar calendar = Calendar.getInstance(Locale.getDefault());
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_MONTH, day);
-
-        return TimeZone.getDefault().inDaylightTime(new Date(calendar.getTimeInMillis()));
     }
 
     private Prayer getTodaysPrayer(int whichPrayer) {
@@ -169,6 +138,28 @@ public class PrayersSchedule {
         return new Prayer(
                 getDstRespectingPrayerTime(time[whichPrayer], year, month, day),
                 whichPrayer);
+    }
+
+    public static int getDstRespectingPrayerTime(int defaultPrayerTime, int year, int month, int day) {
+        FileLog.d(TAG, "[getDstRespectingPrayerTime defaultPrayerTime=" + defaultPrayerTime + " year=" + year + " month=" + month + " day=" + day + "]");
+
+        // beacuse months have index 0 in java Calendar
+        --month;
+
+        boolean summerTimeOn = isSummerTimeOn(year, month, day);
+
+        FileLog.i(TAG, "summer time on: " + summerTimeOn);
+
+        if (summerTimeOn && (month == Calendar.MARCH || month == Calendar.OCTOBER)) {
+            if (day >= 25 && day <= 30) {
+                FileLog.i(TAG, "adding one hour to default prayer time");
+
+                return defaultPrayerTime + 3600;
+                //return defaultPrayerTime + 60;
+            }
+        }
+
+        return defaultPrayerTime;
     }
 
     public synchronized Prayer getCurrentPrayer() {
@@ -400,6 +391,15 @@ public class PrayersSchedule {
         }
 
         return mPrayers.get(prayerId - 1);
+    }
+
+    public static boolean isSummerTimeOn(int year, int month, int day) {
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+
+        return TimeZone.getDefault().inDaylightTime(new Date(calendar.getTimeInMillis()));
     }
 
     public void reset() {

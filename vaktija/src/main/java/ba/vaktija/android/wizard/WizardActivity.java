@@ -4,9 +4,9 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
 import ba.vaktija.android.R;
+import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
 public class WizardActivity extends AppCompatActivity {
 

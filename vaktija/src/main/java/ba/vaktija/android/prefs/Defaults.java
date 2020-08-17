@@ -107,9 +107,9 @@ public class Defaults {
                 if (field.equals(Prayer.FIELD_SKIP_NEXT_ALARM))
                     return false;
                 if (field.equals(Prayer.FIELD_ALARM_ON))
-                    return true;
+                    return false;
                 if (field.equals(Prayer.FIELD_SILENT_ON))
-                    return true;
+                    return false;
                 if (field.equals(Prayer.FIELD_NOTIF_ON))
                     return false;
                 if (field.equals(Prayer.FIELD_NOTIF_SOUND_ON))

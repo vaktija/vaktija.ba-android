@@ -15,8 +15,9 @@ import java.util.concurrent.Executors;
  * Created by e on 2/9/15.
  */
 public class LogAppender {
-    private static final long MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
     private static LogAppender instance;
+    private static final long MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+
     private Executor mExecutor = Executors.newFixedThreadPool(1);
     private SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
 

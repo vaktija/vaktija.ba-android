@@ -11,6 +11,7 @@ import ba.vaktija.android.models.Events;
 import ba.vaktija.android.prefs.Prefs;
 import ba.vaktija.android.service.SilentModeManager;
 import ba.vaktija.android.service.VaktijaService;
+import ba.vaktija.android.service.VaktijaServiceHelper;
 import ba.vaktija.android.util.FileLog;
 import de.greenrobot.event.EventBus;
 
@@ -75,6 +76,6 @@ public class RingerChangeReceiver extends BroadcastReceiver {
             prefs.edit().putBoolean(Prefs.SILENT_DISABLED_BY_USER, false).commit();
         }
 
-        context.startService(i);
+        VaktijaServiceHelper.startService(context, i);
     }
 }

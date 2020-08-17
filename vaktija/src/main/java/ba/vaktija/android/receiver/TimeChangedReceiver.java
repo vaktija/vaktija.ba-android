@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 
 import ba.vaktija.android.prefs.Prefs;
 import ba.vaktija.android.service.VaktijaService;
+import ba.vaktija.android.service.VaktijaServiceHelper;
 import ba.vaktija.android.util.FileLog;
 
 public class TimeChangedReceiver extends BroadcastReceiver {
@@ -25,7 +26,7 @@ public class TimeChangedReceiver extends BroadcastReceiver {
         if (!userClosed) {
             Intent service = VaktijaService.getStartIntent(context, TAG);
             service.setAction(VaktijaService.ACTION_TIME_CHANGED);
-            context.startService(service);
+            VaktijaServiceHelper.startService(context, service);
         }
     }
 }

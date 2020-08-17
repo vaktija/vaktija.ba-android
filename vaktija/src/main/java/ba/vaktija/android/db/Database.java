@@ -18,23 +18,27 @@ import ba.vaktija.android.models.Location;
 public class Database extends SQLiteAssetHelper {
 
     public static final String TAG = Database.class.getSimpleName();
+
+    private static final String DATABASE_NAME = "vaktija.db";
+    private static final int DATABASE_VERSION = 3;
+
     public static final String TABLE_LOCATIONS = "locations";
     public static final String TABLE_SCHEDULE = "schedule";
     public static final String TABLE_OFFSET = "offset";
+
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_WEIGHT = "weight";
     public static final String COLUMN_LOCATION = "location";
     public static final String COLUMN_LOCATION_ID = "location_id";
     public static final String COLUMN_DATUM = "datum";
     public static final String COLUMN_MONTH = "month";
+
     public static final String COLUMN_FAJR = "fajr";
     public static final String COLUMN_SUNRISE = "sunrise";
     public static final String COLUMN_DHUHR = "dhuhr";
     public static final String COLUMN_ASR = "asr";
     public static final String COLUMN_MAGHRIB = "maghrib";
     public static final String COLUMN_ISHA = "isha";
-    private static final String DATABASE_NAME = "vaktija.db";
-    private static final int DATABASE_VERSION = 3;
 
     public Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

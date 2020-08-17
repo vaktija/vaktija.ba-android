@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 
 import ba.vaktija.android.prefs.Prefs;
 import ba.vaktija.android.service.VaktijaService;
+import ba.vaktija.android.service.VaktijaServiceHelper;
 import ba.vaktija.android.util.FileLog;
 import ba.vaktija.android.util.Utils;
 
@@ -26,7 +27,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
         if (!userClosed) {
             Intent service = VaktijaService.getStartIntent(context, TAG);
             service.setAction(VaktijaService.ACTION_BOOT_COMPLETED);
-            context.startService(service);
+            VaktijaServiceHelper.startService(context, service);
         } else {
             FileLog.w(TAG, "Vaktija closed by user, not starting");
         }

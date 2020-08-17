@@ -35,11 +35,17 @@ public class SettingsManager {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
+    public static class SettingsCorruptedException extends Exception {
+    }
+
     public static SettingsManager getInstance(Context context) {
         if (instance == null)
             instance = new SettingsManager(context);
 
         return instance;
+    }
+
+    public static class UnsupportedFormatException extends Exception {
     }
 
     public String getSettings() {
@@ -137,11 +143,5 @@ public class SettingsManager {
             throw new SettingsCorruptedException();
         }
 
-    }
-
-    public static class SettingsCorruptedException extends Exception {
-    }
-
-    public static class UnsupportedFormatException extends Exception {
     }
 }

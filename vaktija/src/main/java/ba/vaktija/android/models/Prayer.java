@@ -23,6 +23,7 @@ import ba.vaktija.android.AlarmActivity;
 import ba.vaktija.android.App;
 import ba.vaktija.android.prefs.Defaults;
 import ba.vaktija.android.prefs.Prefs;
+import ba.vaktija.android.receiver.AlarmReceiver;
 import ba.vaktija.android.service.VaktijaService;
 import ba.vaktija.android.util.FileLog;
 import ba.vaktija.android.util.FormattingUtils;
@@ -41,9 +42,25 @@ public class Prayer implements Parcelable {
     public static final int MAGHRIB = 4;
     public static final int ISHA = 5;
     public static final int JUMA = 6;
+
+    public static final Creator<Prayer> CREATOR = new Creator<Prayer>() {
+        public Prayer createFromParcel(Parcel in) {
+            return new Prayer(in);
+        }
+
+        public Prayer[] newArray(int size) {
+            return new Prayer[size];
+        }
+    };
+    protected static final int ALARM_PENDING_INTENT_ID = 13579;
+    protected static final int NOTIF_PENDING_INTET_ID = 24680;
+    protected static final int PRAYER_CHANGE_PENDING_INTENT_ID = 86420;
+    protected static final int SILENT_OFF_PENDING_INTENT_ID = 97531;
+
     public static final String FIELD_ALARM = "alarm";
     public static final String FIELD_NOTIF = "notif";
     public static final String FIELD_SILENT = "silent";
+
     public static final String FIELD_SKIP_NEXT_ALARM = "skipNextAlarm";
     public static final String FIELD_SKIP_NEXT_SILENT = "skipNextSilent";
     public static final String FIELD_ALARM_ON = "alarmOn";
@@ -58,25 +75,13 @@ public class Prayer implements Parcelable {
     public static final String FIELD_NOTIF_ON_MINS = "notifTime";
     public static final String FIELD_SKIP_NEXT_NOTIF = "skipNextNotif";
     public static final String FIELD_SILENT_VIBRO_OFF = "silentVibroOff";
-    public static final Parcelable.Creator<Prayer> CREATOR = new Parcelable.Creator<Prayer>() {
-        public Prayer createFromParcel(Parcel in) {
-            return new Prayer(in);
-        }
 
-        public Prayer[] newArray(int size) {
-            return new Prayer[size];
-        }
-    };
-    protected static final int ALARM_PENDING_INTENT_ID = 13579;
-    protected static final int NOTIF_PENDING_INTET_ID = 24680;
-    protected static final int PRAYER_CHANGE_PENDING_INTENT_ID = 86420;
-    protected static final int SILENT_OFF_PENDING_INTENT_ID = 97531;
-    protected static final int SILENT_ON_PENDING_INTENT_ID = 97000;
     protected int id = -1;
     protected boolean skipNextAlarm;
     protected boolean skipNextSilent;
     protected boolean alarmOn;
     protected boolean silentOn;
+
     protected int alarmMins;
     protected String alarmSound = "";
     protected int soundOnMins;
@@ -90,7 +95,9 @@ public class Prayer implements Parcelable {
     protected boolean notifLedOn;
     protected boolean silentVibrationOff;
     protected int prayerTime;
+
     protected SimpleDateFormat mDateFormat = new SimpleDateFormat("HH'h' mm'm'", Locale.getDefault());
+    protected static final int SILENT_ON_PENDING_INTENT_ID = 97000;
 
     public Prayer(Parcel in) {
         id = in.readInt();
@@ -115,6 +122,19 @@ public class Prayer implements Parcelable {
         initCalendar();
 
         initFromPreference();
+    }
+
+    public static PendingIntent getAlarmPendingIntent(Context context, Prayer prayer) {
+        Intent activateAlarm = new Intent(context, AlarmReceiver.class);
+        activateAlarm.setAction(AlarmReceiver.ACTION_SHOW_ALARM + "_" + prayer.getId());
+
+        activateAlarm.putExtra(AlarmActivity.EXTRA_PRAYER_ID, prayer.getId());
+
+        return PendingIntent.getBroadcast(
+                context,
+                ALARM_PENDING_INTENT_ID,
+                activateAlarm,
+                PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
     public Prayer() {
@@ -163,16 +183,19 @@ public class Prayer implements Parcelable {
                 PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
-    public static PendingIntent getAlarmPendingIntent(Context context, Prayer prayer) {
-        Intent activateAlarm = new Intent(context, AlarmActivity.class);
-        activateAlarm.setAction(AlarmActivity.LAUNCH_ALARM + "_" + prayer.getId());
-        activateAlarm.putExtra(AlarmActivity.EXTRA_PRAYER_ID, prayer.getId());
+    public JsonElement getSettingsAsJson() {
+        JsonObject settings = new JsonObject();
+        settings.addProperty(FIELD_ALARM_ON, alarmOn);
+        settings.addProperty(FIELD_SILENT_ON, silentOn);
+        settings.addProperty(FIELD_NOTIF_ON, notifOn);
+        settings.addProperty(FIELD_ALARM_ON_MINS, alarmMins);
+        settings.addProperty(FIELD_SILENT_TIMEOUT, soundOnMins);
+        settings.addProperty(FIELD_NOTIF_SOUND_ON, notifSoundOn);
+        settings.addProperty(FIELD_NOTIF_VIBRO_ON, notifVibroOn);
+        settings.addProperty(FIELD_NOTIF_ON_MINS, notifMins);
+        settings.addProperty(FIELD_SILENT_VIBRO_OFF, silentVibrationOff);
 
-        return PendingIntent.getActivity(
-                context,
-                ALARM_PENDING_INTENT_ID,
-                activateAlarm,
-                PendingIntent.FLAG_CANCEL_CURRENT);
+        return settings;
     }
 
     public static PendingIntent getNotifPendingIntent(Context context, int vakatId) {
@@ -215,21 +238,6 @@ public class Prayer implements Parcelable {
         }
 
         return "";
-    }
-
-    public JsonElement getSettingsAsJson() {
-        JsonObject settings = new JsonObject();
-        settings.addProperty(FIELD_ALARM_ON, alarmOn);
-        settings.addProperty(FIELD_SILENT_ON, silentOn);
-        settings.addProperty(FIELD_NOTIF_ON, notifOn);
-        settings.addProperty(FIELD_ALARM_ON_MINS, alarmMins);
-        settings.addProperty(FIELD_SILENT_TIMEOUT, soundOnMins);
-        settings.addProperty(FIELD_NOTIF_SOUND_ON, notifSoundOn);
-        settings.addProperty(FIELD_NOTIF_VIBRO_ON, notifVibroOn);
-        settings.addProperty(FIELD_NOTIF_ON_MINS, notifMins);
-        settings.addProperty(FIELD_SILENT_VIBRO_OFF, silentVibrationOff);
-
-        return settings;
     }
 
     protected void initCalendar() {
@@ -523,12 +531,12 @@ public class Prayer implements Parcelable {
         this.notifMins = notifMins;
     }
 
-    public boolean isNotifSoundOn() {
-        return notifSoundOn;
-    }
-
     public void setNotifSoundOn(boolean notifSoundOn) {
         this.notifSoundOn = notifSoundOn;
+    }
+
+    public boolean isNotifSoundOn() {
+        return notifSoundOn;
     }
 
     public boolean isNotifVibroOn() {
@@ -675,29 +683,27 @@ public class Prayer implements Parcelable {
                 return;
             }
 
+            PendingIntent alarmIntent = getAlarmPendingIntent(conext, this);
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
                 alarmManager.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
                         alarmOnAtMillis,
-                        getAlarmPendingIntent(conext, this));
+                        alarmIntent);
+
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+
                 alarmManager.setExact(
                         AlarmManager.RTC_WAKEUP,
                         alarmOnAtMillis,
-                        getAlarmPendingIntent(conext, this));
-                /*
-            } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                Intent intent = new Intent(conext, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                PendingIntent pi = PendingIntent.getActivity(conext, 1221, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(alarmOnAtMillis, pi);
-                alarmManager.setAlarmClock(alarmClockInfo, getAlarmPendingIntent(conext, this));
-            */
+                        alarmIntent);
             } else {
+
                 alarmManager.set(
                         AlarmManager.RTC_WAKEUP,
                         alarmOnAtMillis,
-                        getAlarmPendingIntent(conext, this));
+                        alarmIntent);
             }
 
             FileLog.i(TAG, "alarm set for " + getTitle() + ", activation time: " + alarmActivationTime);
