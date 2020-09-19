@@ -59,12 +59,6 @@ public class OngoingAlarmService extends Service {
 
         String action = intent.getAction();
 
-        if(TextUtils.isEmpty(action)) {
-            FileLog.e(TAG,"Action is required");
-            stopSelf(startId);
-            return START_NOT_STICKY;
-        }
-
         FileLog.d(TAG,"action=" + action);
 
         notificationsManager = NotifManagerFactory.getNotifManager(this);
@@ -73,31 +67,35 @@ public class OngoingAlarmService extends Service {
 
             int prayerId = intent.getIntExtra(EXTRA_PRAYER_ID, -1);
 
-            if (prayerId == -1) {
-                FileLog.w(TAG, "Required EXTRA_PRAYER_ID not passed to service");
-                stopSelf(startId);
-            } else {
-                Prayer prayer = PrayersSchedule.getInstance(this).getPrayer(prayerId);
-                startForeground(
-                        NotifManager.ALARM_NOTIF,
-                        notificationsManager.getAlarmNotif(prayer));
+            Prayer prayer = PrayersSchedule.getInstance(this).getPrayer(prayerId);
 
-                final Uri soundUri = App.app.getAlarmSoundUri();
+            startForeground(
+                    NotifManager.ALARM_NOTIF,
+                    notificationsManager.getAlarmNotif(prayer));
 
-                alarmSoundPlayer = new AlarmSoundPlayer(this);
-                try {
-                    alarmSoundPlayer.play(soundUri, true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            final Uri soundUri = App.app.getAlarmSoundUri();
 
-                startCountDownTimer();
+            alarmSoundPlayer = new AlarmSoundPlayer(this);
+            try {
+                alarmSoundPlayer.play(soundUri, true);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
+            startCountDownTimer();
+
         } else if(action.equals(ACTION_STOP_ALARM)) {
+
             if(countDownTimer != null) {
                 countDownTimer.cancel();
             }
+
+            startForeground(
+                    NotifManager.ALARM_NOTIF,
+                    notificationsManager.getAlarmNotif(null));
+
+            stopForeground(true);
+
             quit();
         }
 
@@ -129,6 +127,8 @@ public class OngoingAlarmService extends Service {
         if(alarmSoundPlayer != null) {
             alarmSoundPlayer.cancel();
         }
+
+        stopForeground(true);
         notificationsManager.cancelAlarmNotif();
         stopSelf(startId);
     }

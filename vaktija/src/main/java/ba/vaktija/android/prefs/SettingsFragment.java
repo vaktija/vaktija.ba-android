@@ -100,13 +100,6 @@ public class SettingsFragment extends PreferenceFragmentCompat
         location.setSummary(prefs.getString(Prefs.LOCATION_NAME, Defaults.LOCATION_NAME));
 
         Preference statusBarNotif = getPreference(Prefs.STATUSBAR_NOTIFICATION);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // We use foreground service on Android >= 26 which requires icon in status bar,
-            // so it makes no sense to disable status bar notification
-            statusBarNotif.setEnabled(false);
-        }
-
         statusBarNotif.setOnPreferenceChangeListener(this);
 
         Preference allPrayersNotif = getPreference(Prefs.ALL_PRAYERS_IN_NOTIF);

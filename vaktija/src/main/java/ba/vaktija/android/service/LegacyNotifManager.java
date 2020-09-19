@@ -73,7 +73,9 @@ public class LegacyNotifManager implements NotifManager {
         FileLog.d(TAG, "[buildCountdownNotification] showTicker=" + showTicker);
 
         Notification notif = getOngoingNotif(showTicker, DEFAULT_CHANNEL);
-        notif.priority = Notification.PRIORITY_MAX;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            notif.priority = Notification.PRIORITY_MAX;
+        }
         notificationManager.notify(ONGOING_NOTIF, notif);
     }
 
@@ -102,8 +104,14 @@ public class LegacyNotifManager implements NotifManager {
                 resultIntent,
                 0);
 
-        String title = Prayer.getNextVakatTitle(mPrayer.getId())+" je za ";
-        title += FormattingUtils.getTimeString(PrayersSchedule.getInstance(context).getTimeTillNextPrayer());
+        String title;
+
+        if(mPrefs.getBoolean(Prefs.STATUSBAR_NOTIFICATION, true) && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            title = Prayer.getNextVakatTitle(mPrayer.getId())+" je za ";
+            title += FormattingUtils.getTimeString(PrayersSchedule.getInstance(context).getTimeTillNextPrayer());
+        } else {
+            title = "Uskoro je "+Prayer.getNextVakatTitle(mPrayer.getId());
+        }
 
         mBigTextStyle = new NotificationCompat.BigTextStyle();
         mBigTextStyle.bigText(PrayersSchedule.getInstance(context).getAllPrayersTimes())
@@ -422,6 +430,23 @@ public class LegacyNotifManager implements NotifManager {
 
     public Notification getAlarmNotif(Prayer prayer) {
 
+        if(prayer == null) {
+
+            // Prayer is null when notification is needed to satisfy requirement that services started
+            // using startForegroundService must show notification. In this case we can just show dummy notification,
+            // it is going to be cleared immediately after showing
+
+            NotificationCompat.Builder notificationBuilder =
+                    new NotificationCompat.Builder(context, ALARMS_CHANNEL)
+                            .setSmallIcon(R.drawable.ic_notif_info)
+                            .setContentTitle("Alarm")
+                            .setContentText("Alarm")
+                            .setPriority(NotificationCompat.PRIORITY_LOW)
+                            .setCategory(NotificationCompat.CATEGORY_ALARM);
+
+            return notificationBuilder.build();
+        }
+
         Intent cancelActionIntent = new Intent(context, AlarmReceiver.class);
         cancelActionIntent.setAction(AlarmReceiver.ACTION_DISMISS_ALARM);
 
@@ -454,7 +479,7 @@ public class LegacyNotifManager implements NotifManager {
                         .setSmallIcon(R.drawable.ic_notif_info)
                         .setContentTitle(prayer.getTitle() + " • Alarm")
                         .setContentText(text)
-                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setPriority(NotificationCompat.PRIORITY_LOW)
                         .setCategory(NotificationCompat.CATEGORY_ALARM)
                         .addAction(cancelAction)
                         .setFullScreenIntent(fullScreenPendingIntent, true);

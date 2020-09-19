@@ -20,6 +20,7 @@ public class AlarmSoundPlayer implements MediaPlayer.OnPreparedListener {
     private CountDownTimer volumeTimer;
     private boolean increasing;
     private Context context;
+    private int volume = 0;
 
     public AlarmSoundPlayer(Context context) {
         this.context = context;
@@ -54,27 +55,22 @@ public class AlarmSoundPlayer implements MediaPlayer.OnPreparedListener {
         initialStreamVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM);
         int maxStreamVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
 
-        FileLog.i(TAG, "initialStreamVolume: " + initialStreamVolume);
-        FileLog.i(TAG, "maxStreamVolume: " + maxStreamVolume);
+        FileLog.i(TAG, "initialStreamVolume=" + initialStreamVolume+" maxStreamVolume="+maxStreamVolume);
 
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 0, 0);
 
-        volumeTimer = new CountDownTimer(initialStreamVolume * 1000, 1000) {
+        volumeTimer = new CountDownTimer(maxStreamVolume * 1000 * 2, 2000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
-                int sec = (int) (millisUntilFinished/1000);
-
-                int volume = initialStreamVolume - sec;
-
+                volume++;
                 FileLog.i(TAG, "volume: " + volume);
-
                 audioManager.setStreamVolume(AudioManager.STREAM_ALARM, volume, 0);
             }
 
             @Override
             public void onFinish() {
-                audioManager.setStreamVolume(AudioManager.STREAM_ALARM, initialStreamVolume, 0);
+//                audioManager.setStreamVolume(AudioManager.STREAM_ALARM, initialStreamVolume, 0);
             }
         };
 

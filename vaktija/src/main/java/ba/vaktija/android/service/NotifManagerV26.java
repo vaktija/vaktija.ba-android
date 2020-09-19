@@ -70,6 +70,10 @@ public class NotifManagerV26 extends LegacyNotifManager {
         NotificationChannel alarmChannel = new NotificationChannel(ALARMS_CHANNEL, alarmsChannelDesc, IMPORTANCE_HIGH);
         alarmChannel.enableVibration(true);
         alarmChannel.setShowBadge(false);
+
+        // No sound is needed for the channel because actual alarm sound will be played by
+        // ba.vaktija.android.service.AlarmSoundPlayer
+        alarmChannel.setSound(null, null);
         notificationManager.createNotificationChannel(alarmChannel);
     }
 }

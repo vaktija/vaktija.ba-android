@@ -7,7 +7,7 @@ import ba.vaktija.android.models.Prayer;
 public interface NotifManager {
 
     String DEFAULT_CHANNEL = "DEFAULT_CHANNEL";
-    String ALARMS_CHANNEL = "ALARMS_CHANNEL";
+    String ALARMS_CHANNEL = "ALARMS_CHANNEL_3";
     String APPROACHING_CHANNEL = "APPROACHING_CHANNEL";
 
     int ONGOING_NOTIF = 77;

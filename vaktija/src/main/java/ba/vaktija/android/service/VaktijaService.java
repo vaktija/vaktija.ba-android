@@ -131,6 +131,10 @@ public class VaktijaService extends Service {
                     NotifManager.ONGOING_NOTIF,
                     NotifManagerFactory.getNotifManager(this).getOngoingNotif(true, DEFAULT_CHANNEL)
             );
+
+            if(!mPrefs.getBoolean(Prefs.STATUSBAR_NOTIFICATION, true)) {
+                stopForeground(true);
+            }
         }
 
         processStartCommand(intent, startId);
@@ -246,6 +250,7 @@ public class VaktijaService extends Service {
                             NotifManager.ONGOING_NOTIF,
                             NotifManagerFactory.getNotifManager(this).getOngoingNotif(true, APPROACHING_CHANNEL)
                     );
+
                 } else {
                     NotifManagerFactory.getNotifManager(this).showApproachingNotification();
                 }
@@ -274,6 +279,10 @@ public class VaktijaService extends Service {
                 SilentModeManager.getInstance(this).updateSilentMode(this);
                 NotifManagerFactory.getNotifManager(this).updateNotification();
                 break;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !mPrefs.getBoolean(Prefs.STATUSBAR_NOTIFICATION, true)) {
+            stopForeground(false);
         }
 
         //dumpEventsTimeline();

@@ -12,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.WindowManager.LayoutParams;
@@ -23,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -33,7 +33,6 @@ import ba.vaktija.android.models.PrayersSchedule;
 import ba.vaktija.android.prefs.Prefs;
 import ba.vaktija.android.service.AlarmSoundPlayer;
 import ba.vaktija.android.service.OngoingAlarmService;
-import ba.vaktija.android.service.VaktijaServiceHelper;
 import ba.vaktija.android.util.FileLog;
 import ba.vaktija.android.util.FormattingUtils;
 import ba.vaktija.android.util.Utils;
@@ -61,36 +60,29 @@ public class AlarmActivity extends AppCompatActivity
     private static final int ALARM_SLEEP = 5 /*mins*/ * 60 /*sec*/ * 1000 /*millisec*/;
     public static final String LAUNCH_ALARM = "LAUNCH_ALARM";
 
-    private TextView mAlarmTimeHrs;
-    private TextView mAlarmTimeMins;
-    private TextView mAlarmTitle;
-    private SlidingLayout mSlidingLayout;
-    private ImageView mClockIcon;
-    private Prayer mPrayer;
-    private CountDownTimer mAlarmTimer;
-    private SharedPreferences mPrefs;
-    private PowerManager mPowerManager;
-    private PowerManager.WakeLock mWakeLock;
-    private NotificationManager mNotificationManager;
-    private App mApp;
+    private Prayer prayer;
+    private CountDownTimer countDownTimer;
+    private SharedPreferences preferences;
+    private PowerManager.WakeLock wakeLock;
+    private NotificationManager notificationManager;
+    private App app;
     private AlarmSoundPlayer alarmSoundPlayer;
 
     public static void cancelAlarm(Activity activity) {
         Intent i = new Intent(activity, AlarmActivity.class);
         i.setAction(ACTION_CANCEL_ALARM);
-        //i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         activity.startActivity(i);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, TAG);
-        mWakeLock.setReferenceCounted(false);
+        PowerManager mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, TAG);
+        wakeLock.setReferenceCounted(false);
 
         alarmSoundPlayer = new AlarmSoundPlayer(this);
 
-        mWakeLock.acquire();
+        wakeLock.acquire(ALARM_TIMEOUT);
 
         getWindow().addFlags(
                 LayoutParams.FLAG_DISMISS_KEYGUARD
@@ -103,21 +95,21 @@ public class AlarmActivity extends AppCompatActivity
 
         FileLog.d(TAG, "[*** onCreate ***]");
 
-        mApp = (App) getApplicationContext();
+        app = (App) getApplicationContext();
 
         setContentView(R.layout.activity_alarm);
 
-        mAlarmTimeHrs = (TextView) findViewById(R.id.activity_alarm_timeHrs);
-        mAlarmTimeMins = (TextView) findViewById(R.id.activity_alarm_timeMins);
-        mAlarmTitle = (TextView) findViewById(R.id.activity_alarmTitle);
-        mSlidingLayout = (SlidingLayout) findViewById(R.id.activity_alarm_slidingLayout);
-        mClockIcon = (ImageView) findViewById(R.id.activity_alarm_icon);
+        TextView mAlarmTimeHrs = findViewById(R.id.activity_alarm_timeHrs);
+        TextView mAlarmTimeMins = findViewById(R.id.activity_alarm_timeMins);
+        TextView mAlarmTitle = findViewById(R.id.activity_alarmTitle);
+        SlidingLayout mSlidingLayout = findViewById(R.id.activity_alarm_slidingLayout);
+        ImageView mClockIcon = findViewById(R.id.activity_alarm_icon);
 
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        mPrefs.edit().putBoolean(Prefs.ALARM_ACTIVE, true).commit();
+        preferences.edit().putBoolean(Prefs.ALARM_ACTIVE, true).apply();
 
-        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         mSlidingLayout.setSlidingListener(this);
 
@@ -127,16 +119,16 @@ public class AlarmActivity extends AppCompatActivity
 
         boolean playAlarmSound = getIntent().getBooleanExtra(EXTRA_PLAY_ALARM_SOUND, true);
 
-        mPrayer = PrayersSchedule.getInstance(this).getPrayer(prayerId);
+        prayer = PrayersSchedule.getInstance(this).getPrayer(prayerId);
 
         if (prayerId == -1) {
             Log.w(TAG, "Prayer is null");
-            mPrefs.edit().putBoolean(Prefs.ALARM_ACTIVE, false).commit();
+            preferences.edit().putBoolean(Prefs.ALARM_ACTIVE, false).apply();
             finish();
             return;
         }
 
-        int time = mPrayer.getPrayerTime() - Utils.getCurrentTimeSec();
+        int time = prayer.getPrayerTime() - Utils.getCurrentTimeSec();
 
         time += 5;
 
@@ -145,7 +137,7 @@ public class AlarmActivity extends AppCompatActivity
 
         mAlarmTimeHrs.setText(String.valueOf(hours));
         mAlarmTimeMins.setText(String.valueOf(minutes));
-        mAlarmTitle.setText(mPrayer.getTitle().toUpperCase(Locale.getDefault()) + " JE ZA");
+        mAlarmTitle.setText(String.format("%s JE ZA", prayer.getTitle().toUpperCase(Locale.getDefault())));
 
         try {
             if (playAlarmSound) {
@@ -163,7 +155,7 @@ public class AlarmActivity extends AppCompatActivity
             AlarmActivity.this.finish();
         }
 
-        mApp.sendScreenView("Alarm");
+        app.sendScreenView("Alarm");
     }
 
     @Override
@@ -180,14 +172,15 @@ public class AlarmActivity extends AppCompatActivity
         FileLog.d(TAG, "action: " + action);
 
         if (action != null && action.equals(ACTION_CANCEL_ALARM)) {
-            cancelAlarmAndFinish();
+            cancelAlarm();
+            finish();
         }
     }
 
     void startCountDownTimer() {
         FileLog.d(TAG, "[startCountDownTimer]");
 
-        mAlarmTimer = new CountDownTimer(ALARM_TIMEOUT, 1000) {
+        countDownTimer = new CountDownTimer(ALARM_TIMEOUT, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -200,29 +193,22 @@ public class AlarmActivity extends AppCompatActivity
             @Override
             public void onFinish() {
                 showAlarmMissedNotification();
-                cancelAlarmAndFinish();
+                cancelAlarm();
+                finish();
             }
         };
 
-        mAlarmTimer.start();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        FileLog.d(TAG, "[onDestroy]");
-
-        cancelAlarmAndFinish();
+        countDownTimer.start();
     }
 
     void rescheduleAlarm() {
 
-        mApp.sendEvent("Alarm rescheduled", "Rescheduled for " + mPrayer.getTitle());
+        app.sendEvent("Alarm rescheduled", "Rescheduled for " + prayer.getTitle());
 
-        boolean alreadyResheduled = mPrefs.getBoolean(Prefs.ALARM_RESCHEDULED_ONCE + "_" + mPrayer.getId(), false);
+        boolean alreadyResheduled = preferences.getBoolean(Prefs.ALARM_RESCHEDULED_ONCE + "_" + prayer.getId(), false);
 
         if (alreadyResheduled) {
-            mPrefs.edit().putBoolean(Prefs.ALARM_RESCHEDULED_ONCE + "_" + mPrayer.getId(), false).commit();
+            preferences.edit().putBoolean(Prefs.ALARM_RESCHEDULED_ONCE + "_" + prayer.getId(), false).apply();
             return;
         }
 
@@ -231,40 +217,39 @@ public class AlarmActivity extends AppCompatActivity
 
         long triggerAtMillis = cal.getTimeInMillis() + ALARM_SLEEP;
 
-        am.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, Prayer.getAlarmPendingIntent(this, mPrayer));
-        mPrefs.edit().putBoolean(Prefs.ALARM_RESCHEDULED_ONCE + "_" + mPrayer.getId(), true).commit();
+        am.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, Prayer.getAlarmPendingIntent(this, prayer));
+        preferences.edit().putBoolean(Prefs.ALARM_RESCHEDULED_ONCE + "_" + prayer.getId(), true).apply();
         FileLog.i(TAG, "alarm resheduled at " + new Date(triggerAtMillis));
 
-        mWakeLock.release();
+        wakeLock.release();
     }
 
     @Override
     public void onSlidingCompleted() {
         FileLog.d(TAG, "[onSlidingCompleted]");
 
-        cancelAlarmAndFinish();
+        cancelAlarm();
+        finish();
     }
 
-    private void cancelAlarmAndFinish() {
-        FileLog.d(TAG, "[cancelAlarmAndFinish]");
+    private void cancelAlarm() {
+        FileLog.d(TAG, "[cancelAlarm]");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            VaktijaServiceHelper.startService(this, OngoingAlarmService.getStopAlarmIntent(this));
+            startForegroundService(OngoingAlarmService.getStopAlarmIntent(this));
         }
 
         alarmSoundPlayer.cancel();
 
-        if (mAlarmTimer != null) {
-            mAlarmTimer.cancel();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
         }
 
-        mNotificationManager.cancel(ALARM_NOTIF);
+        notificationManager.cancel(ALARM_NOTIF);
 
-        mPrefs.edit().putBoolean(Prefs.ALARM_ACTIVE, false).commit();
+        preferences.edit().putBoolean(Prefs.ALARM_ACTIVE, false).apply();
 
-        //mPrefs.edit().putBoolean(Prefs.ALARM_RESCHEDULED_ONCE+"_"+ mPrayer.getId(), false).commit();
-        mWakeLock.release();
-        finish();
+        wakeLock.release();
     }
 
     void showNotification() {
@@ -283,11 +268,11 @@ public class AlarmActivity extends AppCompatActivity
                 .setOngoing(true)
                 .setContentIntent(pIntent)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setTicker(mPrayer.getTitle() + " je za " + FormattingUtils.getTimeString(mPrayer.getPrayerTime() - Utils.getCurrentTimeSec()))
+                .setTicker(prayer.getTitle() + " je za " + FormattingUtils.getTimeString(prayer.getPrayerTime() - Utils.getCurrentTimeSec()))
                 .setContentTitle(getString(R.string.alarm))
-                .setContentText(mPrayer.getTitle() + " je za " + FormattingUtils.getTimeString(mPrayer.getPrayerTime() - Utils.getCurrentTimeSec()));
+                .setContentText(prayer.getTitle() + " je za " + FormattingUtils.getTimeString(prayer.getPrayerTime() - Utils.getCurrentTimeSec()));
 
-        mNotificationManager.notify(ALARM_NOTIF, notifBuilder.build());
+        notificationManager.notify(ALARM_NOTIF, notifBuilder.build());
     }
 
     void showAlarmMissedNotification() {
@@ -311,27 +296,30 @@ public class AlarmActivity extends AppCompatActivity
                         getString(
                                 R.string.alarm_missed_for,
                                 " " + FormattingUtils.getCaseTitle(
-                                        mPrayer.getId(),
+                                        prayer.getId(),
                                         FormattingUtils.Case.AKUZATIV)))
 
                 .setContentTitle(getString(R.string.alarm_missed))
                 .setContentText(getString(R.string.alarm_is_missed_for,
                         " " + FormattingUtils.getCaseTitle(
-                                mPrayer.getId(),
+                                prayer.getId(),
                                 FormattingUtils.Case.AKUZATIV)));
 
-        mNotificationManager.notify(ALARM_NOTIF_MISSED, notifBuilder.build());
+        notificationManager.notify(ALARM_NOTIF_MISSED, notifBuilder.build());
     }
 
     @Override
     public void onBackPressed() {
-        mPrefs.edit().putBoolean(Prefs.ALARM_ACTIVE, false).commit();
+        preferences.edit().putBoolean(Prefs.ALARM_ACTIVE, false).apply();
+        cancelAlarm();
         super.onBackPressed();
     }
 
+    // https://developer.android.com/reference/android/app/Activity#onUserLeaveHint()
     @Override
     protected void onUserLeaveHint() {
         Log.d(TAG, "onUserLeaveHint");
+        cancelAlarm();
         finish();
         super.onUserLeaveHint();
     }
