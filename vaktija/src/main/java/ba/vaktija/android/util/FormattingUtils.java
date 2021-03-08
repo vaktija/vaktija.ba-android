@@ -52,18 +52,18 @@ public class FormattingUtils {
             minutes += 1;
         }
 
-        String result = String.format(Locale.getDefault(), "%dh %dm", hours, minutes);
+        String result = String.format(Locale.getDefault(), "%d h %d min", hours, minutes);
 
         if (minutes == 0) {
-            result = String.format(Locale.getDefault(), "%dh", hours);
+            result = String.format(Locale.getDefault(), "%d h", hours);
         }
 
         if (hours == 0) {
-            result = String.format(Locale.getDefault(), "%dm", minutes);
+            result = String.format(Locale.getDefault(), "%d min", minutes);
         }
 
         if (hours == 0 && minutes == 0) {
-            result = String.format(Locale.getDefault(), "0m %ds", seconds);
+            result = String.format(Locale.getDefault(), "0 min %d s", seconds);
         }
 
         return result;
