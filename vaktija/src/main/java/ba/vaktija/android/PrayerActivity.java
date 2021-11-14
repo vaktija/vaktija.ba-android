@@ -119,7 +119,7 @@ public class PrayerActivity extends BaseActivity implements OnNavigationListener
 
         mActionBarTitle.setTypeface(App.robotoCondensedRegular);
         mActionBarSubtitle.setTypeface(App.robotoCondensedRegular);
-        int color = Color.parseColor("#9d9d00");
+        int color = Color.parseColor("#a59573");
         mActionBarTitle.setTextColor(getResources().getColor(android.R.color.darker_gray));
         mActionBarSubtitle.setTextColor(getResources().getColor(android.R.color.darker_gray));
         */
