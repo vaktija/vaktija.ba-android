@@ -15,7 +15,7 @@ ext {
     }
 }
 
-def version = "1.2.7"
+def version = "1.2.8"
 
 android {
     compileSdkVersion 30
