@@ -157,7 +157,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:text="@string/label_dont_ask_again"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <Button
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
