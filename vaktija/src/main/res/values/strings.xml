@@ -83,6 +83,9 @@
     <string name="all_prayers_not_shown_in_notif">Sva vremena se ne prikazuju u notifikaciji</string>
     <string name="all_prayers_shown_in_notif">Sva vremena se prikazuju u notifikaciji</string>
     <string name="all_prayers_in_notif">Sva vremena u notifikaciji</string>
+    <string name="second_vakat_not_shown_in_notif">Drugi vakat se ne prikazuje u notifikaciji</string>
+    <string name="second_vakat_shown_in_notif">Drugi vakat se prikazuje u notifikaciji</string>
+    <string name="second_vakat_in_notif">Drugi vakat u notifikaciji</string>
     <string name="cant_use_selected_tone">Odabrani zvuk se ne može koristiti, odaberite drugi.</string>
     <string name="vaktija_url">vaktija.ba</string>
     <string name="cancel">Odustani</string>
