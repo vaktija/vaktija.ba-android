@@ -35,6 +35,14 @@
             android:summaryOff="@string/second_vakat_not_shown_in_notif"
             android:summaryOn="@string/second_vakat_shown_in_notif"
             android:title="@string/second_vakat_in_notif" />
+        <CheckBoxPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="true"
+            android:key="CURRENT_VAKAT_IN_NOTIF"
+            android:summaryOff="@string/current_vakat_not_shown_in_notif"
+            android:summaryOn="@string/current_vakat_shown_in_notif"
+            android:title="@string/current_vakat_in_notif" />
         <Preference
             android:key="notificationToneUri"
             android:summary="@string/prefs_notification_tone_summary"

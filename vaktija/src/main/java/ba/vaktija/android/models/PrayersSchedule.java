@@ -365,12 +365,18 @@ public class PrayersSchedule {
         Prayer nextVakat = getNextPrayer(currentPrayer.getId());
         Prayer secondNextVakat = getNextPrayer(nextVakat.getId());
 
-        String time = currentPrayer.getShortTitle()
-                + " " + currentPrayer.getHrsString()
-                + ":" + currentPrayer.getMinsString() +
-                " | " + nextVakat.getShortTitle()
+        String time = "";
+        if(mPrefs.getBoolean(Prefs.CURRENT_VAKAT_IN_NOTIF, true)) {
+            time += currentPrayer.getShortTitle()
+                    + " " + currentPrayer.getHrsString()
+                    + ":" + currentPrayer.getMinsString()
+                    + " | ";
+        }
+
+        time +=   nextVakat.getShortTitle()
                 + " " + nextVakat.getHrsString()
                 + ":" + nextVakat.getMinsString();
+
         if(mPrefs.getBoolean(Prefs.SECOND_VAKAT_IN_NOTIF, true)){
             time += " | " + secondNextVakat.getShortTitle()
                     + " " + secondNextVakat.getHrsString()

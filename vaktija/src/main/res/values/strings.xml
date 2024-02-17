@@ -86,6 +86,9 @@
     <string name="second_vakat_not_shown_in_notif">Drugi vakat se ne prikazuje u notifikaciji</string>
     <string name="second_vakat_shown_in_notif">Drugi vakat se prikazuje u notifikaciji</string>
     <string name="second_vakat_in_notif">Drugi vakat u notifikaciji</string>
+    <string name="current_vakat_not_shown_in_notif">Trenutni vakat se ne prikazuje u notifikaciji</string>
+    <string name="current_vakat_shown_in_notif">Trenutni vakat se prikazuje u notifikaciji</string>
+    <string name="current_vakat_in_notif">Trenutni vakat u notifikaciji</string>
     <string name="cant_use_selected_tone">Odabrani zvuk se ne može koristiti, odaberite drugi.</string>
     <string name="vaktija_url">vaktija.ba</string>
     <string name="cancel">Odustani</string>
