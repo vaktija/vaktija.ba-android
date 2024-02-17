@@ -18,10 +18,10 @@ public class FormattingUtils {
         int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
         int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
 
-        String result = String.format("%02d:%02d", hours, minutes);
+        String result = String.format("%d:%02d", hours, minutes);
 
         if (withSeconds)
-            result = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            result = String.format("%d:%02d:%02d", hours, minutes, seconds);
 
         return result;
 
@@ -52,18 +52,18 @@ public class FormattingUtils {
             minutes += 1;
         }
 
-        String result = String.format(Locale.getDefault(), "%dh %dm", hours, minutes);
+        String result = String.format(Locale.getDefault(), "%d:%02d h", hours, minutes);
 
         if (minutes == 0) {
-            result = String.format(Locale.getDefault(), "%dh", hours);
+            result = String.format(Locale.getDefault(), "%d:00 h", hours);
         }
 
         if (hours == 0) {
-            result = String.format(Locale.getDefault(), "%dm", minutes);
+            result = String.format(Locale.getDefault(), "%d min", minutes);
         }
 
         if (hours == 0 && minutes == 0) {
-            result = String.format(Locale.getDefault(), "0m %ds", seconds);
+            result = String.format(Locale.getDefault(), "%d s", seconds);
         }
 
         return result;
@@ -81,7 +81,7 @@ public class FormattingUtils {
         int minutes = (totalSecs / 60) % 60;
         int hours = (totalSecs / 3600) % 24;
 
-        String result = String.format(Locale.getDefault(), "%02d:%02d", hours, minutes);
+        String result = String.format(Locale.getDefault(), "%d:%02d", hours, minutes);
 
         return result;
     }
@@ -143,7 +143,7 @@ public class FormattingUtils {
             case Prayer.SUNRISE:
                 switch (caseId) {
                     case Case.AKUZATIV:
-                        return "izlazak sunca";
+                        return "izlazak";
                 }
 
             case Prayer.DHUHR:

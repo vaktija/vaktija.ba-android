@@ -285,7 +285,7 @@ public class LegacyNotifManager implements NotifManager {
 
         if(approaching){
             String time = FormattingUtils.getTimeString(PrayersSchedule.getInstance(context).getTimeTillNextPrayer());
-            contentTitle = Utils.boldNumbers("Uskoro je " + Prayer.getNextVakatTitle(mPrayer.getId()) + " (" + time + ")");
+            contentTitle = Utils.boldNumbers("Uskoro je " + Prayer.getNextVakatTitle(mPrayer.getId()) + ": " + time);
             mCountdownNotifBuilder.setContentTitle(contentTitle);
             mBigTextStyle.setBigContentTitle(contentTitle);
         }
@@ -306,9 +306,9 @@ public class LegacyNotifManager implements NotifManager {
 
     private CharSequence getTimeTillNext(int seconds,int secondSeconds){
 
-        String time = Prayer.getNextVakatTitle(mPrayer.getId()) +" je za "+FormattingUtils.getTimeString(seconds);
+        String time = Prayer.getNextVakatTitle(mPrayer.getId()) +" za: "+FormattingUtils.getTimeString(seconds);
         if(mPrefs.getBoolean(Prefs.SECOND_VAKAT_IN_NOTIF, true))
-            time += " | " + Prayer.getNextVakatTitle(mNextPrayer.getId()) + " je za "+FormattingUtils.getTimeString(secondSeconds);
+            time += " · " + Prayer.getNextVakatTitle(mNextPrayer.getId()) + " za: "+FormattingUtils.getTimeString(secondSeconds);
 
         return Utils.boldNumbers(time);
     }

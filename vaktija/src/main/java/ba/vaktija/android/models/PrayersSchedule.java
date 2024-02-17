@@ -368,18 +368,18 @@ public class PrayersSchedule {
         String time = "";
         if(mPrefs.getBoolean(Prefs.CURRENT_VAKAT_IN_NOTIF, true)) {
             time += currentPrayer.getShortTitle()
-                    + " " + currentPrayer.getHrsString()
+                    + ": " + currentPrayer.getHrsString()
                     + ":" + currentPrayer.getMinsString()
-                    + " | ";
+                    + " · ";
         }
 
         time +=   nextVakat.getShortTitle()
-                + " " + nextVakat.getHrsString()
+                + ": " + nextVakat.getHrsString()
                 + ":" + nextVakat.getMinsString();
 
         if(mPrefs.getBoolean(Prefs.SECOND_VAKAT_IN_NOTIF, true)){
-            time += " | " + secondNextVakat.getShortTitle()
-                    + " " + secondNextVakat.getHrsString()
+            time += " · " + secondNextVakat.getShortTitle()
+                    + ": " + secondNextVakat.getHrsString()
                     + ":" + secondNextVakat.getMinsString();
         }
 

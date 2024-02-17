@@ -223,7 +223,7 @@ public class Prayer implements Parcelable {
 
         switch (currentVakatId) {
             case Prayer.FAJR:
-                return "Izlazak sunca";
+                return "Izlazak";
             case Prayer.SUNRISE:
                 return "Podne";
             case Prayer.DHUHR:
@@ -386,7 +386,7 @@ public class Prayer implements Parcelable {
             case FAJR:
                 return "Zora";
             case SUNRISE:
-                return "Izlazak sunca";
+                return "Izlazak";
             case DHUHR:
                 return "Podne";
             case ASR:
@@ -407,7 +407,7 @@ public class Prayer implements Parcelable {
             case FAJR:
                 return "Zora";
             case SUNRISE:
-                return "I. sunca";
+                return "Izlazak";
             case DHUHR:
                 return "Podne";
             case ASR:
@@ -506,7 +506,7 @@ public class Prayer implements Parcelable {
 
     @SuppressLint("DefaultLocale")
     public String getHrsString() {
-        return String.format("%02d", ((getPrayerTime() / (3600)) % 24));
+        return String.format("%d", ((getPrayerTime() / (3600)) % 24));
     }
 
     @SuppressLint("DefaultLocale")
