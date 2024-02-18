@@ -225,6 +225,20 @@ public class PrayersSchedule {
         return nextPrayerTime;
     }
 
+    public int getTimeTillNextPrayer(boolean secondVakt) {
+        if(!secondVakt)
+            return getTimeTillNextPrayer();
+
+        Prayer currentPrayer = getCurrentPrayer();
+        Prayer nextPrayer = getNextPrayer(currentPrayer.getId());
+        Prayer secondNextPrayer = getNextPrayer(nextPrayer.getId());
+
+        int nextPrayerTime = secondNextPrayer.getPrayerTime();
+        nextPrayerTime -= Utils.getCurrentTimeSec();
+        if(nextPrayerTime<0) nextPrayerTime+=86400;
+        return nextPrayerTime;
+    }
+
     public boolean isNextPrayerApproaching() {
         //FileLog.d(TAG, "isNextPrayerApproaching");
         Prayer currentPrayer = getCurrentPrayer();
@@ -346,26 +360,25 @@ public class PrayersSchedule {
     public CharSequence getCurrentAndNextTime() {
         Prayer currentPrayer = getCurrentPrayer();
         Prayer nextVakat = getNextPrayer(currentPrayer.getId());
+        Prayer secondNextVakat = getNextPrayer(nextVakat.getId());
 
-        String nextDay = "";
-        String prevDay = "";
-
-        if (isDayEnding()) {
-            //nextDay = " (sutra)";
-            nextDay = "";
-        } else if (currentPrayer.getId() == Prayer.ISHA) {
-            //prevDay = " (jučer)";
-            prevDay = "";
+        String time = "";
+        if(mPrefs.getBoolean(Prefs.CURRENT_VAKAT_IN_NOTIF, true)) {
+            time += currentPrayer.getShortTitle()
+                    + ": " + currentPrayer.getHrsString()
+                    + ":" + currentPrayer.getMinsString()
+                    + " · ";
         }
 
-        String time = currentPrayer.getShortTitle()
-                + prevDay
-                + " " + currentPrayer.getHrsString()
-                + ":" + currentPrayer.getMinsString() +
-                " | " + nextVakat.getShortTitle()
-                + nextDay
-                + " " + nextVakat.getHrsString()
+        time +=   nextVakat.getShortTitle()
+                + ": " + nextVakat.getHrsString()
                 + ":" + nextVakat.getMinsString();
+
+        if(mPrefs.getBoolean(Prefs.SECOND_VAKAT_IN_NOTIF, true)){
+            time += " · " + secondNextVakat.getShortTitle()
+                    + ": " + secondNextVakat.getHrsString()
+                    + ":" + secondNextVakat.getMinsString();
+        }
 
         return Utils.boldNumbers(time);
     }

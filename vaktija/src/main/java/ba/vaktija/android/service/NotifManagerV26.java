@@ -27,6 +27,7 @@ public class NotifManagerV26 extends LegacyNotifManager {
             instance = new NotifManagerV26(context);
         } else {
             instance.mPrayer = PrayersSchedule.getInstance(context).getCurrentPrayer();
+            instance.mNextPrayer = PrayersSchedule.getInstance(context).getNextPrayer();
             instance.approaching = PrayersSchedule.getInstance(context).isNextPrayerApproaching();
         }
 

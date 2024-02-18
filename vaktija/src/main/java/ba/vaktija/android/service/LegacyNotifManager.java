@@ -34,6 +34,7 @@ public class LegacyNotifManager implements NotifManager {
     private SharedPreferences mPrefs;
     protected Context context;
     protected Prayer mPrayer;
+    protected Prayer mNextPrayer;
     protected boolean approaching;
     private boolean mStatusbarNotification;
     private NotificationCompat.Builder mCountdownNotifBuilder;
@@ -47,6 +48,7 @@ public class LegacyNotifManager implements NotifManager {
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         mPrayer = PrayersSchedule.getInstance(this.context).getCurrentPrayer();
+        mNextPrayer = PrayersSchedule.getInstance(this.context).getNextPrayer();
         approaching = PrayersSchedule.getInstance(this.context).isNextPrayerApproaching();
 
         mStatusbarNotification = mPrefs.getBoolean(
@@ -59,6 +61,7 @@ public class LegacyNotifManager implements NotifManager {
             instance = new LegacyNotifManager(context);
         } else {
             instance.mPrayer = PrayersSchedule.getInstance(context).getCurrentPrayer();
+            instance.mNextPrayer = PrayersSchedule.getInstance(context).getNextPrayer();
             instance.approaching = PrayersSchedule.getInstance(context).isNextPrayerApproaching();
 
             instance.mStatusbarNotification = instance.mPrefs.getBoolean(
@@ -262,7 +265,7 @@ public class LegacyNotifManager implements NotifManager {
                     buildCountDownNotif(true);
 
                 if(!mSilentModeOn)
-                    updateCountDownNotif((int) (millisUntilFinished / 1000));
+                    updateCountDownNotif((int) (millisUntilFinished/1000),PrayersSchedule.getInstance(context).getTimeTillNextPrayer(true));
             }
 
             @Override
@@ -273,9 +276,9 @@ public class LegacyNotifManager implements NotifManager {
         mCountDownTimer.start();
     }
 
-    private void updateCountDownNotif(int secRemaining){
+    private void updateCountDownNotif(int secRemaining,int secondSecRemaining){
 
-        CharSequence contentTitle = getTimeTillNext(secRemaining);
+        CharSequence contentTitle = getTimeTillNext(secRemaining,secondSecRemaining);
         mCountdownNotifBuilder.setContentTitle(contentTitle);
         mBigTextStyle.setBigContentTitle(contentTitle);
 
@@ -283,7 +286,7 @@ public class LegacyNotifManager implements NotifManager {
 
         if(approaching){
             String time = FormattingUtils.getTimeString(PrayersSchedule.getInstance(context).getTimeTillNextPrayer());
-            contentTitle = Utils.boldNumbers("Uskoro je " + Prayer.getNextVakatTitle(mPrayer.getId()) + " (" + time + ")");
+            contentTitle = Utils.boldNumbers("Uskoro je " + Prayer.getNextVakatTitle(mPrayer.getId()) + ": " + time);
             mCountdownNotifBuilder.setContentTitle(contentTitle);
             mBigTextStyle.setBigContentTitle(contentTitle);
         }
@@ -302,9 +305,11 @@ public class LegacyNotifManager implements NotifManager {
         Utils.updateWidget(context);
     }
 
-    private CharSequence getTimeTillNext(int seconds){
+    private CharSequence getTimeTillNext(int seconds,int secondSeconds){
 
-        String time = Prayer.getNextVakatTitle(mPrayer.getId())+" je za "+FormattingUtils.getTimeString(seconds);
+        String time = Prayer.getNextVakatTitle(mPrayer.getId()) +" za: "+FormattingUtils.getTimeString(seconds);
+        if(mPrefs.getBoolean(Prefs.SECOND_VAKAT_IN_NOTIF, true))
+            time += " · " + Prayer.getNextVakatTitle(mNextPrayer.getId()) + " za: "+FormattingUtils.getTimeString(secondSeconds);
 
         return Utils.boldNumbers(time);
     }

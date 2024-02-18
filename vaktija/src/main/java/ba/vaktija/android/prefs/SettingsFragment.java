@@ -105,6 +105,12 @@ public class SettingsFragment extends PreferenceFragmentCompat
         Preference allPrayersNotif = getPreference(Prefs.ALL_PRAYERS_IN_NOTIF);
         allPrayersNotif.setOnPreferenceChangeListener(this);
 
+        Preference secondVakatInNotif = getPreference(Prefs.SECOND_VAKAT_IN_NOTIF);
+        secondVakatInNotif.setOnPreferenceChangeListener(this);
+
+        Preference currentVakatInNotif = getPreference(Prefs.CURRENT_VAKAT_IN_NOTIF);
+        currentVakatInNotif.setOnPreferenceChangeListener(this);
+
         notificationTonePreference = getPreference(Prefs.NOTIF_TONE_URI);
         notificationTonePreference.setOnPreferenceClickListener(this);
 
@@ -287,6 +293,24 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
         if (preference.getKey().equals(Prefs.ALL_PRAYERS_IN_NOTIF)) {
             // Wait for onPreferenceChange method to return for change to be saved
+            getListView().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    NotifManagerFactory.getNotifManager(requireContext()).updateNotification();
+                }
+            }, 500);
+        }
+
+        if (preference.getKey().equals(Prefs.SECOND_VAKAT_IN_NOTIF)) {
+            getListView().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    NotifManagerFactory.getNotifManager(requireContext()).updateNotification();
+                }
+            }, 500);
+        }
+
+        if (preference.getKey().equals(Prefs.CURRENT_VAKAT_IN_NOTIF)) {
             getListView().postDelayed(new Runnable() {
                 @Override
                 public void run() {

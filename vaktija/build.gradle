@@ -18,6 +18,14 @@ ext {
 def version = "1.2.9"
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('/home/hasak/keys/vaktija.jks')
+            storePassword 'gnomegnome'
+            keyAlias 'key0'
+            keyPassword 'gnomegnome'
+        }
+    }
     compileSdkVersion 30
 
     defaultConfig {
@@ -26,12 +34,14 @@ android {
         targetSdkVersion 30
         versionCode versionCodeFromString(version)
         versionName version
+        signingConfig signingConfigs.release
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
         }
     }
 }
