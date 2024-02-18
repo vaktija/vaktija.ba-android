@@ -234,11 +234,8 @@ public class PrayersSchedule {
         Prayer secondNextPrayer = getNextPrayer(nextPrayer.getId());
 
         int nextPrayerTime = secondNextPrayer.getPrayerTime();
-        if (isDayEnding()) {
-            nextPrayerTime = ((24 * 3600) + nextPrayerTime) - Utils.getCurrentTimeSec();
-        } else {
-            nextPrayerTime -= Utils.getCurrentTimeSec();
-        }
+        nextPrayerTime -= Utils.getCurrentTimeSec();
+        if(nextPrayerTime<0) nextPrayerTime+=86400;
         return nextPrayerTime;
     }
 

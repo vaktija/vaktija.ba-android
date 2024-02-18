@@ -52,6 +52,11 @@ public class FormattingUtils {
             minutes += 1;
         }
 
+        if(minutes>59){
+            minutes-=60;
+            hours++;
+        }
+
         String result = String.format(Locale.getDefault(), "%d:%02d h", hours, minutes);
 
         if (minutes == 0) {
