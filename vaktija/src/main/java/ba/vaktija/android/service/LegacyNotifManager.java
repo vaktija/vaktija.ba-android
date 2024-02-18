@@ -61,6 +61,7 @@ public class LegacyNotifManager implements NotifManager {
             instance = new LegacyNotifManager(context);
         } else {
             instance.mPrayer = PrayersSchedule.getInstance(context).getCurrentPrayer();
+            instance.mNextPrayer = PrayersSchedule.getInstance(context).getNextPrayer();
             instance.approaching = PrayersSchedule.getInstance(context).isNextPrayerApproaching();
 
             instance.mStatusbarNotification = instance.mPrefs.getBoolean(
